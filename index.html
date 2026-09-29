@@ -531,6 +531,9 @@ img.logo{
 }
 .auth-music-square:hover{background:#056759}
 .auth-music-panel input[type=range]{display:none!important}
+
+.auth-news-hero.team-original{cursor:pointer;text-decoration:none}
+.auth-news-hero.team-original:focus-visible{outline:3px solid #f2d06b;outline-offset:4px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -922,9 +925,9 @@ function startResendCooldown(seconds=60){seconds=Math.min(60,Math.max(1,Number(s
 
 function authNewsPanel(){
  return `<section class="auth-news-panel">
-   <div class="auth-news-hero team-original">
+   <a class="auth-news-hero team-original" href="https://www.facebook.com/tiengtrunghemkho" target="_blank" rel="noopener noreferrer" aria-label="Mở fanpage Tiếng Trung Hem Khó trên Facebook">
      <img class="team-original-img" src="assets/golden-toad-team-banner.jpg?v=1" alt="Dự Án Của Nhóm GOLDEN TOAD - Thành Đạt, Hồng Diệp, Yến Vi, Ngọc Giàu, Phương Nghi">
-   </div>
+   </a>
    <div class="auth-news-card">
      <div class="auth-news-title"><span>📢</span><h3>Bản tin mới nhất</h3></div>
      <div class="auth-news-list">
