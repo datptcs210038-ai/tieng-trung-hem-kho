@@ -619,8 +619,11 @@ function bindRecovery(){
    const {error}=await db.auth.updateUser({password:p});
    state.authBusy=false;
    if(error){state.recoveryMessage='❌ '+error.message;render();return}
-   state.recoveryMessage='✅ Đổi mật khẩu thành công. Bạn có thể tiếp tục sử dụng tài khoản.';
-   state.recoveryMode=false;history.replaceState(null,'',location.pathname+location.hash);render();
+   state.recoveryMessage='✅ Đổi mật khẩu thành công. Bạn sẽ được đưa về màn hình đăng nhập.';
+   await db.auth.signOut();
+   state.user=null;state.profile=null;state.recoveryMode=false;state.authMode='login';state.authMessage='✅ Mật khẩu đã được đổi. Hãy đăng nhập bằng mật khẩu mới.';
+   history.replaceState(null,'','https://datptcs210038-ai.github.io/tieng-trung-hem-kho/');
+   render();
  };
 }
 function leaderboardPage(){
@@ -759,17 +762,17 @@ function bindAuth(){
    const email=document.getElementById('authEmail')?.value.trim();
    if(!email){state.authMessage='❌ Nhập email của bạn trước, rồi bấm “Quên mật khẩu?”.';render();return}
    state.authBusy=true;state.authMessage='';render();
-   const redirectTo=location.origin+location.pathname;
+   const redirectTo='https://datptcs210038-ai.github.io/tieng-trung-hem-kho/';
    const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});
    state.authBusy=false;
-   state.authMessage=error?'❌ '+error.message:'✅ Đã gửi email đặt lại mật khẩu. Kiểm tra Hộp thư đến và Spam.';
+   state.authMessage=error?'❌ '+error.message:'✅ Đã gửi email đặt lại mật khẩu. Mở email và bấm liên kết để quay lại trang “Đặt lại mật khẩu” trên Tiếng Trung Hem Khó.';
    render();
  };
  const resend=document.getElementById('resendConfirm');if(resend)resend.onclick=async()=>{
    const email=document.getElementById('authEmail')?.value.trim();
    if(!email){state.authMessage='❌ Nhập email trước để gửi lại thư xác nhận.';render();return}
    state.authBusy=true;state.authMessage='';render();
-   const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:location.origin+location.pathname}});
+   const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:'https://datptcs210038-ai.github.io/tieng-trung-hem-kho/'}});
    state.authBusy=false;
    state.authMessage=error?'❌ '+error.message:'✅ Đã gửi lại email xác nhận. Kiểm tra Hộp thư đến và Spam.';
    render();
@@ -780,7 +783,7 @@ function bindAuth(){
    const email=document.getElementById('authEmail')?.value.trim()||'';const password=document.getElementById('authPassword')?.value||'';
    if(state.authMode==='register'){
      const display_name=document.getElementById('authName')?.value.trim()||'',student_code=document.getElementById('authStudent')?.value.trim()||'';
-     const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name,student_code},emailRedirectTo:location.origin+location.pathname}});
+     const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name,student_code},emailRedirectTo:'https://datptcs210038-ai.github.io/tieng-trung-hem-kho/'}});
      state.authBusy=false;
      if(error){
        const msg=String(error.message||'');
@@ -861,20 +864,57 @@ function bindModal(){const c=document.getElementById('closeModal');if(c)c.onclic
 
 window.addEventListener('hashchange',()=>{state.currentWord=null;render()});
 window.addEventListener('beforeunload',save);
+
+function isRecoveryUrl(){
+ const q=new URLSearchParams(location.search);
+ const h=new URLSearchParams(location.hash.startsWith('#')?location.hash.slice(1):location.hash);
+ return q.get('type')==='recovery'||h.get('type')==='recovery'||q.has('code')||location.hash.includes('type=recovery');
+}
+
 async function boot(){
- const {data:{session}}=await db.auth.getSession();
- state.user=session?.user||null;
- if(state.user)await loadProfile();
- state.authLoading=false;
- if(state.user)await loadData(); else render();
+ const recoveryHint=isRecoveryUrl();
+
+ // Listen first so PASSWORD_RECOVERY cannot fire before the listener exists.
  db.auth.onAuthStateChange(async(event,session)=>{
    if(event==='PASSWORD_RECOVERY'){
-     state.user=session?.user||null;state.recoveryMode=true;state.authLoading=false;render();return;
+     state.user=session?.user||null;
+     state.recoveryMode=true;
+     state.authLoading=false;
+     render();
+     return;
    }
    state.user=session?.user||null;
-   if(state.user){await loadProfile();if(!state.words.length)await loadData();else render()}
-   else{state.profile=null;state.quiz=null;render()}
+   if(state.recoveryMode && event!=='SIGNED_OUT'){
+     render();
+     return;
+   }
+   if(state.user){
+     await loadProfile();
+     if(!state.words.length)await loadData();else render();
+   }else{
+     state.profile=null;state.quiz=null;render();
+   }
  });
+
+ // Give Supabase a moment to exchange recovery tokens/code from the URL.
+ if(recoveryHint) await new Promise(r=>setTimeout(r,350));
+
+ const {data:{session}}=await db.auth.getSession();
+ state.user=session?.user||null;
+
+ // Some browsers restore the recovery session before emitting PASSWORD_RECOVERY.
+ if(recoveryHint && state.user) state.recoveryMode=true;
+
+ if(state.user && !state.recoveryMode) await loadProfile();
+ state.authLoading=false;
+
+ if(state.recoveryMode){
+   render();
+ }else if(state.user){
+   await loadData();
+ }else{
+   render();
+ }
 }
 boot();
 </script>
