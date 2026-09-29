@@ -814,7 +814,7 @@ function authFriendlyError(msg){
  return String(msg||'Đã có lỗi xảy ra.');
 }
 function resendSeconds(){return Math.max(0,Math.ceil((state.resendUntil-Date.now())/1000))}
-function authCooldownText(){const s=resendSeconds();if(!s)return '';const m=Math.floor(s/60),sec=String(s%60).padStart(2,'0');return m>0?`Vui lòng chờ ${m}:${sec} trước khi gửi email tiếp theo.`:`Vui lòng chờ ${s} giây trước khi gửi email tiếp theo.`;}
+function authCooldownText(){const s=resendSeconds();if(!s)return '';const m=Math.floor(s/60),sec=String(s%60).padStart(2,'0');return m>0?`Chờ ${m}:${sec} để gửi email lại. Bạn vẫn có thể đăng nhập/đăng ký bình thường.`:`Chờ ${s} giây để gửi email lại. Bạn vẫn có thể đăng nhập/đăng ký bình thường.`;}
 function startResendCooldown(seconds=60){seconds=Math.min(60,Math.max(1,Number(seconds)||60));state.resendUntil=Date.now()+seconds*1000;localStorage.setItem('tthk_resend_until',String(state.resendUntil))}
 
 
@@ -865,7 +865,7 @@ function authPage(){
      <button type="button" class="social-btn social-facebook" id="socialFacebook" ${state.authBusy?'disabled':''}><span class="social-icon">f</span><span>Facebook</span></button>
    </div>
  </div>
- ${state.authMessage?`<div class="${state.authMessage.startsWith('✅')?'auth-success':'auth-error'}">${esc(state.authMessage)}</div>`:''}${authCooldownText()?`<div class="notice" style="margin-top:10px">⏳ ${authCooldownText()}</div>`:''}
+ ${state.authMessage?`<div class="${state.authMessage.startsWith('✅')?'auth-success':'auth-error'}">${esc(state.authMessage)}</div>`:''}${authCooldownText()?`<div class="notice" id="emailCooldownNotice" style="margin-top:10px">⏳ ${authCooldownText()}</div>`:''}
  ${authMusicPanel()}</div></div></div>`;
 }
 function recoveryPage(){
@@ -1068,7 +1068,15 @@ function bindAuth(){
  const sg=document.getElementById('socialGoogle');if(sg)sg.onclick=()=>signInSocial('google');
  const sf=document.getElementById('socialFacebook');if(sf)sf.onclick=()=>signInSocial('facebook');
  if(window.__tthkCooldownTimer)clearInterval(window.__tthkCooldownTimer);
- if(resendSeconds()>0)window.__tthkCooldownTimer=setInterval(()=>{if(!state.user&&resendSeconds()>=0)render();if(resendSeconds()<=0){clearInterval(window.__tthkCooldownTimer);window.__tthkCooldownTimer=null}},1000);
+ if(resendSeconds()>0)window.__tthkCooldownTimer=setInterval(()=>{
+   const box=document.getElementById('emailCooldownNotice');
+   const left=resendSeconds();
+   if(box){
+     if(left>0)box.textContent='⏳ '+authCooldownText();
+     else box.remove();
+   }
+   if(left<=0){clearInterval(window.__tthkCooldownTimer);window.__tthkCooldownTimer=null}
+ },1000);
  const sl=document.getElementById('showLogin');if(sl)sl.onclick=()=>{if(state.authBusy)return;state.authMode='login';state.authMessage='';render()};
  const sr=document.getElementById('showRegister');if(sr)sr.onclick=()=>{if(state.authBusy)return;state.authMode='register';state.authMessage='';render()};
  const tp=document.getElementById('toggleAuthPassword');if(tp)tp.onclick=()=>{const i=document.getElementById('authPassword');if(!i)return;i.type=i.type==='password'?'text':'password';tp.textContent=i.type==='password'?'👁️':'🙈'};
