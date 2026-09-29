@@ -646,7 +646,7 @@ const state = {
   authMode:'login',
   authMessage:'',
   authBusy:false,
-  resendUntil:Number(localStorage.getItem('tthk_resend_until')||0),
+  resendUntil:Math.min(Number(localStorage.getItem('tthk_resend_until')||0),Date.now()+60000),
   recoveryMode:false,
   recoveryMessage:'',
   leaderboard:[],
@@ -815,7 +815,7 @@ function authFriendlyError(msg){
 }
 function resendSeconds(){return Math.max(0,Math.ceil((state.resendUntil-Date.now())/1000))}
 function authCooldownText(){const s=resendSeconds();if(!s)return '';const m=Math.floor(s/60),sec=String(s%60).padStart(2,'0');return m>0?`Vui lòng chờ ${m}:${sec} trước khi gửi email tiếp theo.`:`Vui lòng chờ ${s} giây trước khi gửi email tiếp theo.`;}
-function startResendCooldown(seconds=60){state.resendUntil=Date.now()+seconds*1000;localStorage.setItem('tthk_resend_until',String(state.resendUntil))}
+function startResendCooldown(seconds=60){seconds=Math.min(60,Math.max(1,Number(seconds)||60));state.resendUntil=Date.now()+seconds*1000;localStorage.setItem('tthk_resend_until',String(state.resendUntil))}
 
 
 function authNewsPanel(){
