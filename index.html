@@ -520,6 +520,17 @@ img.logo{
 .social-facebook{background:#1877F2;color:#fff;border-color:#1877F2}
 .social-facebook .social-icon{background:#fff;color:#1877F2}
 @media(max-width:430px){.auth-social-grid{grid-template-columns:1fr}}
+
+/* Compact auth music controls */
+.auth-music-row{display:flex;align-items:center;gap:8px;margin-top:7px}
+.auth-music-row select{flex:1;min-width:0;margin-top:0!important}
+.auth-music-square{
+ width:42px;height:42px;flex:0 0 42px;border-radius:11px;
+ border:1px solid #bfae8e;background:#087a67;color:white;
+ display:grid;place-items:center;font-size:16px;font-weight:900;cursor:pointer;
+}
+.auth-music-square:hover{background:#056759}
+.auth-music-panel input[type=range]{display:none!important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -825,19 +836,16 @@ function authNewsPanel(){
  </section>`;
 }
 function authMusicPanel(){
- const track=MUSIC_TRACKS[state.settings.musicTrack]||MUSIC_TRACKS.violin;
  return `<div class="auth-music-panel">
    <div class="auth-music-top"><div class="auth-music-title">🎵 Nhạc nền</div><span>${state.settings.music?'Đang phát':'Đang tắt'}</span></div>
-   <select id="authMusicTrack">
-     <option value="violin" ${state.settings.musicTrack==='violin'?'selected':''}>🎻 Violin nhẹ nhàng</option>
-     <option value="bienDao" ${state.settings.musicTrack==='bienDao'?'selected':''}>🌸 海屿你 (Biển Đào và Em)</option>
-     <option value="loveWaits" ${state.settings.musicTrack==='loveWaits'?'selected':''}>💗 A Love That Waits (Xuân thì)</option>
-   </select>
-   <div class="auth-music-actions">
-     <button type="button" class="btn ${state.settings.music?'ghost':'jade'}" id="authMusicToggle">${state.settings.music?'⏸ Tắt nhạc':'▶ Bật nhạc'}</button>
+   <div class="auth-music-row">
+     <select id="authMusicTrack">
+       <option value="loveWaits" ${state.settings.musicTrack==='loveWaits'?'selected':''}>💗 A Love That Waits (Xuân thì)</option>
+       <option value="bienDao" ${state.settings.musicTrack==='bienDao'?'selected':''}>🌸 海屿你 (Biển Đào và Em)</option>
+       <option value="violin" ${state.settings.musicTrack==='violin'?'selected':''}>🎻 Violin nhẹ nhàng</option>
+     </select>
+     <button type="button" class="auth-music-square" id="authMusicToggle" aria-label="${state.settings.music?'Tắt nhạc':'Phát nhạc'}" title="${state.settings.music?'Tắt nhạc':'Phát nhạc'}">${state.settings.music?'⏸':'▶'}</button>
    </div>
-   <input id="authMusicVolume" type="range" min="0" max="0.35" step="0.01" value="${state.settings.volume}">
-   <div class="auth-music-note">${esc(track.note)}</div>
  </div>`;
 }
 function authPage(){
@@ -850,7 +858,6 @@ function authPage(){
  <div class="auth-field"><label>Mật khẩu</label><div class="password-wrap"><input id="authPassword" type="password" required minlength="6" autocomplete="${reg?'new-password':'current-password'}" placeholder="Ít nhất 6 ký tự"><button type="button" class="password-toggle" id="toggleAuthPassword" aria-label="Hiện mật khẩu" title="Hiện/ẩn mật khẩu">👁️</button></div></div>
  ${!reg?`<div class="auth-links"><span></span><button type="button" class="auth-link" id="forgotPassword">Quên mật khẩu?</button></div>`:''}
  <button class="btn primary" id="authSubmitBtn" style="width:100%;margin-top:8px" ${state.authBusy?'disabled':''}>${state.authBusy?'Đang xử lý…':(reg?'Tạo tài khoản':'Đăng nhập')}</button></form>
- ${!reg?`<button class="btn ghost" id="resendConfirm" style="width:100%;margin-top:9px" ${state.authBusy||resendSeconds()>0?'disabled':''}>${resendSeconds()>0?'Gửi lại sau '+resendSeconds()+'s':'Gửi lại email xác nhận'}</button>`:''}
  <div class="auth-social">
    <div class="auth-social-sep"><span>hoặc tiếp tục với</span></div>
    <div class="auth-social-grid">
@@ -1021,23 +1028,16 @@ function render(){
 function bindAuthMusic(){
  const mt=document.getElementById('authMusicTrack');
  if(mt)mt.onchange=e=>{
-   state.settings.musicTrack=e.target.value;save();
-   if(state.settings.music)startAmbient();
+   state.settings.musicTrack=e.target.value;
+   state.settings.music=true;
+   save();
+   startAmbient();
    render();
  };
  const tog=document.getElementById('authMusicToggle');
  if(tog)tog.onclick=()=>{
    state.settings.music=!state.settings.music;save();
    syncAmbient();render();
- };
- const vol=document.getElementById('authMusicVolume');
- if(vol)vol.oninput=e=>{
-   state.settings.volume=Number(e.target.value);save();
-   if(ytPlayer&&MUSIC_TRACKS[state.settings.musicTrack]?.type==='youtube'){
-     try{ytPlayer.setVolume(ytVolume())}catch{}
-   }else if(state.settings.music){
-     startAmbient();
-   }
  };
 }
 
@@ -1218,7 +1218,17 @@ function isRecoveryUrl(){
  return q.get('type')==='recovery'||h.get('type')==='recovery'||q.has('code')||location.hash.includes('type=recovery');
 }
 
+function forceEntryMusic(){
+ state.settings.musicTrack='loveWaits';
+ state.settings.music=true;
+ if(!Number.isFinite(Number(state.settings.volume))||Number(state.settings.volume)<=0) state.settings.volume=.12;
+ save();
+ // Browsers may block audible autoplay until the first user interaction.
+ // We still request playback immediately; the square button remains available as fallback.
+ setTimeout(()=>{try{syncAmbient()}catch{}},0);
+}
 async function boot(){
+ forceEntryMusic();
  const recoveryHint=isRecoveryUrl() || localStorage.getItem('tthk_password_recovery_pending')==='1';
 
  // Listen first so PASSWORD_RECOVERY cannot fire before the listener exists.
