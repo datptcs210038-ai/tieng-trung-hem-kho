@@ -590,7 +590,7 @@ async function loadLeaderboard(){
 }
 function authFriendlyError(msg){
  const s=String(msg||'').toLowerCase();
- if(s.includes('email rate limit exceeded')||s.includes('rate limit')) return 'Bạn đã yêu cầu gửi email quá nhiều lần trong thời gian ngắn. Vui lòng chờ một lúc rồi thử lại.';
+ if(s.includes('email rate limit exceeded')||s.includes('rate limit')) return 'Hệ thống đang tạm giới hạn gửi email. Vui lòng chờ vài phút rồi thử lại.';
  if(s.includes('email not confirmed')) return 'Email chưa được xác nhận. Hãy kiểm tra Hộp thư đến hoặc Spam.';
  return String(msg||'Đã có lỗi xảy ra.');
 }
@@ -778,7 +778,10 @@ function bindAuth(){
    const redirectTo=APP_URL;
    const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});
    state.authBusy=false;
-   if(error)localStorage.removeItem('tthk_password_recovery_pending');
+   if(error){
+     localStorage.removeItem('tthk_password_recovery_pending');
+     if(/rate limit/i.test(String(error.message||''))) startResendCooldown(300);
+   }else startResendCooldown(60);
    state.authMessage=error?'❌ '+authFriendlyError(error.message):'✅ Đã gửi email đặt lại mật khẩu. Mở email và bấm liên kết; khi quay lại web sẽ hiện form nhập mật khẩu mới.';
    render();
  };
@@ -788,7 +791,9 @@ function bindAuth(){
    state.authBusy=true;state.authMessage='';render();
    const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:'https://datptcs210038-ai.github.io/tieng-trung-hem-kho/'}});
    state.authBusy=false;
-   state.authMessage=error?'❌ '+error.message:'✅ Đã gửi lại email xác nhận. Kiểm tra Hộp thư đến và Spam.';
+   if(error && /rate limit/i.test(String(error.message||''))) startResendCooldown(300);
+   else if(!error) startResendCooldown(60);
+   state.authMessage=error?'❌ '+authFriendlyError(error.message):'✅ Đã gửi lại email xác nhận. Kiểm tra Hộp thư đến và Spam.';
    render();
  };
  const form=document.getElementById('authForm');if(form)form.onsubmit=async e=>{
@@ -804,7 +809,10 @@ function bindAuth(){
        if(/database error saving new user|already registered|user already registered/i.test(msg)){
          state.authMode='login';
          state.authMessage='✅ Tài khoản với email này đã được tạo. Hãy kiểm tra email xác nhận; nếu chưa thấy, nhập email rồi bấm “Gửi lại email xác nhận”.';
-       }else state.authMessage='❌ '+msg;
+       }else{
+         if(/rate limit/i.test(msg)) startResendCooldown(300);
+         state.authMessage='❌ '+authFriendlyError(msg);
+       }
        render();return
      }
      if(data.session){state.user=data.user;await loadProfile();state.authMessage='';loadData();render()}
