@@ -162,6 +162,7 @@ const state = {
   authLoading:true,
   authMode:'login',
   authMessage:'',
+  authBusy:false,
   leaderboard:[],
   leaderboardLoaded:false,
   leaderboardLoading:false,
@@ -305,7 +306,8 @@ function authPage(){
  ${reg?`<div class="auth-field"><label>Họ và tên</label><input id="authName" required minlength="2" maxlength="60" placeholder="Nguyễn Văn A"></div><div class="auth-field"><label>Mã học viên / MSSV</label><input id="authStudent" required minlength="3" maxlength="40" placeholder="CS210038"></div>`:''}
  <div class="auth-field"><label>Email</label><input id="authEmail" type="email" required autocomplete="email" placeholder="ban@example.com"></div>
  <div class="auth-field"><label>Mật khẩu</label><input id="authPassword" type="password" required minlength="6" autocomplete="${reg?'new-password':'current-password'}" placeholder="Ít nhất 6 ký tự"></div>
- <button class="btn primary" style="width:100%;margin-top:8px">${reg?'Tạo tài khoản':'Đăng nhập'}</button></form>
+ <button class="btn primary" id="authSubmitBtn" style="width:100%;margin-top:8px" ${state.authBusy?'disabled':''}>${state.authBusy?'Đang xử lý…':(reg?'Tạo tài khoản':'Đăng nhập')}</button></form>
+ ${!reg?`<button class="btn ghost" id="resendConfirm" style="width:100%;margin-top:9px" ${state.authBusy?'disabled':''}>Gửi lại email xác nhận</button>`:''}
  ${state.authMessage?`<div class="${state.authMessage.startsWith('✅')?'auth-success':'auth-error'}">${esc(state.authMessage)}</div>`:''}
  <p style="font-size:12px;margin-top:16px">🔒 Mỗi tài khoản có hồ sơ và lịch sử Flashcard riêng. Chỉ kết quả trên 80% mới được đưa lên bảng xếp hạng.</p></div></div>`;
 }
@@ -439,19 +441,45 @@ function render(){
 }
 
 function bindAuth(){
- const sl=document.getElementById('showLogin');if(sl)sl.onclick=()=>{state.authMode='login';state.authMessage='';render()};
- const sr=document.getElementById('showRegister');if(sr)sr.onclick=()=>{state.authMode='register';state.authMessage='';render()};
+ const sl=document.getElementById('showLogin');if(sl)sl.onclick=()=>{if(state.authBusy)return;state.authMode='login';state.authMessage='';render()};
+ const sr=document.getElementById('showRegister');if(sr)sr.onclick=()=>{if(state.authBusy)return;state.authMode='register';state.authMessage='';render()};
+ const resend=document.getElementById('resendConfirm');if(resend)resend.onclick=async()=>{
+   const email=document.getElementById('authEmail')?.value.trim();
+   if(!email){state.authMessage='❌ Nhập email trước để gửi lại thư xác nhận.';render();return}
+   state.authBusy=true;state.authMessage='';render();
+   const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:location.origin+location.pathname}});
+   state.authBusy=false;
+   state.authMessage=error?'❌ '+error.message:'✅ Đã gửi lại email xác nhận. Kiểm tra Hộp thư đến và Spam.';
+   render();
+ };
  const form=document.getElementById('authForm');if(form)form.onsubmit=async e=>{
-   e.preventDefault();state.authMessage='';const email=document.getElementById('authEmail').value.trim();const password=document.getElementById('authPassword').value;
+   e.preventDefault();if(state.authBusy)return;
+   state.authBusy=true;state.authMessage='';render();
+   const email=document.getElementById('authEmail')?.value.trim()||'';const password=document.getElementById('authPassword')?.value||'';
    if(state.authMode==='register'){
-     const display_name=document.getElementById('authName').value.trim(),student_code=document.getElementById('authStudent').value.trim();
-     const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name,student_code}}});
-     if(error){state.authMessage='❌ '+error.message;render();return}
+     const display_name=document.getElementById('authName')?.value.trim()||'',student_code=document.getElementById('authStudent')?.value.trim()||'';
+     const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name,student_code},emailRedirectTo:location.origin+location.pathname}});
+     state.authBusy=false;
+     if(error){
+       const msg=String(error.message||'');
+       if(/database error saving new user|already registered|user already registered/i.test(msg)){
+         state.authMode='login';
+         state.authMessage='✅ Tài khoản với email này đã được tạo. Hãy kiểm tra email xác nhận; nếu chưa thấy, nhập email rồi bấm “Gửi lại email xác nhận”.';
+       }else state.authMessage='❌ '+msg;
+       render();return
+     }
      if(data.session){state.user=data.user;await loadProfile();state.authMessage='';loadData();render()}
-     else {state.authMessage='✅ Đã tạo tài khoản. Hãy kiểm tra email để xác nhận rồi đăng nhập.';render()}
+     else {state.authMode='login';state.authMessage='✅ Đã tạo tài khoản. Kiểm tra email để xác nhận, sau đó quay lại đăng nhập.';render()}
    }else{
      const {data,error}=await db.auth.signInWithPassword({email,password});
-     if(error){state.authMessage='❌ Email hoặc mật khẩu chưa đúng, hoặc email chưa được xác nhận.';render();return}
+     state.authBusy=false;
+     if(error){
+       const msg=String(error.message||'');
+       state.authMessage=/email not confirmed/i.test(msg)
+         ?'❌ Email chưa được xác nhận. Bấm “Gửi lại email xác nhận” nếu bạn chưa nhận được thư.'
+         :'❌ Email hoặc mật khẩu chưa đúng.';
+       render();return
+     }
      state.user=data.user;await loadProfile();state.authMessage='';loadData();render();
    }
  };
