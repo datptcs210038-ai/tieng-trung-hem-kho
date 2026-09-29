@@ -611,11 +611,12 @@ async function loadLeaderboard(){
 }
 function authFriendlyError(msg){
  const s=String(msg||'').toLowerCase();
- if(s.includes('email rate limit exceeded')||s.includes('rate limit')) return 'Hệ thống đang tạm giới hạn gửi email. Vui lòng chờ vài phút rồi thử lại.';
+ if(s.includes('email rate limit exceeded')||s.includes('rate limit')) return 'Bạn đã yêu cầu gửi email quá nhiều lần. Hệ thống tạm khóa gửi email trong 10 phút để tránh bị giới hạn tiếp.';
  if(s.includes('email not confirmed')) return 'Email chưa được xác nhận. Hãy kiểm tra Hộp thư đến hoặc Spam.';
  return String(msg||'Đã có lỗi xảy ra.');
 }
 function resendSeconds(){return Math.max(0,Math.ceil((state.resendUntil-Date.now())/1000))}
+function authCooldownText(){const s=resendSeconds();if(!s)return '';const m=Math.floor(s/60),sec=String(s%60).padStart(2,'0');return m>0?`Vui lòng chờ ${m}:${sec} trước khi gửi email tiếp theo.`:`Vui lòng chờ ${s} giây trước khi gửi email tiếp theo.`;}
 function startResendCooldown(seconds=60){state.resendUntil=Date.now()+seconds*1000;localStorage.setItem('tthk_resend_until',String(state.resendUntil))}
 
 function authMusicPanel(){
@@ -645,7 +646,7 @@ function authPage(){
  ${!reg?`<div class="auth-links"><span></span><button type="button" class="auth-link" id="forgotPassword">Quên mật khẩu?</button></div>`:''}
  <button class="btn primary" id="authSubmitBtn" style="width:100%;margin-top:8px" ${state.authBusy?'disabled':''}>${state.authBusy?'Đang xử lý…':(reg?'Tạo tài khoản':'Đăng nhập')}</button></form>
  ${!reg?`<button class="btn ghost" id="resendConfirm" style="width:100%;margin-top:9px" ${state.authBusy||resendSeconds()>0?'disabled':''}>${resendSeconds()>0?'Gửi lại sau '+resendSeconds()+'s':'Gửi lại email xác nhận'}</button>`:''}
- ${state.authMessage?`<div class="${state.authMessage.startsWith('✅')?'auth-success':'auth-error'}">${esc(state.authMessage)}</div>`:''}
+ ${state.authMessage?`<div class="${state.authMessage.startsWith('✅')?'auth-success':'auth-error'}">${esc(state.authMessage)}</div>`:''}${authCooldownText()?`<div class="notice" style="margin-top:10px">⏳ ${authCooldownText()}</div>`:''}
  <p style="font-size:12px;margin-top:16px">🔒 Mỗi tài khoản có hồ sơ và lịch sử Flashcard riêng. Chỉ kết quả trên 80% mới được đưa lên bảng xếp hạng.</p></div>${authMusicPanel()}</div>`;
 }
 function recoveryPage(){
@@ -835,6 +836,7 @@ function bindAuth(){
  const sr=document.getElementById('showRegister');if(sr)sr.onclick=()=>{if(state.authBusy)return;state.authMode='register';state.authMessage='';render()};
  const tp=document.getElementById('toggleAuthPassword');if(tp)tp.onclick=()=>{const i=document.getElementById('authPassword');if(!i)return;i.type=i.type==='password'?'text':'password';tp.textContent=i.type==='password'?'👁️':'🙈'};
  const fp=document.getElementById('forgotPassword');if(fp)fp.onclick=async()=>{
+   if(resendSeconds()>0){state.authMessage='❌ '+authCooldownText();render();return}
    const email=document.getElementById('authEmail')?.value.trim();
    if(!email || !email.includes('@')){state.authMessage='❌ Để quên mật khẩu, vui lòng nhập email tài khoản (không dùng mã học viên).';render();return}
    state.authBusy=true;state.authMessage='';localStorage.setItem('tthk_password_recovery_pending','1');render();
@@ -843,18 +845,19 @@ function bindAuth(){
    state.authBusy=false;
    if(error){
      localStorage.removeItem('tthk_password_recovery_pending');
-     if(/rate limit/i.test(String(error.message||''))) startResendCooldown(300);
+     if(/rate limit/i.test(String(error.message||''))) startResendCooldown(600);
    }else startResendCooldown(60);
    state.authMessage=error?'❌ '+authFriendlyError(error.message):'✅ Đã gửi email đặt lại mật khẩu. Mở email và bấm liên kết; khi quay lại web sẽ hiện form nhập mật khẩu mới.';
    render();
  };
  const resend=document.getElementById('resendConfirm');if(resend)resend.onclick=async()=>{
+   if(resendSeconds()>0){state.authMessage='❌ '+authCooldownText();render();return}
    const email=document.getElementById('authEmail')?.value.trim();
    if(!email || !email.includes('@')){state.authMessage='❌ Để gửi lại email xác nhận, vui lòng nhập email tài khoản.';render();return}
    state.authBusy=true;state.authMessage='';render();
    const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:'https://datptcs210038-ai.github.io/tieng-trung-hem-kho/'}});
    state.authBusy=false;
-   if(error && /rate limit/i.test(String(error.message||''))) startResendCooldown(300);
+   if(error && /rate limit/i.test(String(error.message||''))) startResendCooldown(600);
    else if(!error) startResendCooldown(60);
    state.authMessage=error?'❌ '+authFriendlyError(error.message):'✅ Đã gửi lại email xác nhận. Kiểm tra Hộp thư đến và Spam.';
    render();
@@ -873,7 +876,7 @@ function bindAuth(){
          state.authMode='login';
          state.authMessage='✅ Tài khoản với email này đã được tạo. Hãy kiểm tra email xác nhận; nếu chưa thấy, nhập email rồi bấm “Gửi lại email xác nhận”.';
        }else{
-         if(/rate limit/i.test(msg)) startResendCooldown(300);
+         if(/rate limit/i.test(msg)) startResendCooldown(600);
          state.authMessage='❌ '+authFriendlyError(msg);
        }
        render();return
