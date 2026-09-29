@@ -482,6 +482,26 @@ img.logo{
   .auth-news-list .auth-news-item:nth-child(n+3){display:none}
   .auth-follow-strip{font-size:12px}
 }
+
+/* Golden Toad original team hero */
+.auth-news-hero.team-original{
+  min-height:0!important;
+  aspect-ratio:900/399;
+  background:#075f52!important;
+  border:1px solid rgba(255,244,209,.45);
+  padding:0!important;
+}
+.auth-news-hero.team-original:before{display:none!important;content:none!important}
+.team-original-img{
+  display:block;width:100%;height:100%;
+  object-fit:contain;
+  object-position:center;
+  background:#075f52;
+}
+@media(max-width:900px){
+ .auth-news-hero.team-original{aspect-ratio:900/399;min-height:0!important}
+ .team-original-img{object-fit:contain}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -770,12 +790,8 @@ function startResendCooldown(seconds=60){state.resendUntil=Date.now()+seconds*10
 
 function authNewsPanel(){
  return `<section class="auth-news-panel">
-   <div class="auth-news-hero">
-     <div class="auth-news-badge">中文不难 · Tiếng Trung Hem Khó</div>
-     <div class="auth-news-caption">
-       <h2>Học tiếng Trung nhẹ nhàng hơn mỗi ngày.</h2>
-       <p>Thông tin mới, cập nhật tính năng và các thông báo dành cho người học sẽ được ghim tại đây.</p>
-     </div>
+   <div class="auth-news-hero team-original">
+     <img class="team-original-img" src="assets/golden-toad-team-banner.jpg?v=1" alt="Dự Án Của Nhóm GOLDEN TOAD - Thành Đạt, Hồng Diệp, Yến Vi, Ngọc Giàu, Phương Nghi">
    </div>
    <div class="auth-news-card">
      <div class="auth-news-title"><span>📢</span><h3>Bản tin mới nhất</h3></div>
