@@ -46,13 +46,14 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}
 .chat-fab{position:fixed;right:24px;bottom:24px;z-index:50;width:58px;height:58px;border:0;border-radius:20px;background:var(--primary);color:white;font-size:24px;box-shadow:0 15px 35px rgba(215,78,72,.3)}.chat-pop{position:fixed;right:24px;bottom:92px;width:min(370px,calc(100vw - 28px));height:510px;background:var(--surface);border:1px solid var(--line);border-radius:25px;z-index:60;box-shadow:0 25px 80px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden}.chat-head{padding:15px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.chat-head small{display:block;color:var(--muted)}.messages{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:9px}.bubble{max-width:82%;padding:10px 12px;border-radius:15px;background:var(--surface2);line-height:1.5;font-size:13px}.bubble.me{margin-left:auto;background:var(--primary);color:white}.chat-input{display:flex;gap:7px;padding:11px;border-top:1px solid var(--line)}.chat-input input{flex:1;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 12px;border-radius:13px;outline:none}.demo-tag{font-size:10px;color:#a46c18;background:#fff0c9;border-radius:6px;padding:3px 6px;margin-left:6px}.dark .demo-tag{background:#48380d;color:#ffd982}
 .inbox{display:grid;grid-template-columns:300px 1fr;height:650px;border:1px solid var(--line);border-radius:25px;overflow:hidden;background:var(--surface)}.conv-list{border-right:1px solid var(--line);overflow:auto}.conv{padding:15px;border-bottom:1px solid var(--line);cursor:pointer}.conv.active,.conv:hover{background:var(--surface2)}.conv b{display:block}.conv small{color:var(--muted)}.thread{display:flex;flex-direction:column}.thread-head{padding:16px;border-bottom:1px solid var(--line)}.thread .messages{padding:20px}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.setting{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px}.setting h3{margin:0 0 5px}.setting p{margin:0 0 14px;color:var(--muted);font-size:13px}.setting input[type=range]{width:100%}.setting select,.setting input[type=text]{width:100%;padding:11px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
 .empty{text-align:center;padding:55px 20px;color:var(--muted)}.empty .e{font-size:55px}.source-note{margin-top:36px;padding:15px 18px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.6}
+.auth-screen{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 20% 10%,#ffe7de 0,transparent 32%),radial-gradient(circle at 85% 85%,#dff3eb 0,transparent 32%),var(--bg)}.auth-card{width:min(480px,100%);background:var(--surface);border:1px solid var(--line);border-radius:30px;padding:28px;box-shadow:var(--shadow)}.auth-brand{text-align:center;margin-bottom:22px}.auth-logo{width:68px;height:68px;margin:auto;border-radius:22px;background:linear-gradient(145deg,var(--primary),#f49c78);display:grid;place-items:center;color:white;font-size:34px}.auth-card h1{margin:12px 0 6px}.auth-card p{color:var(--muted);line-height:1.55}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border-radius:14px;padding:4px;margin:18px 0}.auth-tabs button{border:0;background:transparent;padding:10px;border-radius:11px;font-weight:750;color:var(--muted)}.auth-tabs button.active{background:var(--surface);color:var(--ink);box-shadow:0 4px 14px rgba(0,0,0,.06)}.auth-field{display:grid;gap:6px;margin:12px 0}.auth-field label{font-size:13px;font-weight:750}.auth-field input{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--ink);outline:none}.auth-error{margin-top:12px;padding:10px 12px;border-radius:12px;background:#fff0ee;color:#a53f38;font-size:13px}.auth-success{margin-top:12px;padding:10px 12px;border-radius:12px;background:#e8f7ef;color:#236a4a;font-size:13px}.user-chip{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);background:var(--surface);border-radius:14px}.avatar-mini{width:30px;height:30px;border-radius:10px;background:var(--jade);color:white;display:grid;place-items:center;font-weight:850}.leaderboard{width:100%;border-collapse:separate;border-spacing:0 8px}.leaderboard th{text-align:left;color:var(--muted);font-size:12px;padding:0 12px}.leaderboard td{padding:13px 12px;background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.leaderboard td:first-child{border-left:1px solid var(--line);border-radius:14px 0 0 14px}.leaderboard td:last-child{border-right:1px solid var(--line);border-radius:0 14px 14px 0}.rank-medal{font-size:22px}.login-lock{text-align:center;padding:60px 20px}
 .mobile-nav{display:none}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 15px;border-radius:12px;z-index:100;font-size:13px;box-shadow:var(--shadow)}
 @media(max-width:1100px){.grid,.vocab-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:780px){.sidebar{display:none}.main{margin-left:0}.topbar{padding:11px 14px}.topbar .icon-btn.hide-mobile{display:none}.content{padding:22px 14px 100px}.hero-card{padding:24px;min-height:245px}.hero-card h1{font-size:36px}.stats{grid-template-columns:repeat(2,1fr);gap:9px}.grid,.grid.two,.grid.four,.vocab-grid,.settings-grid{grid-template-columns:1fr}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);bottom:0;left:0;right:0;z-index:45;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:7px 4px max(7px,env(safe-area-inset-bottom))}.mobile-nav a{text-align:center;color:var(--muted);font-size:10px;font-weight:650}.mobile-nav .mi{font-size:20px;display:block;margin-bottom:2px}.mobile-nav a.active{color:var(--primary)}.chat-fab{right:15px;bottom:76px}.chat-pop{right:14px;bottom:142px;height:480px}.page-title{display:block}.page-title h1{font-size:29px}.inbox{grid-template-columns:1fr;height:auto}.conv-list{max-height:250px;border-right:0;border-bottom:1px solid var(--line)}.thread{height:480px}.flashcard{height:360px}.flash-face .zh{font-size:76px}}
 @media(max-width:480px){.word-card{grid-template-columns:64px 1fr}.illustration{width:64px;height:64px}.stats{grid-template-columns:1fr 1fr}.stat{padding:14px}.stat .n{font-size:23px}.searchbox input{font-size:13px}.topbar{gap:7px}.icon-btn{width:39px;min-height:39px}.hero-card h1{font-size:32px}.flash-rating{grid-template-columns:repeat(2,1fr)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>\n</head>
 <body>
 <div id="app"></div>
 <script>const DATA_URLS = {
@@ -60,6 +61,10 @@ a{color:inherit;text-decoration:none}.hidden{display:none!important}
   hsk2: 'https://raw.githubusercontent.com/drkameleon/complete-hsk-vocabulary/main/wordlists/exclusive/old/2.json',
   hanviet: 'https://raw.githubusercontent.com/xkhanhs/hsk-sino-viet/main/data/characters.json'
 };
+
+const SUPABASE_URL='https://wcgzdbjmwhyroszvyetv.supabase.co';
+const SUPABASE_KEY='sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const VI = {
 '爱':'yêu, thích','八':'tám','爸爸':'ba, bố','杯子':'cốc, ly','北京':'Bắc Kinh','本':'quyển (lượng từ cho sách)','不':'không','不客气':'không có gì, đừng khách sáo','菜':'món ăn; rau','茶':'trà','吃':'ăn','出租车':'taxi','打电话':'gọi điện thoại','大':'to, lớn','的':'trợ từ sở hữu / bổ nghĩa','点':'giờ; điểm; một chút','电脑':'máy tính','电视':'tivi, truyền hình','电影':'phim điện ảnh','东西':'đồ vật, đồ đạc','都':'đều, tất cả','读':'đọc','对不起':'xin lỗi','多':'nhiều','多少':'bao nhiêu','儿子':'con trai','二':'hai','饭馆':'quán ăn, nhà hàng','飞机':'máy bay','分钟':'phút','高兴':'vui, vui vẻ','个':'cái; người (lượng từ thông dụng)','工作':'làm việc; công việc','狗':'chó','汉语':'tiếng Hán, tiếng Trung','好':'tốt, hay','喝':'uống','和':'và, với','很':'rất','后面':'phía sau','回':'quay về, trở về','会':'biết, có thể (do học được)','火车站':'ga tàu hỏa','几':'mấy, bao nhiêu (số ít)','家':'nhà; gia đình','叫':'gọi; tên là','今天':'hôm nay','九':'chín','开':'mở; lái','看':'nhìn, xem','看见':'nhìn thấy','块':'miếng; đồng (khẩu ngữ)','来':'đến','老师':'giáo viên','了':'trợ từ “rồi” / hoàn thành','冷':'lạnh','里':'trong, bên trong','零':'số không','六':'sáu','妈妈':'mẹ','吗':'trợ từ nghi vấn “không?”','买':'mua','猫':'mèo','没':'không có; chưa','没关系':'không sao, không có gì','米饭':'cơm','名字':'tên','明天':'ngày mai','哪':'nào, đâu','那':'kia, đó','呢':'trợ từ hỏi lại / tiếp diễn','能':'có thể (khả năng/điều kiện)','你':'bạn','年':'năm','女儿':'con gái','朋友':'bạn bè','漂亮':'đẹp','苹果':'táo','七':'bảy','前面':'phía trước','钱':'tiền','请':'mời; xin vui lòng','去':'đi','热':'nóng','人':'người','认识':'quen, biết (người)','日':'ngày; mặt trời','三':'ba','商店':'cửa hàng','上':'trên; lên','上午':'buổi sáng','少':'ít','什么':'cái gì','十':'mười','时候':'lúc, thời điểm','是':'là','书':'sách','谁':'ai','水':'nước','水果':'trái cây','睡觉':'ngủ','说话':'nói chuyện','四':'bốn','岁':'tuổi','他':'anh ấy','她':'cô ấy','太':'quá, rất','天气':'thời tiết','听':'nghe','同学':'bạn học','喂':'a lô','我':'tôi','我们':'chúng tôi, chúng ta','五':'năm (số 5)','喜欢':'thích','下':'dưới; xuống','下午':'buổi chiều','下雨':'mưa','先生':'ông; ngài','现在':'bây giờ','想':'nghĩ; muốn','小':'nhỏ','小姐':'cô, tiểu thư','些':'một vài, một ít','写':'viết','谢谢':'cảm ơn','星期':'tuần; thứ','学生':'học sinh, sinh viên','学习':'học tập','学校':'trường học','一':'một','衣服':'quần áo','医生':'bác sĩ','医院':'bệnh viện','椅子':'ghế','有':'có','月':'tháng; mặt trăng','再见':'tạm biệt','在':'ở, tại; đang','怎么':'như thế nào, làm sao','怎么样':'thế nào','这':'này, đây','中国':'Trung Quốc','中午':'buổi trưa','住':'ở, sinh sống','桌子':'bàn','字':'chữ','昨天':'hôm qua','坐':'ngồi; đi (phương tiện)','做':'làm',
@@ -152,6 +157,14 @@ const state = {
   chat: JSON.parse(localStorage.getItem('hg_chat')||'[{"from":"staff","text":"Xin chào 👋 Đây là hộp chat demo. Khi nối Supabase, tin nhắn sẽ được gửi đến nhân viên thật."}]'),
   chatOpen:false,
   quiz:null,
+  user:null,
+  profile:null,
+  authLoading:true,
+  authMode:'login',
+  authMessage:'',
+  leaderboard:[],
+  leaderboardLoaded:false,
+  leaderboardLoading:false,
   sentenceDraft:localStorage.getItem('hg_sentence')||''
 };
 
@@ -267,15 +280,48 @@ function startAmbient(){
 function syncAmbient(){state.settings.music?startAmbient():stopAmbient();}
 
 function navItems(){return [
- ['#/','🏠','Trang chủ'],['#/hsk/1','🟥','HSK 1'],['#/hsk/2','🟩','HSK 2'],['#/vocab','🀄','Từ vựng'],['#/grammar','🧩','Ngữ pháp'],['#/sentence','✍️','Đặt câu'],['#/flashcards','🃏','Flashcard'],['#/progress','📊','Tiến độ'],['#/settings','⚙️','Cài đặt']
+ ['#/','🏠','Trang chủ'],['#/hsk/1','🟥','HSK 1'],['#/hsk/2','🟩','HSK 2'],['#/vocab','🀄','Từ vựng'],['#/grammar','🧩','Ngữ pháp'],['#/sentence','✍️','Đặt câu'],['#/flashcards','🃏','Flashcard'],['#/leaderboard','🏆','Bảng xếp hạng'],['#/progress','📊','Tiến độ'],['#/settings','⚙️','Cài đặt']
 ]}
 function currentPath(){return location.hash||'#/';}
 function isActive(href){const p=currentPath();if(href==='#/')return p==='#/';return p.startsWith(href);}
 
+async function loadProfile(){
+ if(!state.user){state.profile=null;return}
+ const {data,error}=await db.from('profiles').select('display_name,student_code').eq('user_id',state.user.id).maybeSingle();
+ if(!error&&data){state.profile=data;state.settings.name=data.display_name;save()}
+}
+async function loadLeaderboard(){
+ state.leaderboardLoading=true;render();
+ const {data,error}=await db.rpc('get_leaderboard',{p_limit:50});
+ state.leaderboardLoading=false;
+ if(error){toast('Chưa tải được bảng xếp hạng');state.leaderboard=[]}else state.leaderboard=data||[];
+ render();
+}
+function authPage(){
+ const reg=state.authMode==='register';
+ return `<div class="auth-screen"><div class="auth-card"><div class="auth-brand"><div class="auth-logo">汉</div><h1>Tiếng Trung Hem Khó</h1><p>Đăng nhập để học, làm Flashcard và lưu kết quả vào hệ thống chung.</p></div>
+ <div class="auth-tabs"><button id="showLogin" class="${!reg?'active':''}">Đăng nhập</button><button id="showRegister" class="${reg?'active':''}">Đăng ký</button></div>
+ <form id="authForm">
+ ${reg?`<div class="auth-field"><label>Họ và tên</label><input id="authName" required minlength="2" maxlength="60" placeholder="Nguyễn Văn A"></div><div class="auth-field"><label>Mã học viên / MSSV</label><input id="authStudent" required minlength="3" maxlength="40" placeholder="CS210038"></div>`:''}
+ <div class="auth-field"><label>Email</label><input id="authEmail" type="email" required autocomplete="email" placeholder="ban@example.com"></div>
+ <div class="auth-field"><label>Mật khẩu</label><input id="authPassword" type="password" required minlength="6" autocomplete="${reg?'new-password':'current-password'}" placeholder="Ít nhất 6 ký tự"></div>
+ <button class="btn primary" style="width:100%;margin-top:8px">${reg?'Tạo tài khoản':'Đăng nhập'}</button></form>
+ ${state.authMessage?`<div class="${state.authMessage.startsWith('✅')?'auth-success':'auth-error'}">${esc(state.authMessage)}</div>`:''}
+ <p style="font-size:12px;margin-top:16px">🔒 Mỗi tài khoản có hồ sơ và lịch sử Flashcard riêng. Chỉ kết quả trên 80% mới được đưa lên bảng xếp hạng.</p></div></div>`;
+}
+function leaderboardPage(){
+ if(!state.leaderboardLoaded){state.leaderboardLoaded=true;setTimeout(loadLeaderboard,0)}
+ const rows=state.leaderboard;
+ const medal=r=>r===1?'🥇':r===2?'🥈':r===3?'🥉':`#${r}`;
+ return `<div class="page-title"><div><h1>🏆 Bảng xếp hạng Flashcard</h1><p>Chỉ ghi nhận người học đạt <b>trên 80%</b>. Mỗi người được làm nhiều lần; bảng lấy thành tích tốt nhất. Nếu bằng điểm, lượt 20 câu được ưu tiên hơn 15 rồi 10 câu.</p></div><button class="btn ghost" id="refreshBoard">↻ Làm mới</button></div>
+ <div class="notice" style="margin-bottom:16px">✅ Điểm trên bảng được hệ thống Supabase tính lại từ từng đáp án, không lấy % do trình duyệt tự gửi.</div>
+ ${state.leaderboardLoading?'<div class="card empty">Đang tải bảng xếp hạng…</div>':rows.length?`<div style="overflow:auto"><table class="leaderboard"><thead><tr><th>Hạng</th><th>Người học</th><th>Điểm</th><th>Bài</th><th>Cấp độ</th><th>Thời gian</th></tr></thead><tbody>${rows.map(r=>`<tr><td><span class="rank-medal">${medal(Number(r.rank))}</span></td><td><b>${esc(r.display_name)}</b></td><td><b>${Number(r.score_percent).toFixed(0)}%</b></td><td>${r.question_count} câu</td><td>${Number(r.hsk_level)===0?'HSK 1 + 2':'HSK '+r.hsk_level}</td><td>${new Date(r.achieved_at).toLocaleString('vi-VN')}</td></tr>`).join('')}</tbody></table></div>`:'<div class="card empty"><div class="e">🏆</div><h3>Chưa có thành tích đủ điều kiện</h3><p>Đạt trên 80% Flashcard để xuất hiện tại đây.</p></div>'}`;
+}
+
 function shell(content){
  const nav=navItems().map(([h,i,t])=>`<a href="${h}" class="${isActive(h)?'active':''}"><span class="ico">${i}</span>${t}</a>`).join('');
  const mobile=[['#/','🏠','Nhà'],['#/hsk/1','📚','Bài'],['#/vocab','🀄','Từ'],['#/flashcards','🃏','Ôn'],['#/settings','⚙️','Cài']].map(([h,i,t])=>`<a href="${h}" class="${isActive(h)?'active':''}"><span class="mi">${i}</span>${t}</a>`).join('');
- return `<div class="shell"><aside class="sidebar"><div class="brand"><div class="logo">汉</div><div><strong>Tiếng Trung Hem Khó</strong><small>HSK 1–2 cho người Việt</small></div></div><nav class="nav">${nav}</nav><div class="sidebar-foot"><b>🌱 Học nhẹ mỗi ngày</b><small>Tiến độ được lưu ngay trên thiết bị. Không cần tài khoản ở bản miễn phí.</small></div></aside><main class="main"><header class="topbar"><div class="searchbox"><span>⌕</span><input id="globalSearch" placeholder="Tìm Hán tự, pinyin, nghĩa Việt, Hán Việt…" value="${esc(state.query)}"></div><button class="icon-btn hide-mobile" id="musicQuick" title="Nhạc violin nền">${state.settings.music?'🎻':'🔇'}</button><button class="icon-btn" id="themeQuick" title="Đổi giao diện">${state.settings.theme==='dark'?'☀️':'🌙'}</button></header><div class="content">${content}<div class="source-note">🎻 Nhạc nền: violin nhẹ tổng hợp riêng cho Tiếng Trung Hem Khó, không dùng tác phẩm có bản quyền.<br>Tiếng Trung Hem Khó là dự án học tập độc lập, không phải đơn vị tổ chức kỳ thi HSK. Dữ liệu từ vựng tham khảo dự án <b>complete-hsk-vocabulary</b> (MIT); lớp Hán-Việt tham khảo <b>hsk-sino-viet</b> (CC BY 4.0). Một số ví dụ cơ bản được sinh theo mẫu để luyện tập, nên người học nên kiểm tra thêm với giáo viên khi cần độ chính xác ngữ dụng cao.</div></div></main><nav class="mobile-nav">${mobile}</nav>${chatWidget()}</div>`;
+ return `<div class="shell"><aside class="sidebar"><div class="brand"><div class="logo">汉</div><div><strong>Tiếng Trung Hem Khó</strong><small>HSK 1–2 cho người Việt</small></div></div><nav class="nav">${nav}</nav><div class="sidebar-foot"><b>🌱 Học nhẹ mỗi ngày</b><small>Tiến độ được lưu ngay trên thiết bị. Không cần tài khoản ở bản miễn phí.</small></div></aside><main class="main"><header class="topbar"><div class="searchbox"><span>⌕</span><input id="globalSearch" placeholder="Tìm Hán tự, pinyin, nghĩa Việt, Hán Việt…" value="${esc(state.query)}"></div><button class="icon-btn hide-mobile" id="musicQuick" title="Nhạc violin nền">${state.settings.music?'🎻':'🔇'}</button><button class="icon-btn" id="themeQuick" title="Đổi giao diện">${state.settings.theme==='dark'?'☀️':'🌙'}</button><div class="user-chip hide-mobile"><div class="avatar-mini">${esc((state.profile?.display_name||state.user?.email||'U').slice(0,1).toUpperCase())}</div><div><b style="font-size:12px">${esc(state.profile?.display_name||'Người học')}</b><small style="display:block;color:var(--muted)">${esc(state.profile?.student_code||'')}</small></div></div><button class="btn sm ghost hide-mobile" id="logoutBtn">Đăng xuất</button></header><div class="content">${content}<div class="source-note">🎻 Nhạc nền: violin nhẹ tổng hợp riêng cho Tiếng Trung Hem Khó, không dùng tác phẩm có bản quyền.<br>Tiếng Trung Hem Khó là dự án học tập độc lập, không phải đơn vị tổ chức kỳ thi HSK. Dữ liệu từ vựng tham khảo dự án <b>complete-hsk-vocabulary</b> (MIT); lớp Hán-Việt tham khảo <b>hsk-sino-viet</b> (CC BY 4.0). Một số ví dụ cơ bản được sinh theo mẫu để luyện tập, nên người học nên kiểm tra thêm với giáo viên khi cần độ chính xác ngữ dụng cao.</div></div></main><nav class="mobile-nav">${mobile}</nav>${chatWidget()}</div>`;
 }
 
 function chatWidget(){
@@ -348,16 +394,24 @@ function flashcardsPage(){
    if(item.selected!==null){if(choice===w.meaning)cls='correct';else if(choice===item.selected)cls='wrong'}
    return `<button class="quiz-option ${cls}" data-answer="${esc(choice)}" ${item.selected!==null?'disabled':''}><b>${String.fromCharCode(65+i)}.</b> ${esc(choice)}</button>`;
  }).join('')}</div>
- ${item.selected!==null?`<div class="quiz-feedback ${item.correct?'good':'bad'}">${item.correct?'✅ <b>Chính xác!</b>':'❌ <b>Chưa đúng.</b>'} Đáp án đúng là <b>${esc(w.meaning)}</b>.<br><span class="hanviet">Hán-Việt: ${esc(w.hanviet)}</span></div><div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn primary" id="nextQuiz">${q.index===q.count-1?'Xem kết quả →':'Câu tiếp theo →'}</button></div>`:''}
+ ${item.selected!==null?`<div class="quiz-feedback ${item.correct?'good':'bad'}">${item.correct?'✅ <b>Chính xác!</b>':'❌ <b>Chưa đúng.</b>'} Đáp án đúng là <b>${esc(w.meaning)}</b>.<br><span class="hanviet">Hán-Việt: ${esc(w.hanviet)}</span></div>${q.submitError?`<div class="auth-error">${esc(q.submitError)}</div>`:''}<div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn primary" id="nextQuiz" ${q.submitting?'disabled':''}>${q.submitting?'Đang xác minh…':(q.index===q.count-1?'Xác minh & xem kết quả →':'Câu tiếp theo →')}</button></div>`:''}
  </div>`;
 }
+async function submitQuizResult(){
+ const q=state.quiz;if(!q||q.submitting)return;q.submitting=true;render();
+ const answers=q.items.map(x=>({hanzi:x.word.hanzi,selected:x.selected}));
+ const {data,error}=await db.rpc('submit_quiz_attempt',{p_level:q.level,p_question_count:q.count,p_answers:answers});
+ q.submitting=false;
+ if(error){q.submitError=error.message;toast('Không lưu được kết quả lên hệ thống');render();return}
+ q.serverResult=(data&&data[0])||null;q.finished=true;state.leaderboardLoaded=false;render();
+}
 function quizResultPage(){
- const q=state.quiz,correct=q.items.filter(x=>x.correct).length,wrong=q.count-correct,score=Math.round(correct/q.count*100);
+ const q=state.quiz,sr=q.serverResult||{},correct=Number(sr.correct_count??q.items.filter(x=>x.correct).length),wrong=q.count-correct,score=Number(sr.score_percent??Math.round(correct/q.count*100));
  const good=q.items.filter(x=>x.correct),bad=q.items.filter(x=>!x.correct);
- const reward=score>80;
+ const reward=sr.reward_eligible===true;
  const rows=arr=>arr.length?arr.map(x=>`<div class="result-row"><div class="zh">${esc(x.word.hanzi)}</div><div><b>${esc(x.word.pinyin)}</b><div>${esc(x.word.meaning)}</div>${!x.correct?`<small>Bạn chọn: ${esc(x.selected||'—')}</small>`:''}</div></div>`).join(''):'<div class="empty" style="padding:20px">Không có từ nào 🎉</div>';
- return `<div class="quiz-results"><div class="card score-hero"><span class="pill">HOÀN THÀNH</span><div class="score">${score}%</div><h2>${correct}/${q.count} câu đúng</h2><p style="color:var(--muted)">Đúng: <b>${correct}</b> · Sai: <b>${wrong}</b></p><button class="btn primary" id="restartQuiz">Chơi lượt mới</button></div>
- ${reward?`<div class="good-ticket" id="goodTicket"><div class="seal">🌟</div><h2>PHIẾU BÉ NGOAN</h2><p>Trao tặng <b>${esc(state.settings.name||'Bạn')}</b> vì đã hoàn thành thử thách với <b>${score}%</b> đáp án đúng.</p><div class="pill" style="background:#fff4c1;color:#755719">Tiếng Trung Hem Khó · HSK ${q.level||'1–2'}</div><p style="margin-top:18px"><b>🎁 Nhớ cap màn hình phiếu này lại và gửi vào hệ thống để nhận thưởng nha!</b></p></div>`:`<div class="notice" style="max-width:760px;margin:18px auto">🌱 Bạn cần đạt <b>trên 80%</b> để nhận Phiếu Bé Ngoan. Ôn lại các từ sai bên dưới rồi thử lại nhé!</div>`}
+ return `<div class="quiz-results"><div class="card score-hero"><span class="pill">HOÀN THÀNH</span><div class="score">${score}%</div><h2>${correct}/${q.count} câu đúng</h2><p style="color:var(--muted)">Đúng: <b>${correct}</b> · Sai: <b>${wrong}</b></p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn primary" id="restartQuiz">Chơi lượt mới</button><a class="btn jade" href="#/leaderboard">🏆 Xem bảng xếp hạng</a></div></div>
+ ${reward?`<div class="good-ticket" id="goodTicket"><div class="seal">🌟</div><h2>PHIẾU BÉ NGOAN</h2><p>Trao tặng <b>${esc(state.settings.name||'Bạn')}</b> vì đã hoàn thành thử thách với <b>${score}%</b> đáp án đúng đã được hệ thống xác minh.</p><div class="pill" style="background:#fff4c1;color:#755719">Tiếng Trung Hem Khó · HSK ${q.level||'1–2'}</div><p style="margin-top:18px"><b>🎁 Nhớ cap màn hình phiếu này lại và gửi vào hệ thống để nhận thưởng nha!</b></p></div>`:`<div class="notice" style="max-width:760px;margin:18px auto">🌱 Bạn cần đạt <b>trên 80%</b> để nhận Phiếu Bé Ngoan. Ôn lại các từ sai bên dưới rồi thử lại nhé!</div>`}
  <div class="result-columns"><div class="card"><h2>✅ Từ trả lời đúng (${good.length})</h2><div class="result-list">${rows(good)}</div></div><div class="card"><h2>❌ Từ cần ôn lại (${bad.length})</h2><div class="result-list">${rows(bad)}</div></div></div></div>`;
 }
 
@@ -374,17 +428,40 @@ function routeContent(){
  if(!parts.length)return dashboard();
  if(parts[0]==='hsk')return hskPage(Number(parts[1])||1);
  if(parts[0]==='lesson')return lessonPage(Number(parts[1]),decodeURIComponent(parts.slice(2).join('/')));
- if(parts[0]==='vocab')return vocabPage();if(parts[0]==='grammar')return grammarPage();if(parts[0]==='sentence')return sentencePage();if(parts[0]==='flashcards')return flashcardsPage();if(parts[0]==='progress')return progressPage();if(parts[0]==='settings')return settingsPage();return dashboard();
+ if(parts[0]==='vocab')return vocabPage();if(parts[0]==='grammar')return grammarPage();if(parts[0]==='sentence')return sentencePage();if(parts[0]==='flashcards')return flashcardsPage();if(parts[0]==='leaderboard')return leaderboardPage();if(parts[0]==='progress')return progressPage();if(parts[0]==='settings')return settingsPage();return dashboard();
 }
 
 function render(){
- document.body.classList.toggle('dark',state.settings.theme==='dark');document.getElementById('app').innerHTML=shell(routeContent());bind();if(state.currentWord){const w=state.words.find(x=>x.hanzi===state.currentWord);if(w)document.body.insertAdjacentHTML('beforeend',wordModal(w));bindModal();}
+ document.body.classList.toggle('dark',state.settings.theme==='dark');
+ if(state.authLoading){document.getElementById('app').innerHTML='<div class="auth-screen"><div class="card">Đang kiểm tra tài khoản…</div></div>';return}
+ if(!state.user){document.getElementById('app').innerHTML=authPage();bindAuth();return}
+ document.getElementById('app').innerHTML=shell(routeContent());bind();if(state.currentWord){const w=state.words.find(x=>x.hanzi===state.currentWord);if(w)document.body.insertAdjacentHTML('beforeend',wordModal(w));bindModal();}
 }
 
+function bindAuth(){
+ const sl=document.getElementById('showLogin');if(sl)sl.onclick=()=>{state.authMode='login';state.authMessage='';render()};
+ const sr=document.getElementById('showRegister');if(sr)sr.onclick=()=>{state.authMode='register';state.authMessage='';render()};
+ const form=document.getElementById('authForm');if(form)form.onsubmit=async e=>{
+   e.preventDefault();state.authMessage='';const email=document.getElementById('authEmail').value.trim();const password=document.getElementById('authPassword').value;
+   if(state.authMode==='register'){
+     const display_name=document.getElementById('authName').value.trim(),student_code=document.getElementById('authStudent').value.trim();
+     const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name,student_code}}});
+     if(error){state.authMessage='❌ '+error.message;render();return}
+     if(data.session){state.user=data.user;await loadProfile();state.authMessage='';loadData();render()}
+     else {state.authMessage='✅ Đã tạo tài khoản. Hãy kiểm tra email để xác nhận rồi đăng nhập.';render()}
+   }else{
+     const {data,error}=await db.auth.signInWithPassword({email,password});
+     if(error){state.authMessage='❌ Email hoặc mật khẩu chưa đúng, hoặc email chưa được xác nhận.';render();return}
+     state.user=data.user;await loadProfile();state.authMessage='';loadData();render();
+   }
+ };
+}
 function bind(){
  const gs=document.getElementById('globalSearch');if(gs)gs.onkeydown=e=>{if(e.key==='Enter'){state.query=e.target.value;location.hash='#/vocab';render()}};
  const tq=document.getElementById('themeQuick');if(tq)tq.onclick=()=>{state.settings.theme=state.settings.theme==='dark'?'light':'dark';save();render()};
  const mq=document.getElementById('musicQuick');if(mq)mq.onclick=()=>{state.settings.music=!state.settings.music;save();syncAmbient();render()};
+ const lo=document.getElementById('logoutBtn');if(lo)lo.onclick=async()=>{await db.auth.signOut();state.user=null;state.profile=null;state.quiz=null;state.leaderboardLoaded=false;render()};
+ const rb=document.getElementById('refreshBoard');if(rb)rb.onclick=()=>{state.leaderboardLoaded=true;loadLeaderboard()};
  const vf=document.getElementById('vocabSearch');if(vf)vf.oninput=e=>{state.query=e.target.value;render()};
  const lf=document.getElementById('levelFilter');if(lf)lf.onchange=e=>{state.filterLevel=Number(e.target.value);location.hash='#/vocab';render()};
  const cf=document.getElementById('catFilter');if(cf)cf.onchange=e=>{state.filterCategory=e.target.value;render()};
@@ -402,7 +479,7 @@ function bind(){
  const sb=document.getElementById('showSample');if(sb)sb.onclick=()=>{const pool=state.words;const idx=Math.abs(hashCode(localStorage.getItem('hg_target')||new Date().toDateString()))%Math.max(1,pool.length);const w=pool[idx];const ex=examplesFor(w)[0];document.getElementById('sampleBox').innerHTML=`<div class="example" style="margin-top:14px"><div class="zh">${esc(ex[0])}</div><div class="py">${esc(ex[1])}</div><div class="vi">${esc(ex[2])}</div></div>`};
  const sq=document.getElementById('startQuiz');if(sq)sq.onclick=()=>{const level=Number(document.getElementById('quizLevel').value),count=Number(document.getElementById('quizCount').value);buildQuiz(level,count);render()};
  document.querySelectorAll('.quiz-option').forEach(b=>b.onclick=()=>{const q=state.quiz;if(!q||q.finished)return;const item=q.items[q.index];if(item.selected!==null)return;item.selected=b.dataset.answer;item.correct=item.selected===item.word.meaning;if(item.correct)state.learned.add(item.word.hanzi);else state.reviews[item.word.hanzi]='again';save();render()});
- const nq=document.getElementById('nextQuiz');if(nq)nq.onclick=()=>{const q=state.quiz;if(!q)return;if(q.index>=q.count-1){q.finished=true}else{q.index++}render()};
+ const nq=document.getElementById('nextQuiz');if(nq)nq.onclick=async()=>{const q=state.quiz;if(!q)return;if(q.index>=q.count-1){await submitQuizResult()}else{q.index++;render()}};
  const rq=document.getElementById('restartQuiz');if(rq)rq.onclick=()=>{state.quiz=null;render()};
  const qq=document.getElementById('quitQuiz');if(qq)qq.onclick=()=>{if(confirm('Thoát lượt chơi hiện tại?')){state.quiz=null;render()}};
  bindSettings();bindChat();
@@ -430,7 +507,19 @@ function bindModal(){const c=document.getElementById('closeModal');if(c)c.onclic
 
 window.addEventListener('hashchange',()=>{state.currentWord=null;render()});
 window.addEventListener('beforeunload',save);
-render();loadData();
+async function boot(){
+ const {data:{session}}=await db.auth.getSession();
+ state.user=session?.user||null;
+ if(state.user)await loadProfile();
+ state.authLoading=false;
+ if(state.user)await loadData(); else render();
+ db.auth.onAuthStateChange(async(event,session)=>{
+   state.user=session?.user||null;
+   if(state.user){await loadProfile();if(!state.words.length)await loadData();else render()}
+   else{state.profile=null;state.quiz=null;render()}
+ });
+}
+boot();
 </script>
 </body>
 </html>
