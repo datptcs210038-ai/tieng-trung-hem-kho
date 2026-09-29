@@ -651,17 +651,104 @@ const state = {
   recoveryMessage:'',
   leaderboard:[],
   leaderboardLoaded:false,
-  leaderboardLoading:false
+  leaderboardLoading:false,
+  userDataLoaded:false
 };
 
+const DEFAULT_USER_SETTINGS={name:'Người học',goal:'HSK 2',theme:'light',rate:.85,voice:'',music:true,volume:.12,musicTrack:'loveWaits'};
+let userSaveTimer=null;
+
+function userSnapshot(){
+ return {
+   favorites:[...state.favorites],
+   learned:[...state.learned],
+   reviews:state.reviews||{},
+   completed_lessons:[...state.completedLessons],
+   grammar_done:[...state.grammarDone],
+   settings:{...state.settings},
+   chat:Array.isArray(state.chat)?state.chat:[]
+ };
+}
+function resetUserData(){
+ state.favorites=new Set();
+ state.learned=new Set();
+ state.reviews={};
+ state.completedLessons=new Set();
+ state.grammarDone=new Set();
+ state.settings={...DEFAULT_USER_SETTINGS};
+ state.chat=[{from:'staff',text:'Xin chào 👋 Đây là hộp chat demo. Khi nối Supabase, tin nhắn sẽ được gửi đến nhân viên thật.'}];
+ state.quiz=null;
+ state.currentWord=null;
+ state.query='';
+ state.filterLevel=0;
+ state.filterCategory='';
+ state.userDataLoaded=false;
+}
+function applyUserData(row){
+ state.favorites=new Set(Array.isArray(row?.favorites)?row.favorites:[]);
+ state.learned=new Set(Array.isArray(row?.learned)?row.learned:[]);
+ state.reviews=row?.reviews&&typeof row.reviews==='object'?row.reviews:{};
+ state.completedLessons=new Set(Array.isArray(row?.completed_lessons)?row.completed_lessons:[]);
+ state.grammarDone=new Set(Array.isArray(row?.grammar_done)?row.grammar_done:[]);
+ state.settings=Object.assign({},DEFAULT_USER_SETTINGS,row?.settings||{});
+ if(state.profile?.display_name)state.settings.name=state.profile.display_name;
+ state.chat=Array.isArray(row?.chat)&&row.chat.length?row.chat:[{from:'staff',text:'Xin chào 👋 Đây là hộp chat demo. Khi nối Supabase, tin nhắn sẽ được gửi đến nhân viên thật.'}];
+ state.userDataLoaded=true;
+}
+async function persistUserData(){
+ if(!state.user||!state.userDataLoaded)return;
+ const snap=userSnapshot();
+ localStorage.setItem('tthk_user_'+state.user.id,JSON.stringify(snap));
+ const {error}=await db.from('user_data').upsert({
+   user_id:state.user.id,
+   ...snap,
+   updated_at:new Date().toISOString()
+ },{onConflict:'user_id'});
+ if(error)console.warn('Không thể lưu dữ liệu tài khoản:',error.message);
+}
 function save(){
- localStorage.setItem('hg_favorites',JSON.stringify([...state.favorites]));
- localStorage.setItem('hg_learned',JSON.stringify([...state.learned]));
- localStorage.setItem('hg_reviews',JSON.stringify(state.reviews));
- localStorage.setItem('hg_lessons',JSON.stringify([...state.completedLessons]));
- localStorage.setItem('hg_grammar',JSON.stringify([...state.grammarDone]));
- localStorage.setItem('hg_settings',JSON.stringify(state.settings));
- localStorage.setItem('hg_chat',JSON.stringify(state.chat));
+ if(!state.user||!state.userDataLoaded)return;
+ const snap=userSnapshot();
+ localStorage.setItem('tthk_user_'+state.user.id,JSON.stringify(snap));
+ clearTimeout(userSaveTimer);
+ userSaveTimer=setTimeout(()=>persistUserData(),250);
+}
+async function loadUserData(){
+ if(!state.user){resetUserData();return}
+ state.userDataLoaded=false;
+ const {data,error}=await db.from('user_data')
+   .select('favorites,learned,reviews,completed_lessons,grammar_done,settings,chat')
+   .eq('user_id',state.user.id)
+   .maybeSingle();
+
+ if(!error&&data){
+   applyUserData(data);
+   return;
+ }
+
+ // One-time migration of the old browser-wide data to the first account only.
+ const migrated=localStorage.getItem('tthk_legacy_migrated');
+ if(!data&&!migrated){
+   const legacy={
+     favorites:JSON.parse(localStorage.getItem('hg_favorites')||'[]'),
+     learned:JSON.parse(localStorage.getItem('hg_learned')||'[]'),
+     reviews:JSON.parse(localStorage.getItem('hg_reviews')||'{}'),
+     completed_lessons:JSON.parse(localStorage.getItem('hg_lessons')||'[]'),
+     grammar_done:JSON.parse(localStorage.getItem('hg_grammar')||'[]'),
+     settings:Object.assign({},DEFAULT_USER_SETTINGS,JSON.parse(localStorage.getItem('hg_settings')||'{}')),
+     chat:JSON.parse(localStorage.getItem('hg_chat')||'[]')
+   };
+   applyUserData(legacy);
+   localStorage.setItem('tthk_legacy_migrated',state.user.id);
+   await persistUserData();
+   return;
+ }
+
+ // New account: start with completely separate, empty progress.
+ resetUserData();
+ state.userDataLoaded=true;
+ if(state.profile?.display_name)state.settings.name=state.profile.display_name;
+ await persistUserData();
 }
 
 function esc(s=''){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -812,7 +899,7 @@ function isActive(href){const p=currentPath();if(href==='#/')return p==='#/';ret
 async function loadProfile(){
  if(!state.user){state.profile=null;return}
  const {data,error}=await db.from('profiles').select('display_name,student_code').eq('user_id',state.user.id).maybeSingle();
- if(!error&&data){state.profile=data;state.settings.name=data.display_name;save()}
+ if(!error&&data){state.profile=data;if(state.userDataLoaded){state.settings.name=data.display_name;save()}}
 }
 async function loadLeaderboard(){
  state.leaderboardLoading=true;render();
@@ -1159,7 +1246,7 @@ function bindAuth(){
        }
        render();return
      }
-     if(data.session){state.user=data.user;await loadProfile();state.authMessage='';loadData();render()}
+     if(data.session){state.user=data.user;await loadProfile();await loadUserData();state.authMessage='';loadData();render()}
      else {state.authMode='login';state.authMessage='✅ Đã tạo tài khoản. Kiểm tra email để xác nhận, sau đó quay lại đăng nhập.';render()}
    }else{
      let data=null,error=null;
@@ -1183,15 +1270,19 @@ function bindAuth(){
          :'❌ Email/mã học viên hoặc mật khẩu chưa đúng.';
        render();return
      }
-     state.user=data.user||data.session?.user;await loadProfile();state.authMessage='';loadData();render();
+     state.user=data.user||data.session?.user;await loadProfile();await loadUserData();state.authMessage='';loadData();render();
    }
  };
 }
 async function doLogout(){
- stopAmbient();state.settings.music=false;save();localStorage.removeItem('tthk_password_recovery_pending');
+ if(state.user&&state.userDataLoaded)await persistUserData();
+ stopAmbient();localStorage.removeItem('tthk_password_recovery_pending');
  await db.auth.signOut();
- state.user=null;state.profile=null;state.quiz=null;state.leaderboardLoaded=false;state.recoveryMode=false;
- location.hash='#/';render();
+ state.user=null;state.profile=null;state.leaderboardLoaded=false;state.recoveryMode=false;
+ resetUserData();
+ // Login screen defaults back to the public entry music.
+ state.settings.music=true;state.settings.musicTrack='loveWaits';
+ location.hash='#/';render();syncAmbient();
 }
 function bind(){
  const gs=document.getElementById('globalSearch');if(gs)gs.onkeydown=e=>{if(e.key==='Enter'){state.query=e.target.value;location.hash='#/vocab';render()}};
@@ -1303,9 +1394,10 @@ async function boot(){
    }
    if(state.user){
      await loadProfile();
+     await loadUserData();
      if(!state.words.length)await loadData();else render();
    }else{
-     state.profile=null;state.quiz=null;render();
+     state.profile=null;resetUserData();render();
    }
  });
 
@@ -1318,7 +1410,7 @@ async function boot(){
  // Some browsers restore the recovery session before emitting PASSWORD_RECOVERY.
  if(recoveryHint && state.user) state.recoveryMode=true;
 
- if(state.user && !state.recoveryMode) await loadProfile();
+ if(state.user && !state.recoveryMode){await loadProfile();await loadUserData();}
  state.authLoading=false;
 
  if(state.recoveryMode){
