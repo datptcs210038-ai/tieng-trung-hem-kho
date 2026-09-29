@@ -153,7 +153,7 @@ const state = {
   reviews: JSON.parse(localStorage.getItem('hg_reviews')||'{}'),
   completedLessons: new Set(JSON.parse(localStorage.getItem('hg_lessons')||'[]')),
   grammarDone: new Set(JSON.parse(localStorage.getItem('hg_grammar')||'[]')),
-  settings: Object.assign({name:'Đạt',goal:'HSK 2',theme:'light',rate:.85,voice:'',music:false,volume:.12}, JSON.parse(localStorage.getItem('hg_settings')||'{}')),
+  settings: Object.assign({name:'Đạt',goal:'HSK 2',theme:'light',rate:.85,voice:'',music:false,volume:.12,musicTrack:'violin'}, JSON.parse(localStorage.getItem('hg_settings')||'{}')),
   chat: JSON.parse(localStorage.getItem('hg_chat')||'[{"from":"staff","text":"Xin chào 👋 Đây là hộp chat demo. Khi nối Supabase, tin nhắn sẽ được gửi đến nhân viên thật."}]'),
   chatOpen:false,
   quiz:null,
@@ -165,8 +165,7 @@ const state = {
   authBusy:false,
   leaderboard:[],
   leaderboardLoaded:false,
-  leaderboardLoading:false,
-  sentenceDraft:localStorage.getItem('hg_sentence')||''
+  leaderboardLoading:false
 };
 
 function save(){
@@ -177,7 +176,6 @@ function save(){
  localStorage.setItem('hg_grammar',JSON.stringify([...state.grammarDone]));
  localStorage.setItem('hg_settings',JSON.stringify(state.settings));
  localStorage.setItem('hg_chat',JSON.stringify(state.chat));
- localStorage.setItem('hg_sentence',state.sentenceDraft);
 }
 
 function esc(s=''){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -250,6 +248,11 @@ function speak(text){
  speechSynthesis.cancel();speechSynthesis.speak(u);
 }
 
+const MUSIC_TRACKS={
+  violin:{name:'Violin nhẹ nhàng',available:true,note:'Nhạc nền tổng hợp có sẵn trong web.'},
+  bienDao:{name:'Biển Đào và Em',available:false,note:'Cần tệp âm thanh hoặc nguồn phát mà bạn có quyền sử dụng.'},
+  loveWaits:{name:'A Love That Waits (Xuân thì)',available:false,note:'Cần tệp âm thanh hoặc nguồn phát mà bạn có quyền sử dụng.'}
+};
 let musicPlayer=null;
 let violinCtx=null, violinTimer=null, violinNodes=[];
 function stopAmbient(){
@@ -274,14 +277,21 @@ function scheduleViolinLoop(){
   violinTimer=setTimeout(scheduleViolinLoop, Math.max(1000,(t-now-.1)*1000));
 }
 function startAmbient(){
-  stopAmbient(); const AC=window.AudioContext||window.webkitAudioContext;
-  if(!AC){toast('Trình duyệt này chưa hỗ trợ nhạc violin nền.');state.settings.music=false;save();return;}
+  stopAmbient();
+  const track=MUSIC_TRACKS[state.settings.musicTrack]||MUSIC_TRACKS.violin;
+  if(!track.available){
+    state.settings.music=false;save();
+    toast('Bài này chưa có nguồn âm thanh được cấp quyền. Hãy thêm file/link hợp pháp trước nhé.');
+    return;
+  }
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC){toast('Trình duyệt này chưa hỗ trợ nhạc nền.');state.settings.music=false;save();return;}
   violinCtx=new AC(); scheduleViolinLoop();
 }
 function syncAmbient(){state.settings.music?startAmbient():stopAmbient();}
 
 function navItems(){return [
- ['#/','🏠','Trang chủ'],['#/hsk/1','🟥','HSK 1'],['#/hsk/2','🟩','HSK 2'],['#/vocab','🀄','Từ vựng'],['#/grammar','🧩','Ngữ pháp'],['#/sentence','✍️','Đặt câu'],['#/flashcards','🃏','Flashcard'],['#/leaderboard','🏆','Bảng xếp hạng'],['#/progress','📊','Tiến độ'],['#/settings','⚙️','Cài đặt']
+ ['#/','🏠','Trang chủ'],['#/hsk/1','🟥','HSK 1'],['#/hsk/2','🟩','HSK 2'],['#/vocab','🀄','Từ vựng'],['#/grammar','🧩','Ngữ pháp'],['#/flashcards','🃏','Flashcard'],['#/leaderboard','🏆','Bảng xếp hạng'],['#/progress','📊','Tiến độ'],['#/settings','⚙️','Cài đặt']
 ]}
 function currentPath(){return location.hash||'#/';}
 function isActive(href){const p=currentPath();if(href==='#/')return p==='#/';return p.startsWith(href);}
@@ -323,7 +333,7 @@ function leaderboardPage(){
 function shell(content){
  const nav=navItems().map(([h,i,t])=>`<a href="${h}" class="${isActive(h)?'active':''}"><span class="ico">${i}</span>${t}</a>`).join('');
  const mobile=[['#/','🏠','Nhà'],['#/hsk/1','📚','Bài'],['#/vocab','🀄','Từ'],['#/flashcards','🃏','Ôn'],['#/settings','⚙️','Cài']].map(([h,i,t])=>`<a href="${h}" class="${isActive(h)?'active':''}"><span class="mi">${i}</span>${t}</a>`).join('');
- return `<div class="shell"><aside class="sidebar"><div class="brand"><div class="logo">汉</div><div><strong>Tiếng Trung Hem Khó</strong><small>HSK 1–2 cho người Việt</small></div></div><nav class="nav">${nav}</nav><div class="sidebar-foot"><b>🌱 Học nhẹ mỗi ngày</b><small>Tiến độ được lưu ngay trên thiết bị. Không cần tài khoản ở bản miễn phí.</small></div></aside><main class="main"><header class="topbar"><div class="searchbox"><span>⌕</span><input id="globalSearch" placeholder="Tìm Hán tự, pinyin, nghĩa Việt, Hán Việt…" value="${esc(state.query)}"></div><button class="icon-btn hide-mobile" id="musicQuick" title="Nhạc violin nền">${state.settings.music?'🎻':'🔇'}</button><button class="icon-btn" id="themeQuick" title="Đổi giao diện">${state.settings.theme==='dark'?'☀️':'🌙'}</button><div class="user-chip hide-mobile"><div class="avatar-mini">${esc((state.profile?.display_name||state.user?.email||'U').slice(0,1).toUpperCase())}</div><div><b style="font-size:12px">${esc(state.profile?.display_name||'Người học')}</b><small style="display:block;color:var(--muted)">${esc(state.profile?.student_code||'')}</small></div></div><button class="btn sm ghost hide-mobile" id="logoutBtn">Đăng xuất</button></header><div class="content">${content}<div class="source-note">🎻 Nhạc nền: violin nhẹ tổng hợp riêng cho Tiếng Trung Hem Khó, không dùng tác phẩm có bản quyền.<br>Tiếng Trung Hem Khó là dự án học tập độc lập, không phải đơn vị tổ chức kỳ thi HSK. Dữ liệu từ vựng tham khảo dự án <b>complete-hsk-vocabulary</b> (MIT); lớp Hán-Việt tham khảo <b>hsk-sino-viet</b> (CC BY 4.0). Một số ví dụ cơ bản được sinh theo mẫu để luyện tập, nên người học nên kiểm tra thêm với giáo viên khi cần độ chính xác ngữ dụng cao.</div></div></main><nav class="mobile-nav">${mobile}</nav>${chatWidget()}</div>`;
+ return `<div class="shell"><aside class="sidebar"><div class="brand"><div class="logo">汉</div><div><strong>Tiếng Trung Hem Khó</strong><small>HSK 1–2 cho người Việt</small></div></div><nav class="nav">${nav}</nav><div class="sidebar-foot"><b>🌱 Học nhẹ mỗi ngày</b><small>Tiến độ được lưu ngay trên thiết bị. Không cần tài khoản ở bản miễn phí.</small></div></aside><main class="main"><header class="topbar"><div class="searchbox"><span>⌕</span><input id="globalSearch" placeholder="Tìm Hán tự, pinyin, nghĩa Việt, Hán Việt…" value="${esc(state.query)}"></div><button class="icon-btn hide-mobile" id="musicQuick" title="Nhạc nền">${state.settings.music?'🎻':'🔇'}</button><button class="icon-btn" id="themeQuick" title="Đổi giao diện">${state.settings.theme==='dark'?'☀️':'🌙'}</button><div class="user-chip hide-mobile"><div class="avatar-mini">${esc((state.profile?.display_name||state.user?.email||'U').slice(0,1).toUpperCase())}</div><div><b style="font-size:12px">${esc(state.profile?.display_name||'Người học')}</b><small style="display:block;color:var(--muted)">${esc(state.profile?.student_code||'')}</small></div></div><button class="btn sm ghost hide-mobile" id="logoutBtn">Đăng xuất</button></header><div class="content">${content}<div class="source-note">🎵 Nhạc nền: hiện có violin nhẹ tổng hợp sẵn. Các bài thương mại chỉ phát khi có nguồn âm thanh hợp pháp được thêm vào.<br>Tiếng Trung Hem Khó là dự án học tập độc lập, không phải đơn vị tổ chức kỳ thi HSK. Dữ liệu từ vựng tham khảo dự án <b>complete-hsk-vocabulary</b> (MIT); lớp Hán-Việt tham khảo <b>hsk-sino-viet</b> (CC BY 4.0). Một số ví dụ cơ bản được sinh theo mẫu để luyện tập, nên người học nên kiểm tra thêm với giáo viên khi cần độ chính xác ngữ dụng cao.</div></div></main><nav class="mobile-nav">${mobile}</nav>${chatWidget()}</div>`;
 }
 
 function chatWidget(){
@@ -354,8 +364,6 @@ function vocabPage(){
 
 function grammarPage(){return `<div class="page-title"><div><h1>Ngữ pháp HSK 1–2</h1><p>Giải thích bằng tiếng Việt, có công thức, ví dụ và lỗi thường gặp.</p></div></div><div class="grammar-list">${GRAMMAR.map((g,i)=>`<div class="grammar-item"><div class="grammar-summary" data-gi="${i}"><div><span class="pill">${esc(g.k)}</span><h3>${esc(g.title)}</h3><p>${esc(g.desc.slice(0,90))}…</p></div><span>⌄</span></div><div class="grammar-body hidden" id="gb-${i}"><div class="formula">${esc(g.formula)}</div><p><b>Khi dùng:</b> ${esc(g.when)}</p><p>${esc(g.desc)}</p><div class="notice">⚠️ <b>Lỗi thường gặp:</b> ${esc(g.mistake)}</div><div class="examples">${g.ex.map(e=>`<div class="example"><div class="zh">${esc(e[0])} <button class="mini speakText" data-text="${esc(e[0])}">🔊</button></div><div class="py">${esc(e[1])}</div><div class="vi">${esc(e[2])}</div></div>`).join('')}</div><button class="btn sm ${state.grammarDone.has(g.k)?'jade':'ghost'} grammarDone" data-key="${esc(g.k)}" style="margin-top:12px">${state.grammarDone.has(g.k)?'✓ Đã học':'Đánh dấu đã học'}</button></div></div>`).join('')}</div>`}
 
-function sentencePage(){const pool=state.words.filter(w=>w.level<=2);const idx=Math.abs(hashCode(localStorage.getItem('hg_target')||new Date().toDateString()))%Math.max(1,pool.length);const w=pool[idx]||state.words[0]||fallbackWords()[0];return `<div class="page-title"><div><h1>Luyện đặt câu</h1><p>Tự viết câu ngắn với từ mục tiêu. Bản miễn phí chỉ đưa gợi ý, <b>không giả vờ chấm bằng AI</b>.</p></div><button class="btn ghost" id="newTarget">Đổi từ ↻</button></div><div class="card practice-card"><div class="target"><div class="illustration">${emojiFor(w)}</div><div><div class="zh">${esc(w.hanzi)}</div><div class="pinyin">${esc(w.pinyin)} · ${esc(w.meaning)}</div><div class="hanviet">Hán-Việt: ${esc(w.hanviet)}</div></div></div><textarea id="sentenceDraft" placeholder="Ví dụ: 我喜欢喝茶。">${esc(state.sentenceDraft)}</textarea><div class="checklist"><span>✓ Có chủ ngữ?</span><span>✓ Trật tự thời gian–địa điểm đúng?</span><span>✓ Từ mục tiêu dùng đúng vị trí?</span><span>✓ Câu đủ ngắn để bạn đọc thành tiếng?</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="saveSentence">Lưu nháp</button><button class="btn ghost" id="showSample">Xem câu gợi ý</button><button class="btn ghost speakText" data-text="${esc(w.hanzi)}">🔊 Nghe từ</button></div><div id="sampleBox"></div></div>`}
-function hashCode(s){let h=0;for(const c of s)h=((h<<5)-h)+c.charCodeAt(0)|0;return h}
 
 
 function shuffleArr(arr){
@@ -375,7 +383,7 @@ function buildQuiz(level,count){
  state.quiz={level,count,items,index:0,finished:false};
 }
 function quizSetupPage(){
- return `<div class="page-title"><div><h1>Flashcard trắc nghiệm</h1><p>Chọn đáp án đúng cho từng từ. Kết thúc lượt chơi sẽ có bảng tổng kết từ đúng, từ sai và phần thưởng nếu đạt trên 80%.</p></div></div>
+ return `<div class="page-title"><div><h1>Flashcard trắc nghiệm</h1><p>Chọn đáp án đúng cho từng từ. Đây là game riêng, kết quả không tự đánh dấu từ vựng là “đã thuộc”. Kết thúc lượt chơi sẽ có bảng tổng kết và phần thưởng nếu đạt trên 80%.</p></div></div>
  <div class="card quiz-setup"><h2>🎯 Chọn lượt chơi</h2><p style="color:var(--muted)">Bạn có thể luyện riêng HSK 1, HSK 2 hoặc trộn cả hai.</p>
  <div class="quiz-config"><div><label>Cấp độ</label><select id="quizLevel"><option value="1">HSK 1</option><option value="2">HSK 2</option><option value="0">HSK 1 + HSK 2</option></select></div>
  <div><label>Số câu</label><select id="quizCount"><option value="10">10 từ — nhanh</option><option value="15">15 từ — vừa</option><option value="20">20 từ — thử thách</option></select></div></div>
@@ -419,7 +427,7 @@ function quizResultPage(){
 
 function progressPage(){const total=state.words.length||1;const l1=state.words.filter(w=>w.level===1),l2=state.words.filter(w=>w.level===2);const pct=a=>Math.round(a.filter(w=>state.learned.has(w.hanzi)).length/Math.max(1,a.length)*100);return `<div class="page-title"><div><h1>Tiến độ học</h1><p>Dữ liệu đang lưu bằng localStorage trên thiết bị này — miễn phí và riêng tư.</p></div></div><div class="grid four"><div class="card"><span class="pill hsk1">HSK 1</span><h2>${pct(l1)}%</h2><p>${l1.filter(w=>state.learned.has(w.hanzi)).length}/${l1.length} từ</p><div class="progressbar"><i style="width:${pct(l1)}%"></i></div></div><div class="card"><span class="pill hsk2">HSK 2</span><h2>${pct(l2)}%</h2><p>${l2.filter(w=>state.learned.has(w.hanzi)).length}/${l2.length} từ</p><div class="progressbar"><i style="width:${pct(l2)}%"></i></div></div><div class="card"><span class="pill">Ngữ pháp</span><h2>${state.grammarDone.size}/${GRAMMAR.length}</h2><p>điểm đã học</p></div><div class="card"><span class="pill">Ôn tập</span><h2>${Object.keys(state.reviews).length}</h2><p>từ đã đánh giá</p></div></div><div class="section-head"><div><h2>Từ cần ôn</h2><p>Các từ bạn đánh giá “Lại” hoặc “Khó”.</p></div></div><div class="vocab-grid">${state.words.filter(w=>['again','hard'].includes(state.reviews[w.hanzi])).slice(0,18).map(wordCard).join('')||'<div class="empty"><div class="e">🌿</div><h3>Chưa có từ khó</h3><p>Chơi flashcard để tạo danh sách ôn tập.</p></div>'}</div>`}
 
-function settingsPage(){const zh=voices.filter(v=>/^zh(-|_)/i.test(v.lang));return `<div class="page-title"><div><h1>Cài đặt</h1><p>Tùy chỉnh phát âm, giao diện và âm thanh nền.</p></div></div><div class="settings-grid"><div class="setting"><h3>👤 Hồ sơ học</h3><p>Dữ liệu chỉ lưu trên trình duyệt.</p><label>Tên hiển thị</label><input id="setName" type="text" value="${esc(state.settings.name)}"><br><br><label>Mục tiêu</label><select id="setGoal"><option ${state.settings.goal==='HSK 1'?'selected':''}>HSK 1</option><option ${state.settings.goal==='HSK 2'?'selected':''}>HSK 2</option></select></div><div class="setting"><h3>🔊 Phát âm Mandarin</h3><p>Dùng Web Speech API miễn phí của trình duyệt.</p><label>Giọng đọc</label><select id="setVoice"><option value="">Tự động chọn giọng zh-CN</option>${zh.map(v=>`<option value="${esc(v.voiceURI)}" ${state.settings.voice===v.voiceURI?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select><br><br><label>Tốc độ: <b id="rateLabel">${state.settings.rate}x</b></label><input id="setRate" type="range" min="0.7" max="1" step="0.05" value="${state.settings.rate}"><button class="btn sm ghost" style="margin-top:10px" id="testVoice">🔊 Nghe thử 你好</button></div><div class="setting"><h3>🎻 Nhạc violin nhẹ nhàng</h3><p>Bản violin nền chậm, êm, được tổng hợp riêng cho Tiếng Trung Hem Khó — không dùng tác phẩm có bản quyền.</p><label><input id="setMusic" type="checkbox" ${state.settings.music?'checked':''}> Bật nhạc violin nền</label><br><br><label>Âm lượng</label><input id="setVolume" type="range" min="0" max="0.35" step="0.01" value="${state.settings.volume}"></div><div class="setting"><h3>🌙 Giao diện</h3><p>Chế độ sáng/tối.</p><button class="btn" id="toggleTheme">${state.settings.theme==='dark'?'☀️ Chuyển sang sáng':'🌙 Chuyển sang tối'}</button><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><button class="btn ghost" id="resetProgress">Xóa toàn bộ tiến độ</button></div></div>`}
+function settingsPage(){const zh=voices.filter(v=>/^zh(-|_)/i.test(v.lang));return `<div class="page-title"><div><h1>Cài đặt</h1><p>Tùy chỉnh phát âm, giao diện và âm thanh nền.</p></div></div><div class="settings-grid"><div class="setting"><h3>👤 Hồ sơ học</h3><p>Dữ liệu chỉ lưu trên trình duyệt.</p><label>Tên hiển thị</label><input id="setName" type="text" value="${esc(state.settings.name)}"><br><br><label>Mục tiêu</label><select id="setGoal"><option ${state.settings.goal==='HSK 1'?'selected':''}>HSK 1</option><option ${state.settings.goal==='HSK 2'?'selected':''}>HSK 2</option></select></div><div class="setting"><h3>🔊 Phát âm Mandarin</h3><p>Dùng Web Speech API miễn phí của trình duyệt.</p><label>Giọng đọc</label><select id="setVoice"><option value="">Tự động chọn giọng zh-CN</option>${zh.map(v=>`<option value="${esc(v.voiceURI)}" ${state.settings.voice===v.voiceURI?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select><br><br><label>Tốc độ: <b id="rateLabel">${state.settings.rate}x</b></label><input id="setRate" type="range" min="0.7" max="1" step="0.05" value="${state.settings.rate}"><button class="btn sm ghost" style="margin-top:10px" id="testVoice">🔊 Nghe thử 你好</button></div><div class="setting"><h3>🎵 Nhạc nền</h3><p>Chọn bài muốn nghe khi học. Nhạc có bản quyền chỉ được bật khi có file hoặc nguồn phát hợp pháp.</p><label>Bài nhạc</label><select id="setMusicTrack"><option value="violin" ${state.settings.musicTrack==='violin'?'selected':''}>🎻 Violin nhẹ nhàng — có sẵn</option><option value="bienDao" ${state.settings.musicTrack==='bienDao'?'selected':''}>🌸 Biển Đào và Em — cần nguồn âm thanh</option><option value="loveWaits" ${state.settings.musicTrack==='loveWaits'?'selected':''}>💗 A Love That Waits (Xuân thì) — cần nguồn âm thanh</option></select><div id="musicTrackNote" style="font-size:12px;color:var(--muted);margin-top:7px">${esc((MUSIC_TRACKS[state.settings.musicTrack]||MUSIC_TRACKS.violin).note)}</div><br><label><input id="setMusic" type="checkbox" ${state.settings.music?'checked':''}> Bật nhạc nền</label><br><br><label>Âm lượng</label><input id="setVolume" type="range" min="0" max="0.35" step="0.01" value="${state.settings.volume}"></div><div class="setting"><h3>🌙 Giao diện</h3><p>Chế độ sáng/tối.</p><button class="btn" id="toggleTheme">${state.settings.theme==='dark'?'☀️ Chuyển sang sáng':'🌙 Chuyển sang tối'}</button><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><button class="btn ghost" id="resetProgress">Xóa toàn bộ tiến độ</button></div></div>`}
 
 function wordModal(w){const ex=examplesFor(w);return `<div class="modal-wrap" id="modalWrap"><div class="modal"><div class="modal-head"><div><span class="pill hsk${w.level}">HSK ${w.level}</span><div class="big-hanzi">${esc(w.hanzi)}</div><div class="pinyin" style="font-size:20px">${esc(w.pinyin)}</div></div><button class="icon-btn" id="closeModal">✕</button></div><h2>${esc(w.meaning)}</h2><div class="hanviet">Âm Hán-Việt: <b>${esc(w.hanviet)}</b></div><div class="meta" style="margin:12px 0"><span>${esc(POS_VI[w.pos]||'từ vựng')}</span><span>${esc(w.category)}</span>${w.classifier?`<span>Lượng từ: ${esc(w.classifier)}</span>`:''}</div><div style="display:flex;gap:8px"><button class="btn primary speakText" data-text="${esc(w.hanzi)}">🔊 Nghe từ</button><button class="btn ghost favWord" data-word="${esc(w.hanzi)}">♡ Lưu</button><button class="btn ghost learnWord" data-word="${esc(w.hanzi)}">✓ Đã nhớ</button></div><div class="section-head"><div><h2>Ví dụ cơ bản</h2><p>Hanzi + Pinyin + nghĩa Việt</p></div></div><div class="examples">${ex.map(e=>`<div class="example"><div class="zh">${esc(e[0])} <button class="mini speakText" data-text="${esc(e[0])}">🔊</button></div><div class="py">${esc(e[1])}</div><div class="vi">${esc(e[2])}</div></div>`).join('')}</div><div class="notice" style="margin-top:16px">Hán-Việt giúp liên hệ mặt chữ, nhưng không nên dùng thay cho nghĩa tiếng Việt hiện đại.</div></div></div>`}
 
@@ -430,7 +438,7 @@ function routeContent(){
  if(!parts.length)return dashboard();
  if(parts[0]==='hsk')return hskPage(Number(parts[1])||1);
  if(parts[0]==='lesson')return lessonPage(Number(parts[1]),decodeURIComponent(parts.slice(2).join('/')));
- if(parts[0]==='vocab')return vocabPage();if(parts[0]==='grammar')return grammarPage();if(parts[0]==='sentence')return sentencePage();if(parts[0]==='flashcards')return flashcardsPage();if(parts[0]==='leaderboard')return leaderboardPage();if(parts[0]==='progress')return progressPage();if(parts[0]==='settings')return settingsPage();return dashboard();
+ if(parts[0]==='vocab')return vocabPage();if(parts[0]==='grammar')return grammarPage();if(parts[0]==='flashcards')return flashcardsPage();if(parts[0]==='leaderboard')return leaderboardPage();if(parts[0]==='progress')return progressPage();if(parts[0]==='settings')return settingsPage();return dashboard();
 }
 
 function render(){
@@ -501,12 +509,8 @@ function bind(){
  document.querySelectorAll('.grammar-summary').forEach(b=>b.onclick=()=>document.getElementById('gb-'+b.dataset.gi)?.classList.toggle('hidden'));
  document.querySelectorAll('.grammarDone').forEach(b=>b.onclick=()=>{const k=b.dataset.key;state.grammarDone.has(k)?state.grammarDone.delete(k):state.grammarDone.add(k);save();render()});
  const tl=document.getElementById('toggleLesson');if(tl)tl.onclick=()=>{const p=currentPath().slice(2).split('/');const id=`${p[1]}:${decodeURIComponent(p.slice(2).join('/'))}`;state.completedLessons.has(id)?state.completedLessons.delete(id):state.completedLessons.add(id);save();render()};
- const nt=document.getElementById('newTarget');if(nt)nt.onclick=()=>{localStorage.setItem('hg_target',Date.now().toString());render()};
- const sd=document.getElementById('sentenceDraft');if(sd)sd.oninput=e=>state.sentenceDraft=e.target.value;
- const ss=document.getElementById('saveSentence');if(ss)ss.onclick=()=>{save();toast('Đã lưu nháp trên thiết bị ✓')};
- const sb=document.getElementById('showSample');if(sb)sb.onclick=()=>{const pool=state.words;const idx=Math.abs(hashCode(localStorage.getItem('hg_target')||new Date().toDateString()))%Math.max(1,pool.length);const w=pool[idx];const ex=examplesFor(w)[0];document.getElementById('sampleBox').innerHTML=`<div class="example" style="margin-top:14px"><div class="zh">${esc(ex[0])}</div><div class="py">${esc(ex[1])}</div><div class="vi">${esc(ex[2])}</div></div>`};
  const sq=document.getElementById('startQuiz');if(sq)sq.onclick=()=>{const level=Number(document.getElementById('quizLevel').value),count=Number(document.getElementById('quizCount').value);buildQuiz(level,count);render()};
- document.querySelectorAll('.quiz-option').forEach(b=>b.onclick=()=>{const q=state.quiz;if(!q||q.finished)return;const item=q.items[q.index];if(item.selected!==null)return;item.selected=b.dataset.answer;item.correct=item.selected===item.word.meaning;if(item.correct)state.learned.add(item.word.hanzi);else state.reviews[item.word.hanzi]='again';save();render()});
+ document.querySelectorAll('.quiz-option').forEach(b=>b.onclick=()=>{const q=state.quiz;if(!q||q.finished)return;const item=q.items[q.index];if(item.selected!==null)return;item.selected=b.dataset.answer;item.correct=item.selected===item.word.meaning;render()});
  const nq=document.getElementById('nextQuiz');if(nq)nq.onclick=async()=>{const q=state.quiz;if(!q)return;if(q.index>=q.count-1){await submitQuizResult()}else{q.index++;render()}};
  const rq=document.getElementById('restartQuiz');if(rq)rq.onclick=()=>{state.quiz=null;render()};
  const qq=document.getElementById('quitQuiz');if(qq)qq.onclick=()=>{if(confirm('Thoát lượt chơi hiện tại?')){state.quiz=null;render()}};
@@ -519,6 +523,7 @@ function bindSettings(){
  const v=document.getElementById('setVoice');if(v)v.onchange=e=>{state.settings.voice=e.target.value;save()};
  const r=document.getElementById('setRate');if(r)r.oninput=e=>{state.settings.rate=Number(e.target.value);document.getElementById('rateLabel').textContent=state.settings.rate+'x';save()};
  const tv=document.getElementById('testVoice');if(tv)tv.onclick=()=>speak('你好，欢迎学习中文。');
+ const mt=document.getElementById('setMusicTrack');if(mt)mt.onchange=e=>{state.settings.musicTrack=e.target.value;save();const tr=MUSIC_TRACKS[state.settings.musicTrack]||MUSIC_TRACKS.violin;const note=document.getElementById('musicTrackNote');if(note)note.textContent=tr.note;if(state.settings.music){if(tr.available)startAmbient();else{state.settings.music=false;save();render();toast('Bài này cần file/link âm thanh hợp pháp trước khi phát.')}}};
  const m=document.getElementById('setMusic');if(m)m.onchange=e=>{state.settings.music=e.target.checked;save();syncAmbient()};
  const vol=document.getElementById('setVolume');if(vol)vol.oninput=e=>{state.settings.volume=Number(e.target.value);save();if(state.settings.music)startAmbient()};
  const th=document.getElementById('toggleTheme');if(th)th.onclick=()=>{state.settings.theme=state.settings.theme==='dark'?'light':'dark';save();render()};
