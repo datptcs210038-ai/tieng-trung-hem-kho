@@ -1104,8 +1104,54 @@ function quizResultPage(){
 
 function progressPage(){const total=state.words.length||1;const l1=state.words.filter(w=>w.level===1),l2=state.words.filter(w=>w.level===2);const pct=a=>Math.round(a.filter(w=>state.learned.has(w.hanzi)).length/Math.max(1,a.length)*100);return `<div class="page-title"><div><h1>Tiến độ học</h1><p>Dữ liệu đang lưu bằng localStorage trên thiết bị này — miễn phí và riêng tư.</p></div></div><div class="grid four"><div class="card"><span class="pill hsk1">HSK 1</span><h2>${pct(l1)}%</h2><p>${l1.filter(w=>state.learned.has(w.hanzi)).length}/${l1.length} từ</p><div class="progressbar"><i style="width:${pct(l1)}%"></i></div></div><div class="card"><span class="pill hsk2">HSK 2</span><h2>${pct(l2)}%</h2><p>${l2.filter(w=>state.learned.has(w.hanzi)).length}/${l2.length} từ</p><div class="progressbar"><i style="width:${pct(l2)}%"></i></div></div><div class="card"><span class="pill">Ngữ pháp</span><h2>${state.grammarDone.size}/${GRAMMAR.length}</h2><p>điểm đã học</p></div><div class="card"><span class="pill">Ôn tập</span><h2>${Object.keys(state.reviews).length}</h2><p>từ đã đánh giá</p></div></div><div class="section-head"><div><h2>Từ cần ôn</h2><p>Các từ bạn đánh giá “Lại” hoặc “Khó”.</p></div></div><div class="vocab-grid">${state.words.filter(w=>['again','hard'].includes(state.reviews[w.hanzi])).slice(0,18).map(wordCard).join('')||'<div class="empty"><div class="e">🌿</div><h3>Chưa có từ khó</h3><p>Chơi flashcard để tạo danh sách ôn tập.</p></div>'}</div>`}
 
-function settingsPage(){const zh=voices.filter(v=>/^zh(-|_)/i.test(v.lang));return `<div class="page-title"><div><h1>Cài đặt</h1><p>Tùy chỉnh phát âm, giao diện và âm thanh nền.</p></div></div><div class="settings-grid"><div class="setting"><h3>👤 Hồ sơ học</h3><p>Dữ liệu chỉ lưu trên trình duyệt.</p><label>Tên hiển thị</label><input id="setName" type="text" value="${esc(state.settings.name)}"><br><br><label>Mục tiêu</label><select id="setGoal"><option ${state.settings.goal==='HSK 1'?'selected':''}>HSK 1</option><option ${state.settings.goal==='HSK 2'?'selected':''}>HSK 2</option></select></div><div class="setting"><h3>🔊 Phát âm Mandarin</h3><p>Dùng Web Speech API miễn phí của trình duyệt.</p><label>Giọng đọc</label><select id="setVoice"><option value="">Tự động chọn giọng zh-CN</option>${zh.map(v=>`<option value="${esc(v.voiceURI)}" ${state.settings.voice===v.voiceURI?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select><br><br><label>Tốc độ: <b id="rateLabel">${state.settings.rate}x</b></label><input id="setRate" type="range" min="0.7" max="1" step="0.05" value="${state.settings.rate}"><button class="btn sm ghost" style="margin-top:10px" id="testVoice">🔊 Nghe thử 你好</button></div><div class="setting"><h3>🎵 Nhạc nền</h3><p>Chọn bài muốn nghe khi học. Hai ca khúc được phát bằng trình phát YouTube ẩn; trình duyệt có thể yêu cầu bạn bấm nút nhạc một lần trước khi phát.</p><label>Bài nhạc</label><select id="setMusicTrack"><option value="violin" ${state.settings.musicTrack==='violin'?'selected':''}>🎻 Violin nhẹ nhàng</option><option value="bienDao" ${state.settings.musicTrack==='bienDao'?'selected':''}>🌸 海屿你 (Biển Đào và Em)</option><option value="loveWaits" ${state.settings.musicTrack==='loveWaits'?'selected':''}>💗 A Love That Waits (Xuân thì)</option></select><div id="musicTrackNote" style="font-size:12px;color:var(--muted);margin-top:7px">${esc((MUSIC_TRACKS[state.settings.musicTrack]||MUSIC_TRACKS.violin).note)}</div><br><label><input id="setMusic" type="checkbox" ${state.settings.music?'checked':''}> Bật nhạc nền</label><br><br><label>Âm lượng</label><input id="setVolume" type="range" min="0" max="0.35" step="0.01" value="${state.settings.volume}"></div><div class="setting"><h3>🔐 Tài khoản</h3><p>Đang đăng nhập: <b>${esc(state.user?.email||'')}</b></p><div class="account-actions"><button class="btn ghost" id="logoutSettings">Đăng xuất</button></div></div><div class="setting"><h3>🌙 Giao diện</h3><p>Chế độ sáng/tối.</p><button class="btn" id="toggleTheme">${state.settings.theme==='dark'?'☀️ Chuyển sang sáng':'🌙 Chuyển sang tối'}</button><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><button class="btn ghost" id="resetProgress">Xóa toàn bộ tiến độ</button></div></div>`}
+function settingsPage(){
+ const zh=voices.filter(v=>/^zh(-|_)/i.test(v.lang));
+ const displayName=state.profile?.display_name||state.settings.name||'';
+ const studentCode=state.profile?.student_code||'';
+ return `<div class="page-title"><div><h1>Cài đặt</h1><p>Tùy chỉnh hồ sơ, tài khoản, phát âm, giao diện và âm thanh nền.</p></div></div>
+ <div class="settings-grid">
+  <div class="setting">
+   <h3>👤 Hồ sơ học</h3>
+   <p>Thông tin này được lưu riêng theo tài khoản của bạn.</p>
+   <label>Tên hiển thị</label>
+   <input id="setName" type="text" minlength="2" maxlength="60" value="${esc(displayName)}" placeholder="Tên của bạn">
+   <br><br>
+   <label>Mã học viên / MSSV</label>
+   <input id="setStudentCode" type="text" minlength="3" maxlength="40" value="${esc(studentCode)}" placeholder="Ví dụ: CS210038">
+   <br><br>
+   <label>Mục tiêu</label>
+   <select id="setGoal"><option ${state.settings.goal==='HSK 1'?'selected':''}>HSK 1</option><option ${state.settings.goal==='HSK 2'?'selected':''}>HSK 2</option></select>
+   <button class="btn jade" id="saveProfileBtn" style="margin-top:14px;width:100%">Lưu thông tin</button>
+   <div id="profileSaveStatus" style="font-size:12px;margin-top:9px"></div>
+  </div>
 
+  <div class="setting">
+   <h3>🔐 Tài khoản & mật khẩu</h3>
+   <p>Email đăng nhập: <b>${esc(state.user?.email||'')}</b></p>
+   <label>Mật khẩu mới</label>
+   <div class="password-wrap">
+    <input id="newAccountPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Ít nhất 6 ký tự">
+    <button type="button" class="password-toggle" id="toggleNewAccountPassword" aria-label="Hiện mật khẩu">👁️</button>
+   </div>
+   <br>
+   <label>Nhập lại mật khẩu mới</label>
+   <div class="password-wrap">
+    <input id="confirmAccountPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Nhập lại mật khẩu">
+    <button type="button" class="password-toggle" id="toggleConfirmAccountPassword" aria-label="Hiện mật khẩu">👁️</button>
+   </div>
+   <button class="btn primary" id="changePasswordBtn" style="margin-top:14px;width:100%">Đổi mật khẩu</button>
+   <div id="passwordChangeStatus" style="font-size:12px;margin-top:9px"></div>
+   <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+   <button class="btn ghost" id="logoutSettings">Đăng xuất</button>
+  </div>
+
+  <div class="setting"><h3>🔊 Phát âm Mandarin</h3><p>Dùng Web Speech API miễn phí của trình duyệt.</p><label>Giọng đọc</label><select id="setVoice"><option value="">Tự động chọn giọng zh-CN</option>${zh.map(v=>`<option value="${esc(v.voiceURI)}" ${state.settings.voice===v.voiceURI?'selected':''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</select><br><br><label>Tốc độ: <b id="rateLabel">${state.settings.rate}x</b></label><input id="setRate" type="range" min="0.7" max="1" step="0.05" value="${state.settings.rate}"><button class="btn sm ghost" style="margin-top:10px" id="testVoice">🔊 Nghe thử 你好</button></div>
+
+  <div class="setting"><h3>🎵 Nhạc nền</h3><p>Chọn bài muốn nghe khi học.</p><label>Bài nhạc</label><select id="setMusicTrack"><option value="violin" ${state.settings.musicTrack==='violin'?'selected':''}>🎻 Violin nhẹ nhàng</option><option value="bienDao" ${state.settings.musicTrack==='bienDao'?'selected':''}>🌸 海屿你 (Biển Đào và Em)</option><option value="loveWaits" ${state.settings.musicTrack==='loveWaits'?'selected':''}>💗 A Love That Waits (Xuân thì)</option></select><div id="musicTrackNote" style="font-size:12px;color:var(--muted);margin-top:7px">${esc((MUSIC_TRACKS[state.settings.musicTrack]||MUSIC_TRACKS.violin).note)}</div><br><label><input id="setMusic" type="checkbox" ${state.settings.music?'checked':''}> Bật nhạc nền</label><br><br><label>Âm lượng</label><input id="setVolume" type="range" min="0" max="0.35" step="0.01" value="${state.settings.volume}"></div>
+
+  <div class="setting"><h3>🌙 Giao diện</h3><p>Chế độ sáng/tối.</p><button class="btn" id="toggleTheme">${state.settings.theme==='dark'?'☀️ Chuyển sang sáng':'🌙 Chuyển sang tối'}</button><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><button class="btn ghost" id="resetProgress">Xóa toàn bộ tiến độ</button></div>
+ </div>`;
+}
 function wordModal(w){const ex=examplesFor(w);return `<div class="modal-wrap" id="modalWrap"><div class="modal"><div class="modal-head"><div><span class="pill hsk${w.level}">HSK ${w.level}</span><div class="big-hanzi">${esc(w.hanzi)}</div><div class="pinyin" style="font-size:20px">${esc(w.pinyin)}</div></div><button class="icon-btn" id="closeModal">✕</button></div><h2>${esc(w.meaning)}</h2><div class="hanviet">Âm Hán-Việt: <b>${esc(w.hanviet)}</b></div><div class="meta" style="margin:12px 0"><span>${esc(POS_VI[w.pos]||'từ vựng')}</span><span>${esc(w.category)}</span>${w.classifier?`<span>Lượng từ: ${esc(w.classifier)}</span>`:''}</div><div style="display:flex;gap:8px"><button class="btn primary speakText" data-text="${esc(w.hanzi)}">🔊 Nghe từ</button><button class="btn ghost favWord" data-word="${esc(w.hanzi)}">♡ Lưu</button><button class="btn ghost learnWord" data-word="${esc(w.hanzi)}">✓ Đã nhớ</button></div><div class="section-head"><div><h2>Ví dụ cơ bản</h2><p>Hanzi + Pinyin + nghĩa Việt</p></div></div><div class="examples">${ex.map(e=>`<div class="example"><div class="zh">${esc(e[0])} <button class="mini speakText" data-text="${esc(e[0])}">🔊</button></div><div class="py">${esc(e[1])}</div><div class="vi">${esc(e[2])}</div></div>`).join('')}</div><div class="notice" style="margin-top:16px">Hán-Việt giúp liên hệ mặt chữ, nhưng không nên dùng thay cho nghĩa tiếng Việt hiện đại.</div></div></div>`}
 
 function loadingPage(){return `<div class="page-title"><div><h1>Chuẩn bị dữ liệu HSK…</h1><p>Dữ liệu 300 từ đã được nhúng sẵn trong file.</p></div></div><div class="vocab-grid">${Array(9).fill('<div class="skeleton"></div>').join('')}</div>`}
@@ -1311,7 +1357,50 @@ function bind(){
 
 function bindSettings(){
  const ls=document.getElementById('logoutSettings');if(ls)ls.onclick=doLogout;
- const n=document.getElementById('setName');if(n)n.onchange=e=>{state.settings.name=e.target.value;save()};
+ const sp=document.getElementById('saveProfileBtn');if(sp)sp.onclick=async()=>{
+   const name=document.getElementById('setName')?.value.trim()||'';
+   const code=document.getElementById('setStudentCode')?.value.trim()||'';
+   const status=document.getElementById('profileSaveStatus');
+   if(name.length<2){if(status){status.textContent='❌ Tên phải có ít nhất 2 ký tự.';status.style.color='#b42318'}return}
+   if(code.length<3){if(status){status.textContent='❌ MSSV phải có ít nhất 3 ký tự.';status.style.color='#b42318'}return}
+   sp.disabled=true;sp.textContent='Đang lưu...';
+   const {error}=await db.from('profiles').update({
+     display_name:name,
+     student_code:code,
+     updated_at:new Date().toISOString()
+   }).eq('user_id',state.user.id);
+   sp.disabled=false;sp.textContent='Lưu thông tin';
+   if(error){
+     if(status){status.textContent=/duplicate|unique/i.test(String(error.message))?'❌ MSSV này đã được tài khoản khác sử dụng.':'❌ Chưa lưu được thông tin. Vui lòng thử lại.';status.style.color='#b42318'}
+     return;
+   }
+   state.profile={...(state.profile||{}),display_name:name,student_code:code};
+   state.settings.name=name;
+   save();
+   if(status){status.textContent='✅ Đã cập nhật tên và MSSV.';status.style.color='#087a67'}
+   render();
+ };
+ const togglePwd=(inputId,btnId)=>{const btn=document.getElementById(btnId);if(btn)btn.onclick=()=>{const input=document.getElementById(inputId);if(!input)return;input.type=input.type==='password'?'text':'password';btn.textContent=input.type==='password'?'👁️':'🙈'}};
+ togglePwd('newAccountPassword','toggleNewAccountPassword');
+ togglePwd('confirmAccountPassword','toggleConfirmAccountPassword');
+ const cp=document.getElementById('changePasswordBtn');if(cp)cp.onclick=async()=>{
+   const p1=document.getElementById('newAccountPassword')?.value||'';
+   const p2=document.getElementById('confirmAccountPassword')?.value||'';
+   const status=document.getElementById('passwordChangeStatus');
+   if(p1.length<6){if(status){status.textContent='❌ Mật khẩu phải có ít nhất 6 ký tự.';status.style.color='#b42318'}return}
+   if(p1!==p2){if(status){status.textContent='❌ Hai mật khẩu chưa giống nhau.';status.style.color='#b42318'}return}
+   cp.disabled=true;cp.textContent='Đang đổi...';
+   const {error}=await db.auth.updateUser({password:p1});
+   cp.disabled=false;cp.textContent='Đổi mật khẩu';
+   if(error){
+     if(status){status.textContent='❌ '+authFriendlyError(error.message);status.style.color='#b42318'}
+     return;
+   }
+   document.getElementById('newAccountPassword').value='';
+   document.getElementById('confirmAccountPassword').value='';
+   if(status){status.textContent='✅ Đổi mật khẩu thành công.';status.style.color='#087a67'}
+ };
+
  const g=document.getElementById('setGoal');if(g)g.onchange=e=>{state.settings.goal=e.target.value;save()};
  const v=document.getElementById('setVoice');if(v)v.onchange=e=>{state.settings.voice=e.target.value;save()};
  const r=document.getElementById('setRate');if(r)r.oninput=e=>{state.settings.rate=Number(e.target.value);document.getElementById('rateLabel').textContent=state.settings.rate+'x';save()};
