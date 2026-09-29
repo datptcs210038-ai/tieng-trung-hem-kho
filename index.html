@@ -780,6 +780,7 @@ async function loadLeaderboard(){
 function authFriendlyError(msg){
  const s=String(msg||'').toLowerCase();
  if(s.includes('email rate limit exceeded')||s.includes('rate limit')) return 'Bạn đã yêu cầu gửi email quá nhiều lần. Hệ thống tạm khóa gửi email trong 10 phút để tránh bị giới hạn tiếp.';
+ if(s.includes('anonymous sign-ins are disabled')) return 'Form đăng ký vừa bị lỗi dữ liệu trống. Hệ thống đã được sửa; hãy tải lại trang rồi đăng ký lại.';
  if(s.includes('email not confirmed')) return 'Email chưa được xác nhận. Hãy kiểm tra Hộp thư đến hoặc Spam.';
  return String(msg||'Đã có lỗi xảy ra.');
 }
@@ -1033,7 +1034,7 @@ function bindAuth(){
      localStorage.removeItem('tthk_password_recovery_pending');
      if(/rate limit/i.test(String(error.message||''))) startResendCooldown(600);
    }else startResendCooldown(60);
-   state.authMessage=error?'❌ '+authFriendlyError(error.message):'✅ Đã gửi email đặt lại mật khẩu. Mở email và bấm liên kết; khi quay lại web sẽ hiện form nhập mật khẩu mới.';
+   state.authMessage=error?'❌ '+authFriendlyError(error.message):'✅ Đã gửi email đặt lại mật khẩu. Hãy dùng email mới nhất. Link đúng phải quay về trang Tiếng Trung Hem Khó, không phải localhost.';
    render();
  };
  const resend=document.getElementById('resendConfirm');if(resend)resend.onclick=async()=>{
@@ -1050,10 +1051,20 @@ function bindAuth(){
  };
  const form=document.getElementById('authForm');if(form)form.onsubmit=async e=>{
    e.preventDefault();if(state.authBusy)return;
+   const email=document.getElementById('authEmail')?.value.trim()||'';
+   const password=document.getElementById('authPassword')?.value||'';
+   const display_name=state.authMode==='register'?(document.getElementById('authName')?.value.trim()||''):'';
+   const student_code=state.authMode==='register'?(document.getElementById('authStudent')?.value.trim()||''):'';
+   if(!email || !password){
+     state.authMessage='❌ Vui lòng nhập đầy đủ thông tin đăng nhập.';
+     render();return;
+   }
+   if(state.authMode==='register' && (!display_name || !student_code)){
+     state.authMessage='❌ Vui lòng nhập đầy đủ họ tên, mã học viên/MSSV, email và mật khẩu.';
+     render();return;
+   }
    state.authBusy=true;state.authMessage='';render();
-   const email=document.getElementById('authEmail')?.value.trim()||'';const password=document.getElementById('authPassword')?.value||'';
    if(state.authMode==='register'){
-     const display_name=document.getElementById('authName')?.value.trim()||'',student_code=document.getElementById('authStudent')?.value.trim()||'';
      const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name,student_code},emailRedirectTo:'https://datptcs210038-ai.github.io/tieng-trung-hem-kho/'}});
      state.authBusy=false;
      if(error){
