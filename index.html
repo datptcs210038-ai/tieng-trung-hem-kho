@@ -741,6 +741,7 @@ const MUSIC_TRACKS={
 };
 let musicPlayer=null;
 let ytPlayer=null, ytApiReady=false, ytPendingTrack=null;
+window.__tthkMusicUserPaused=false;
 window.onYouTubeIframeAPIReady=function(){ytApiReady=true;if(ytPendingTrack&&state?.settings?.music)playYouTubeTrack(ytPendingTrack)};
 function ytVolume(){return Math.round(Math.max(0,Math.min(1,state.settings.volume/0.35))*100)}
 function playYouTubeTrack(track){
@@ -748,11 +749,25 @@ function playYouTubeTrack(track){
   if(!ytApiReady||!window.YT||!YT.Player)return;
   if(!ytPlayer){
     ytPlayer=new YT.Player('ytMusicHost',{height:'1',width:'1',videoId:track.videoId,playerVars:{autoplay:1,controls:0,playsinline:1,rel:0},events:{
-      onReady:e=>{e.target.setVolume(ytVolume());e.target.playVideo()},
-      onStateChange:e=>{if(e.data===YT.PlayerState.ENDED&&state.settings.music){e.target.seekTo(0);e.target.playVideo()}}
+      onReady:e=>{
+        try{
+          e.target.setVolume(ytVolume());
+          if(state.settings.music&&!window.__tthkMusicUserPaused)e.target.playVideo();
+        }catch{}
+      },
+      onStateChange:e=>{
+        if(e.data===YT.PlayerState.ENDED&&state.settings.music&&!window.__tthkMusicUserPaused){
+          try{e.target.seekTo(0);e.target.playVideo()}catch{}
+        }
+      }
     }});
   }else{
-    try{ytPlayer.setVolume(ytVolume());ytPlayer.loadVideoById(track.videoId);ytPlayer.playVideo()}catch{}
+    try{
+      ytPlayer.setVolume(ytVolume());
+      const current=ytPlayer.getVideoData?.().video_id;
+      if(current!==track.videoId)ytPlayer.loadVideoById(track.videoId);
+      if(state.settings.music&&!window.__tthkMusicUserPaused)ytPlayer.playVideo();
+    }catch{}
   }
 }
 let violinCtx=null, violinTimer=null, violinNodes=[];
@@ -786,7 +801,7 @@ function startAmbient(){
   if(!AC){toast('Trình duyệt này chưa hỗ trợ nhạc nền.');state.settings.music=false;save();return;}
   violinCtx=new AC(); scheduleViolinLoop();
 }
-function syncAmbient(){state.settings.music?startAmbient():stopAmbient();}
+function syncAmbient(){if(state.settings.music&&!window.__tthkMusicUserPaused){const track=MUSIC_TRACKS[state.settings.musicTrack]||MUSIC_TRACKS.violin;if(track.type==='youtube'&&ytPlayer){try{ytPlayer.setVolume(ytVolume());ytPlayer.playVideo();return}catch{}}startAmbient()}else stopAmbient();}
 
 function navItems(){return [
  ['#/','🏠','Trang chủ'],['#/hsk/1','🟥','HSK 1'],['#/hsk/2','🟩','HSK 2'],['#/vocab','🀄','Từ vựng'],['#/grammar','🧩','Ngữ pháp'],['#/flashcards','🃏','Flashcard'],['#/leaderboard','🏆','Bảng xếp hạng'],['#/progress','📊','Tiến độ'],['#/settings','⚙️','Cài đặt']
@@ -1029,6 +1044,7 @@ function bindAuthMusic(){
  const mt=document.getElementById('authMusicTrack');
  if(mt)mt.onchange=e=>{
    state.settings.musicTrack=e.target.value;
+   window.__tthkMusicUserPaused=false;
    state.settings.music=true;
    save();
    startAmbient();
@@ -1036,7 +1052,14 @@ function bindAuthMusic(){
  };
  const tog=document.getElementById('authMusicToggle');
  if(tog)tog.onclick=()=>{
-   state.settings.music=!state.settings.music;save();
+   if(state.settings.music){
+     window.__tthkMusicUserPaused=true;
+     state.settings.music=false;
+   }else{
+     window.__tthkMusicUserPaused=false;
+     state.settings.music=true;
+   }
+   save();
    syncAmbient();render();
  };
 }
@@ -1173,7 +1196,7 @@ async function doLogout(){
 function bind(){
  const gs=document.getElementById('globalSearch');if(gs)gs.onkeydown=e=>{if(e.key==='Enter'){state.query=e.target.value;location.hash='#/vocab';render()}};
  const tq=document.getElementById('themeQuick');if(tq)tq.onclick=()=>{state.settings.theme=state.settings.theme==='dark'?'light':'dark';save();render()};
- const mq=document.getElementById('musicQuick');if(mq)mq.onclick=()=>{state.settings.music=!state.settings.music;save();syncAmbient();render()};
+ const mq=document.getElementById('musicQuick');if(mq)mq.onclick=()=>{if(state.settings.music){window.__tthkMusicUserPaused=true;state.settings.music=false}else{window.__tthkMusicUserPaused=false;state.settings.music=true}save();syncAmbient();render()};
  const lo=document.getElementById('logoutBtn');if(lo)lo.onclick=doLogout;
  const rb=document.getElementById('refreshBoard');if(rb)rb.onclick=()=>{state.leaderboardLoaded=true;loadLeaderboard()};
  const vf=document.getElementById('vocabSearch');if(vf)vf.oninput=e=>{state.query=e.target.value;render()};
@@ -1228,12 +1251,36 @@ function isRecoveryUrl(){
 
 function forceEntryMusic(){
  state.settings.musicTrack='loveWaits';
+ window.__tthkMusicUserPaused=false;
  state.settings.music=true;
  if(!Number.isFinite(Number(state.settings.volume))||Number(state.settings.volume)<=0) state.settings.volume=.12;
  save();
- // Browsers may block audible autoplay until the first user interaction.
- // We still request playback immediately; the square button remains available as fallback.
+
+ // Request playback immediately.
  setTimeout(()=>{try{syncAmbient()}catch{}},0);
+
+ // If the browser blocks audible autoplay, ANY first interaction on the page
+ // retries playback automatically. The user does not need to press the music button.
+ const kick=()=>{
+   if(state.settings.music&&!window.__tthkMusicUserPaused){
+     try{syncAmbient()}catch{}
+   }
+ };
+ ['pointerdown','touchstart','keydown','click'].forEach(evt=>{
+   window.addEventListener(evt,kick,{passive:true,once:true,capture:true});
+ });
+
+ // Keep music alive when returning to the tab/app, unless the user explicitly paused it.
+ document.addEventListener('visibilitychange',()=>{
+   if(!document.hidden&&state.settings.music&&!window.__tthkMusicUserPaused){
+     setTimeout(()=>{try{syncAmbient()}catch{}},120);
+   }
+ });
+ window.addEventListener('pageshow',()=>{
+   if(state.settings.music&&!window.__tthkMusicUserPaused){
+     setTimeout(()=>{try{syncAmbient()}catch{}},120);
+   }
+ });
 }
 async function boot(){
  forceEntryMusic();
