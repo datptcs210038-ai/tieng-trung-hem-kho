@@ -808,7 +808,7 @@ async function loadLeaderboard(){
 }
 function authFriendlyError(msg){
  const s=String(msg||'').toLowerCase();
- if(s.includes('email rate limit exceeded')||s.includes('rate limit')) return 'Bạn đã yêu cầu gửi email quá nhiều lần. Hệ thống tạm khóa gửi email trong 10 phút để tránh bị giới hạn tiếp.';
+ if(s.includes('email rate limit exceeded')||s.includes('rate limit')) return 'Bạn đã yêu cầu gửi email quá nhiều lần. Vui lòng chờ khoảng 60 giây rồi thử lại.';
  if(s.includes('anonymous sign-ins are disabled')) return 'Form đăng ký vừa bị lỗi dữ liệu trống. Hệ thống đã được sửa; hãy tải lại trang rồi đăng ký lại.';
  if(s.includes('email not confirmed')) return 'Email chưa được xác nhận. Hãy kiểm tra Hộp thư đến hoặc Spam.';
  return String(msg||'Đã có lỗi xảy ra.');
@@ -1082,7 +1082,7 @@ function bindAuth(){
    state.authBusy=false;
    if(error){
      localStorage.removeItem('tthk_password_recovery_pending');
-     if(/rate limit/i.test(String(error.message||''))) startResendCooldown(600);
+     if(/rate limit/i.test(String(error.message||''))) startResendCooldown(60);
    }else startResendCooldown(60);
    state.authMessage=error?'❌ '+authFriendlyError(error.message):'✅ Đã gửi email đặt lại mật khẩu. Hãy dùng email mới nhất. Link đúng phải quay về trang Tiếng Trung Hem Khó, không phải localhost.';
    render();
@@ -1094,7 +1094,7 @@ function bindAuth(){
    state.authBusy=true;state.authMessage='';render();
    const {error}=await db.auth.resend({type:'signup',email,options:{emailRedirectTo:'https://datptcs210038-ai.github.io/tieng-trung-hem-kho/'}});
    state.authBusy=false;
-   if(error && /rate limit/i.test(String(error.message||''))) startResendCooldown(600);
+   if(error && /rate limit/i.test(String(error.message||''))) startResendCooldown(60);
    else if(!error) startResendCooldown(60);
    state.authMessage=error?'❌ '+authFriendlyError(error.message):'✅ Đã gửi lại email xác nhận. Kiểm tra Hộp thư đến và Spam.';
    render();
@@ -1123,7 +1123,7 @@ function bindAuth(){
          state.authMode='login';
          state.authMessage='✅ Tài khoản với email này đã được tạo. Hãy kiểm tra email xác nhận; nếu chưa thấy, nhập email rồi bấm “Gửi lại email xác nhận”.';
        }else{
-         if(/rate limit/i.test(msg)) startResendCooldown(600);
+         if(/rate limit/i.test(msg)) startResendCooldown(60);
          state.authMessage='❌ '+authFriendlyError(msg);
        }
        render();return
