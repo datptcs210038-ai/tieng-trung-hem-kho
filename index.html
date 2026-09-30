@@ -557,7 +557,7 @@ if(!window.supabase){
   }
   window.addEventListener('error',showBootError);
   window.addEventListener('unhandledrejection',showBootError);
-  setTimeout(function(){if(document.getElementById('bootFallback'))showBootError()},12000);
+  setTimeout(function(){if(document.getElementById('bootFallback'))showBootError()},30000);
 })();
 </script>
 <div id="ytMusicHost" style="position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;overflow:hidden" aria-hidden="true"></div>
@@ -1389,8 +1389,9 @@ async function boot(){
  forceEntryMusic();
  const recoveryHint=isRecoveryUrl() || localStorage.getItem('tthk_password_recovery_pending')==='1';
 
- // Listen first so PASSWORD_RECOVERY cannot fire before the listener exists.
- db.auth.onAuthStateChange(async(event,session)=>{
+ // Keep the auth callback synchronous. Safari/iOS can hang when
+ // database calls are awaited directly from inside onAuthStateChange.
+ db.auth.onAuthStateChange((event,session)=>{
    if(event==='PASSWORD_RECOVERY'){
      localStorage.setItem('tthk_password_recovery_pending','1');
      state.user=session?.user||null;
@@ -1400,23 +1401,41 @@ async function boot(){
      return;
    }
    state.user=session?.user||null;
-   if(state.recoveryMode && event!=='SIGNED_OUT'){
-     render();
-     return;
-   }
-   if(state.user){
-     await loadProfile();
-     await loadUserData();
-     if(!state.words.length)await loadData();else render();
-   }else{
-     state.profile=null;resetUserData();render();
-   }
+   if(state.recoveryMode && event!=='SIGNED_OUT'){render();return}
+   setTimeout(async()=>{
+     try{
+       if(state.user){
+         await loadProfile();
+         await loadUserData();
+         if(!state.words.length)await loadData();else render();
+       }else{
+         state.profile=null;resetUserData();state.authLoading=false;render();
+       }
+     }catch(err){
+       console.warn('Auth refresh warning:',err);
+       state.authLoading=false;
+       render();
+     }
+   },0);
  });
 
  // Give Supabase a moment to exchange recovery tokens/code from the URL.
  if(recoveryHint) await new Promise(r=>setTimeout(r,350));
 
- const {data:{session}}=await db.auth.getSession();
+ let session=null;
+ const quickUi=setTimeout(()=>{
+   if(document.getElementById('bootFallback')){
+     state.authLoading=false;
+     render();
+   }
+ },1800);
+ try{
+   const result=await db.auth.getSession();
+   session=result?.data?.session||null;
+ }catch(err){
+   console.warn('getSession warning:',err);
+ }
+ clearTimeout(quickUi);
  state.user=session?.user||null;
 
  // Some browsers restore the recovery session before emitting PASSWORD_RECOVERY.
@@ -1433,9 +1452,17 @@ async function boot(){
    render();
  }
 }
-boot();
+boot().catch(err=>{
+ console.warn('Boot warning:',err);
+ state.authLoading=false;
+ try{render()}catch{
+   const app=document.getElementById('app');
+   if(app)app.innerHTML='<div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#f8f5ef;color:#203a32;font-family:Arial,sans-serif"><div style="text-align:center"><h2>Tiếng Trung Hem Khó</h2><p>Không tải được phiên đăng nhập. Hãy tải lại trang.</p><button onclick="location.reload()" style="border:0;border-radius:12px;padding:11px 18px;background:#087a67;color:white;font-weight:800">Tải lại</button></div></div>';
+ }
+});
 </script>
 <!-- TTHK build 2026-09-30-0715 -->
 <!-- TTHK Gmail-only stable build 2026-10-01 -->
+<!-- TTHK mobile boot fix 2026-10-01-0110 -->
 </body>
 </html>
