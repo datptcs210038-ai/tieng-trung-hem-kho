@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#087a67" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <meta name="description" content="Tiếng Trung Hem Khó — học tiếng Trung HSK 1–2: đủ 300 từ, Pinyin, Hán Việt, ngữ pháp, flashcard, phát âm và nhạc violin nhẹ." />
 <title>Tiếng Trung Hem Khó — HSK 1–2 Offline (300 từ)</title>
 <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4">
@@ -967,7 +970,7 @@ function authPage(){
      <button type="button" class="social-btn social-facebook" id="socialFacebook" ${state.authBusy?'disabled':''}><span class="social-icon">f</span><span>Facebook</span></button>
    </div>
  </div>
- ${state.authMessage?`<div class="${state.authMessage.startsWith('✅')?'auth-success':'auth-error'}">${esc(state.authMessage)}</div>`:''}${authCooldownText()?`<div class="notice" id="emailCooldownNotice" style="margin-top:10px">⏳ ${authCooldownText()}</div>`:''}
+ ${state.authMessage?`<div class="${state.authMessage.startsWith('✅')?'auth-success':'auth-error'}">${esc(state.authMessage)}</div>`:''}${(!reg&&authCooldownText())?`<div class="notice" id="emailCooldownNotice" style="margin-top:10px">⏳ ${authCooldownText()}</div>`:''}
  ${authMusicPanel()}</div></div></div>`;
 }
 function recoveryPage(){
@@ -1233,21 +1236,26 @@ function bindAuth(){
    }
    state.authBusy=true;state.authMessage='';render();
    if(state.authMode==='register'){
-     const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name,student_code},emailRedirectTo:'https://datptcs210038-ai.github.io/tieng-trung-hem-kho/'}});
-     state.authBusy=false;
-     if(error){
-       const msg=String(error.message||'');
-       if(/database error saving new user|already registered|user already registered/i.test(msg)){
-         state.authMode='login';
-         state.authMessage='✅ Tài khoản với email này đã được tạo. Hãy kiểm tra email xác nhận; nếu chưa thấy, nhập email rồi bấm “Gửi lại email xác nhận”.';
-       }else{
-         if(/rate limit/i.test(msg)) startResendCooldown(60);
-         state.authMessage='❌ '+authFriendlyError(msg);
-       }
+     const regRes=await db.functions.invoke('register-user',{body:{email,password,display_name,student_code}});
+     if(regRes.error || regRes.data?.error){
+       state.authBusy=false;
+       const code=String(regRes.data?.error||regRes.error?.message||'');
+       if(code.includes('STUDENT_CODE_EXISTS')) state.authMessage='❌ MSSV này đã được một tài khoản khác sử dụng.';
+       else if(code.includes('EMAIL_EXISTS')) state.authMessage='❌ Email này đã có tài khoản. Hãy chuyển sang Đăng nhập.';
+       else if(code.includes('INVALID_INPUT')) state.authMessage='❌ Vui lòng kiểm tra lại họ tên, MSSV, email và mật khẩu.';
+       else state.authMessage='❌ Chưa tạo được tài khoản. Vui lòng thử lại sau ít giây.';
        render();return
      }
-     if(data.session){state.user=data.user;await loadProfile();await loadUserData();state.authMessage='';loadData();render()}
-     else {state.authMode='login';state.authMessage='✅ Đã tạo tài khoản. Kiểm tra email để xác nhận, sau đó quay lại đăng nhập.';render()}
+     const loginRes=await db.auth.signInWithPassword({email,password});
+     state.authBusy=false;
+     if(loginRes.error){
+       state.authMode='login';
+       state.authMessage='✅ Đã tạo tài khoản. Hãy đăng nhập bằng email/MSSV và mật khẩu vừa tạo.';
+       render();return
+     }
+     state.resendUntil=0;localStorage.removeItem('tthk_resend_until');
+     state.user=loginRes.data.user||loginRes.data.session?.user;
+     await loadProfile();await loadUserData();state.authMessage='';await loadData();render();
    }else{
      let data=null,error=null;
      if(email.includes('@')){
@@ -1374,6 +1382,8 @@ function forceEntryMusic(){
  });
 }
 async function boot(){
+ const oldCooldown=Number(localStorage.getItem('tthk_resend_until')||0);
+ if(oldCooldown>Date.now()+60000){localStorage.removeItem('tthk_resend_until');state.resendUntil=0}
  forceEntryMusic();
  const recoveryHint=isRecoveryUrl() || localStorage.getItem('tthk_password_recovery_pending')==='1';
 
@@ -1423,5 +1433,6 @@ async function boot(){
 }
 boot();
 </script>
+<!-- TTHK build 2026-09-30-0715 -->
 </body>
 </html>
