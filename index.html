@@ -506,6 +506,23 @@ img.logo{
  .team-original-img{object-fit:contain}
 }
 
+/* Social auth buttons */
+.auth-social{margin-top:12px}
+.auth-social-sep{display:flex;align-items:center;gap:10px;color:#8b8172;font-size:12px;margin:10px 0}
+.auth-social-sep:before,.auth-social-sep:after{content:"";height:1px;background:#dfd2bc;flex:1}
+.auth-social-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.social-btn{
+  min-height:44px;border-radius:12px;border:1.5px solid #d5c7ad;background:#fffdf8;
+  color:#203a32;font-weight:800;display:flex;align-items:center;justify-content:center;
+  gap:8px;cursor:pointer;transition:.18s ease
+}
+.social-btn:hover{transform:translateY(-1px);border-color:#0b7f6b;box-shadow:0 6px 16px rgba(0,80,66,.1)}
+.social-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.social-icon{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px}
+.social-google .social-icon{background:#fff;border:1px solid #ddd;color:#4285F4}
+.social-facebook{background:#1877F2;color:#fff;border-color:#1877F2}
+.social-facebook .social-icon{background:#fff;color:#1877F2}
+@media(max-width:430px){.auth-social-grid{grid-template-columns:1fr}}
 
 /* Compact auth music controls */
 .auth-music-row{display:flex;align-items:center;gap:8px;margin-top:7px}
@@ -915,7 +932,7 @@ function authNewsPanel(){
      <div class="auth-news-title"><span>📢</span><h3>Bản tin mới nhất</h3></div>
      <div class="auth-news-list">
        <div class="auth-news-item"><span class="dot"></span><div><b>Follow fanpage</b> 中文不难 - Tiếng Trung Hem Khó để cập nhật tin tức sớm nhất nha!</div></div>
-       <div class="auth-news-item"><span class="dot"></span><div>Đăng nhập hệ thống bằng <b>Gmail</b>.</div></div>
+       <div class="auth-news-item"><span class="dot"></span><div>Đã hỗ trợ đăng nhập bằng <b>email hoặc mã học viên / MSSV</b>.</div></div>
        <div class="auth-news-item"><span class="dot"></span><div>Flashcard có bảng xếp hạng; chỉ kết quả <b>trên 80%</b> mới được ghi nhận.</div></div>
        <div class="auth-news-item"><span class="dot"></span><div>Nhạc nền có thể chọn và điều chỉnh ngay trong khung đăng nhập.</div></div>
      </div>
@@ -1205,7 +1222,7 @@ function bindAuth(){
      render();return;
    }
    if(!/@gmail\.com$/i.test(email)){
-     state.authMessage='❌ Hệ thống hiện chỉ cho phép Gmail (@gmail.com).';
+     state.authMessage='❌ Hệ thống chỉ cho phép tài khoản Gmail (@gmail.com).';
      render();return;
    }
    if(state.authMode==='register' && (!display_name || !student_code)){
@@ -1235,11 +1252,6 @@ function bindAuth(){
      state.user=loginRes.data.user||loginRes.data.session?.user;
      await loadProfile();await loadUserData();state.authMessage='';await loadData();render();
    }else{
-     if(!/@gmail\.com$/i.test(email)){
-       state.authBusy=false;
-       state.authMessage='❌ Vui lòng đăng nhập bằng địa chỉ Gmail (@gmail.com).';
-       render();return;
-     }
      const res=await db.auth.signInWithPassword({email,password});
      const data=res.data,error=res.error;
      state.authBusy=false;
@@ -1403,5 +1415,6 @@ async function boot(){
 boot();
 </script>
 <!-- TTHK build 2026-09-30-0715 -->
+<!-- TTHK Gmail-only stable build 2026-10-01 -->
 </body>
 </html>
