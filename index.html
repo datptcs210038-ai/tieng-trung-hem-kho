@@ -464,7 +464,7 @@ img.logo{
     padding:14px;
     align-items:start;
   }
-  .auth-news-panel{order:1}
+  .auth-news-panel{order:1}.auth-news-panel>.auth-news-card{margin-top:0}
   .auth-layout .auth-card{order:2;justify-self:stretch;max-width:none!important}
   .auth-news-hero{min-height:180px;border-radius:20px}
   .auth-news-hero:before{background-size:130px 130px;background-position:center 42%}
@@ -486,25 +486,6 @@ img.logo{
   .auth-follow-strip{font-size:12px}
 }
 
-/* Golden Toad original team hero */
-.auth-news-hero.team-original{
-  min-height:0!important;
-  aspect-ratio:900/399;
-  background:#075f52!important;
-  border:1px solid rgba(255,244,209,.45);
-  padding:0!important;
-}
-.auth-news-hero.team-original:before{display:none!important;content:none!important}
-.team-original-img{
-  display:block;width:100%;height:100%;
-  object-fit:contain;
-  object-position:center;
-  background:#075f52;
-}
-@media(max-width:900px){
- .auth-news-hero.team-original{aspect-ratio:900/399;min-height:0!important}
- .team-original-img{object-fit:contain}
-}
 
 /* Social auth buttons */
 .auth-social{margin-top:12px}
@@ -946,9 +927,6 @@ function startResendCooldown(seconds=60){seconds=Math.min(60,Math.max(1,Number(s
 
 function authNewsPanel(){
  return `<section class="auth-news-panel">
-   <div class="auth-news-hero team-original">
-     <img class="team-original-img" src="assets/golden-toad-team-banner.jpg?v=1" alt="Dự Án Của Nhóm GOLDEN TOAD - Thành Đạt, Hồng Diệp, Yến Vi, Ngọc Giàu, Phương Nghi">
-   </div>
    <div class="auth-news-card">
      <div class="auth-news-title"><span>📢</span><h3>Bản tin mới nhất</h3></div>
      <div class="auth-news-list">
@@ -1464,5 +1442,6 @@ boot().catch(err=>{
 <!-- TTHK build 2026-09-30-0715 -->
 <!-- TTHK Gmail-only stable build 2026-10-01 -->
 <!-- TTHK mobile boot fix 2026-10-01-0110 -->
+<!-- TTHK remove team banner 2026-10-01 -->
 </body>
 </html>
