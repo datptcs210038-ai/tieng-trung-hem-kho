@@ -515,6 +515,207 @@ img.logo{
 }
 .auth-music-square:hover{background:#056759}
 .auth-music-panel input[type=range]{display:none!important}
+
+/* Split auth redesign 2026-10-01 */
+.auth-screen{
+  min-height:100vh!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:28px!important;
+  background:
+    radial-gradient(circle at 10% 12%,rgba(246,212,118,.12),transparent 28%),
+    radial-gradient(circle at 90% 88%,rgba(104,173,111,.12),transparent 30%),
+    #064f45!important;
+}
+.auth-layout{
+  width:min(1180px,calc(100vw - 56px))!important;
+  min-height:680px!important;
+  margin:0 auto!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr)!important;
+  gap:0!important;
+  align-items:stretch!important;
+  padding:0!important;
+  border:1px solid rgba(255,244,209,.34)!important;
+  border-radius:34px!important;
+  overflow:hidden!important;
+  background:#fffaf0!important;
+  box-shadow:0 34px 90px rgba(0,30,26,.34)!important;
+}
+.auth-news-panel{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  min-height:680px!important;
+  gap:18px!important;
+  padding:34px!important;
+  background:
+    radial-gradient(circle at 18% 22%,rgba(255,235,171,.14),transparent 24%),
+    radial-gradient(circle at 82% 74%,rgba(230,47,37,.12),transparent 26%),
+    linear-gradient(140deg,#043f38 0%,#075f52 52%,#0b7c68 100%)!important;
+  color:#fff9ec!important;
+}
+.auth-news-panel:before,
+.auth-news-panel:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  border:2px solid rgba(255,245,213,.18);
+  pointer-events:none;
+}
+.auth-news-panel:before{width:330px;height:330px;left:-130px;top:110px}
+.auth-news-panel:after{width:250px;height:250px;right:-100px;bottom:120px}
+.auth-visual-top{position:relative;z-index:2;display:flex;flex-direction:column;min-height:390px}
+.auth-mini-brand{
+  align-self:flex-start;
+  padding:9px 13px;
+  border-radius:999px;
+  background:rgba(255,250,240,.96);
+  color:#075f52;
+  font-size:12px;
+  font-weight:900;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+}
+.auth-welcome-copy{margin-top:auto;max-width:560px}
+.auth-kicker{
+  display:inline-block;
+  margin-bottom:12px;
+  color:#f5d679;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.auth-welcome-copy h2{
+  margin:0 0 12px!important;
+  font-size:clamp(42px,5vw,68px)!important;
+  line-height:.98!important;
+  letter-spacing:-.04em!important;
+  color:#fffaf0!important;
+}
+.auth-welcome-copy p{
+  margin:0!important;
+  max-width:520px;
+  color:rgba(255,250,240,.82)!important;
+  font-size:15px!important;
+  line-height:1.65!important;
+}
+.auth-news-card{
+  position:relative!important;
+  z-index:2!important;
+  margin-top:12px!important;
+  padding:16px!important;
+  border-radius:22px!important;
+  background:rgba(255,250,240,.10)!important;
+  border:1px solid rgba(255,245,213,.22)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(8px);
+  color:#fffaf0!important;
+}
+.auth-news-title{color:#fffaf0!important;margin-bottom:10px!important}
+.auth-news-title h3{font-size:18px!important}
+.auth-news-list{gap:8px!important}
+.auth-news-item{
+  background:rgba(255,250,240,.09)!important;
+  border:1px solid rgba(255,245,213,.16)!important;
+  color:rgba(255,250,240,.9)!important;
+  padding:9px 10px!important;
+}
+.auth-news-item b{color:#f7dc84!important}
+.auth-follow-strip{
+  background:rgba(229,242,236,.12)!important;
+  border:1px solid rgba(229,242,236,.2)!important;
+  color:#fffaf0!important;
+  margin-top:10px!important;
+}
+.auth-layout .auth-card{
+  width:100%!important;
+  max-width:none!important;
+  justify-self:stretch!important;
+  align-self:stretch!important;
+  margin:0!important;
+  padding:38px 42px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#fffaf0!important;
+  box-shadow:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+.auth-layout .auth-brand{margin-bottom:18px!important}
+.auth-layout .auth-brand .auth-logo{
+  width:86px!important;
+  height:86px!important;
+  border-radius:22px!important;
+}
+.auth-layout .auth-brand h1{
+  margin:10px 0 6px!important;
+  font-size:34px!important;
+  color:#173d36!important;
+}
+.auth-layout .auth-brand p{
+  color:#7a736b!important;
+  font-size:14px!important;
+  line-height:1.55!important;
+}
+.auth-tabs{
+  background:#eee2cb!important;
+  border-radius:16px!important;
+  padding:4px!important;
+}
+.auth-tab{border-radius:13px!important}
+.auth-field label{font-size:13px!important;color:#314f48!important}
+.auth-field input{
+  min-height:48px!important;
+  border:1.5px solid #d7c6a5!important;
+  background:#fffdf8!important;
+  color:#203a32!important;
+}
+.auth-field input:focus{
+  border-color:#0b7c68!important;
+  box-shadow:0 0 0 4px rgba(11,124,104,.10)!important;
+}
+.auth-link{color:#c02b22!important}
+.auth-music-panel{
+  margin-top:12px!important;
+  background:#f6eddc!important;
+  border-color:#dcc9aa!important;
+}
+@media(max-width:900px){
+  .auth-screen{padding:0!important;background:#064f45!important;place-items:start center!important}
+  .auth-layout{
+    width:100%!important;
+    min-height:100vh!important;
+    border:0!important;
+    border-radius:0!important;
+    grid-template-columns:1fr!important;
+    box-shadow:none!important;
+  }
+  .auth-news-panel{
+    min-height:auto!important;
+    padding:22px 18px 18px!important;
+    gap:12px!important;
+  }
+  .auth-visual-top{min-height:auto!important}
+  .auth-welcome-copy{margin-top:34px!important}
+  .auth-welcome-copy h2{font-size:36px!important}
+  .auth-welcome-copy p{font-size:13px!important}
+  .auth-news-card{display:none!important}
+  .auth-layout .auth-card{
+    padding:24px 18px 28px!important;
+    border-radius:28px 28px 0 0!important;
+    min-height:calc(100vh - 230px)!important;
+  }
+}
+@media(max-width:520px){
+  .auth-welcome-copy{margin-top:26px!important}
+  .auth-welcome-copy h2{font-size:31px!important}
+  .auth-layout .auth-brand .auth-logo{width:72px!important;height:72px!important}
+  .auth-layout .auth-brand h1{font-size:29px!important}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4"></script>
 <script>
@@ -927,15 +1128,21 @@ function startResendCooldown(seconds=60){seconds=Math.min(60,Math.max(1,Number(s
 
 function authNewsPanel(){
  return `<section class="auth-news-panel">
+   <div class="auth-visual-top">
+     <div class="auth-mini-brand">中文不难 · Tiếng Trung Hem Khó</div>
+     <div class="auth-welcome-copy">
+       <span class="auth-kicker">欢迎回来 · Welcome back</span>
+       <h2>Chào mừng trở lại!</h2>
+       <p>Học HSK 1–2 nhẹ nhàng mỗi ngày, lưu tiến độ riêng theo từng tài khoản và ôn tập bằng Flashcard.</p>
+     </div>
+   </div>
    <div class="auth-news-card">
      <div class="auth-news-title"><span>📢</span><h3>Bản tin mới nhất</h3></div>
      <div class="auth-news-list">
        <div class="auth-news-item"><span class="dot"></span><div><b>Follow fanpage</b> 中文不难 - Tiếng Trung Hem Khó để cập nhật tin tức sớm nhất nha!</div></div>
-       <div class="auth-news-item"><span class="dot"></span><div>Đã hỗ trợ đăng nhập bằng <b>email hoặc mã học viên / MSSV</b>.</div></div>
-       <div class="auth-news-item"><span class="dot"></span><div>Flashcard có bảng xếp hạng; chỉ kết quả <b>trên 80%</b> mới được ghi nhận.</div></div>
-       <div class="auth-news-item"><span class="dot"></span><div>Nhạc nền có thể chọn và điều chỉnh ngay trong khung đăng nhập.</div></div>
+       <div class="auth-news-item"><span class="dot"></span><div>Đăng nhập bằng <b>email hoặc mã học viên / MSSV</b>.</div></div>
      </div>
-     <div class="auth-follow-strip">🔔 Thông báo mới nhất sẽ được cập nhật tại đây. Hãy theo dõi fanpage để không bỏ lỡ nha!</div>
+     <div class="auth-follow-strip">🔔 Thông báo mới sẽ được ghim tại đây.</div>
    </div>
  </section>`;
 }
@@ -1443,5 +1650,6 @@ boot().catch(err=>{
 <!-- TTHK Gmail-only stable build 2026-10-01 -->
 <!-- TTHK mobile boot fix 2026-10-01-0110 -->
 <!-- TTHK remove team banner 2026-10-01 -->
+<!-- TTHK split auth redesign 2026-10-01-0144 -->
 </body>
 </html>
