@@ -364,50 +364,87 @@ function renderPetOnly(){
  }
 }
 
-/* The original gray & white kitten from the user's image is now the character. */
-const KITTEN_FRAMES=['idle','blink','hungry','groom','groom2','eat','sleep'];
+/* User-selected gray/white kitten: real four-step walking, turning, grooming, eating and sleeping. */
 let petFrameIndex=0;
-function kittenImage(state){return '/kitten-'+state+'.svg?v=original-gray-cat-1'}
+const catWalkStart=Date.now();
+let lastPetPosition=.5,lastPetDirection=-1;
+const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches||false;
+function kittenImage(state){return '/kitten-'+state+'.svg?v=gray-kitten-walk-2'}
 function groomCat(){
  if(petAnimation==='eating')return;
  petAnimation='grooming';clearTimeout(animationTimeout);
  render();paintKitten();
- animationTimeout=setTimeout(()=>{petAnimation='';if(currentView!=='play')render();paintKitten()},2800);
+ animationTimeout=setTimeout(()=>{petAnimation='';if(currentView!=='play')render();paintKitten()},3200);
 }
 function kittenFrame(){
- const state=mood();
- petFrameIndex++;
+ const state=mood();petFrameIndex++;
  if(state==='eating')return petFrameIndex%2?'eat':'idle';
  if(state==='grooming')return petFrameIndex%2?'groom':'groom2';
  if(state==='sleeping')return 'sleep';
  if(state==='hungry')return petFrameIndex%7===0?'blink':'hungry';
- // Idle: blink, wipe face naturally, and swish into a relaxed pose.
- const t=petFrameIndex%27;
- if(t===7||t===8)return 'blink';
- if(t===16||t===18)return 'groom';
- if(t===17||t===19)return 'groom2';
+ const t=petFrameIndex%36;
+ if(t===6||t===7)return 'blink';
+ if(t===18||t===20)return 'groom';
+ if(t===19||t===21)return 'groom2';
  return 'idle';
 }
-function paintKitten(){
- const frame=kittenFrame(),picture=kittenImage(frame);
- const base=$('.pa-cat-base');
- if(base)base.style.backgroundImage='url("'+picture+'")';
- const heroCat=document.querySelector('#intro .garden-cat-sprite');
- if(heroCat){
-  const safe=(frame==='sleep'||frame==='hungry')?'idle':frame;
-  heroCat.style.setProperty('background-image','url("'+kittenImage(safe)+'")','important');
-  heroCat.style.setProperty('background-size','contain','important');
-  heroCat.style.setProperty('background-position','center','important');
-  heroCat.style.setProperty('animation','none','important');
- }
- const m=mood();
- const body=$('.pa-cat');
- if(body){body.classList.toggle('is-grooming',m==='grooming')}
+function catTravel(now,cycle,move,rest){
+ const t=((now%cycle)+cycle)%cycle;
+ if(t<move)return {fraction:t/move,facing:-1,walking:true};
+ if(t<move+rest)return {fraction:1,facing:-1,walking:false};
+ if(t<2*move+rest)return {fraction:1-(t-move-rest)/move,facing:1,walking:true};
+ return {fraction:0,facing:1,walking:false};
 }
-const animateKitten=()=>{if(document.hidden)return;paintKitten()};
-window.setInterval(animateKitten,420);
+function setCatSprite(el,state){
+ if(!el)return;
+ const url='url("'+kittenImage(state)+'")';
+ el.style.setProperty('background-image',url,'important');
+ el.style.setProperty('background-size','contain','important');
+ el.style.setProperty('background-position','center','important');
+ el.style.setProperty('background-repeat','no-repeat','important');
+ el.style.setProperty('animation','none','important');
+}
+function paintKitten(){
+ const now=Date.now()-catWalkStart;
+ const moodNow=mood();
+ const walk=catTravel(now,20400,8100,2100);
+ const isWalking=!reducedMotion&&moodNow==='happy'&&walk.walking;
+ const frame=isWalking?'walk-'+((petFrameIndex%4)+1):kittenFrame();
+ if(isWalking)petFrameIndex++;
+ const base=$('.pa-cat-base');
+ if(base)setCatSprite(base,frame);
+ const petStage=$('.pa-pet-stage');
+ if(petStage){
+  const scene=petStage.closest('.pa-scene');
+  const travel=Math.max(0,(scene?.clientWidth||410)-petStage.offsetWidth-14);
+  if(moodNow==='happy'){lastPetPosition=walk.fraction;lastPetDirection=walk.facing}
+  const x=7+lastPetPosition*travel;
+  petStage.style.setProperty('transform','translate3d('+x.toFixed(1)+'px,0,0) scaleX('+lastPetDirection+')','important');
+  petStage.style.setProperty('animation','none','important');
+ }
+ const body=$('.pa-cat');
+ if(body){
+  body.classList.toggle('is-walking',isWalking);
+  body.classList.toggle('is-grooming',moodNow==='grooming');
+ }
+ // On the homepage the same gray kitten walks across the pixel brick path and turns at both ends.
+ const heroSprite=document.querySelector('#intro .garden-cat-sprite');
+ if(heroSprite){
+  const heroWalk=catTravel(now,24600,10000,2300);
+  const heroFrame=reducedMotion?'idle':heroWalk.walking?'walk-'+((petFrameIndex%4)+1):petFrameIndex%11===0?'blink':'idle';
+  setCatSprite(heroSprite,heroFrame);
+  const heroContainer=heroSprite.closest('.garden-running-cat');
+  const hero=heroContainer?.closest('.hero');
+  if(heroContainer&&hero){
+   const travel=Math.max(0,hero.clientWidth-heroContainer.offsetWidth-12);
+   heroContainer.style.setProperty('animation','none','important');
+   const x=7+(reducedMotion?.5:heroWalk.fraction)*travel;
+   heroContainer.style.setProperty('transform','translate3d('+x.toFixed(1)+'px,0,0) scaleX('+(reducedMotion?1:heroWalk.facing)+')','important');
+  }
+ }
+}
+const animateKitten=()=>{if(!document.hidden)paintKitten()};
+window.setInterval(animateKitten,195);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)paintKitten()});
-const originalPetRender=render;
-
 loadPet().then(()=>{render();paintKitten()});
 })();
