@@ -84,12 +84,13 @@ function fullnessNow(){
 }
 function mood(){
  if(petAnimation==='eating')return 'eating';
+ if(petAnimation==='grooming')return 'grooming';
  const fullness=fullnessNow();
  if(fullness<=25)return 'hungry';
  if(fullness>=90)return 'sleeping';
  return 'happy';
 }
-function moodText(){const m=mood();return m==='eating'?'Nhăm nhăm! ♡':m==='hungry'?'Meo… đói rồi!':m==='sleeping'?'No quá… Zzz':'Meo! Chơi cùng tui!'}
+function moodText(){const m=mood();return m==='eating'?'Nhăm nhăm! ♡':m==='grooming'?'Miu đang lau mặt! 🐾':m==='hungry'?'Meo… đói rồi!':m==='sleeping'?'No quá… Zzz':'Meo! Chơi cùng tui!'}
 function petScene(){
  const catMood=mood();
  const over=Object.entries(pet.equipped||{}).map(([slot,id])=>
@@ -121,12 +122,12 @@ function render(){
  root.querySelectorAll('[data-pa-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.paTab===currentView||(currentView==='play'&&b.dataset.paTab==='home'))));
  if(currentView==='home'){
   content.innerHTML='<div class="pa-home"><div class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🐱 Bé mèo của bạn</h2>'+petScene()+petStatus()+
-   '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:16px"><button class="pa-primary" data-pa-open="cat">Cho mèo ăn ♡</button><button class="pa-primary" data-pa-open="shop">🛍️ Mua trang phục</button></div></div>'+
+   '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:16px"><button class="pa-primary" data-pa-open="cat">Cho mèo ăn ♡</button><button class="pa-primary" data-pa-open="shop">🛍️ Mua trang phục</button><button class="pa-primary" data-pa-groom>🐾 Lau mặt</button></div></div>'+
    '<section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 11px">★ Chọn trò chơi</h2>'+gameButtons()+'</section></div>';
  }else if(currentView==='cat'){
   const food=ITEMS.filter(x=>x.category==='food');
   content.innerHTML='<div class="pa-home"><section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">Nhà của Miu Miu</h2>'+petScene()+petStatus()+
-   '<p class="pa-hint" style="margin-top:13px">Bạn có thể cho mèo ăn ngay cả khi no. Mèo no sẽ nằm ngủ và hiện Zzz.</p></section>'+
+   '<button class="pa-primary" data-pa-groom style="margin-top:14px">🐾 Lau mặt cho bé</button><p class="pa-hint" style="margin-top:13px">Bạn có thể cho mèo ăn ngay cả khi no. Mèo no sẽ nằm ngủ và hiện Zzz.</p></section>'+
    '<section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🍽️ Cho mèo ăn</h2><p class="pa-hint">Mua món tại cửa hàng trước, sau đó bấm Cho ăn.</p><div class="pa-shop-grid">'+food.map(i=>foodCard(i)).join('')+
    '</div><button class="pa-primary" data-pa-open="shop" style="margin-top:15px">🛒 Đến cửa hàng</button></section></div>';
  }else if(currentView==='shop'){
@@ -139,6 +140,7 @@ function render(){
  }else if(currentView==='play'){renderGame();return}
  content.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>startGame(b.dataset.game));
  content.querySelectorAll('[data-pa-open]').forEach(b=>b.onclick=()=>tab(b.dataset.paOpen));
+ content.querySelectorAll('[data-pa-groom]').forEach(b=>b.onclick=()=>groomCat());
  content.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{storeFilter=b.dataset.filter;render()});
  content.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>doShopAction(b.dataset.action,b.dataset.item,b));
 }
@@ -361,5 +363,48 @@ function renderPetOnly(){
   const bubble=sc.querySelector('.pa-cat-bubble');if(bubble)bubble.textContent=moodText();
  }
 }
-loadPet().then(render);
+
+/* The original gray & white kitten from the user's image is now the character. */
+const KITTEN_FRAMES=['idle','blink','hungry','groom','groom2','eat','sleep'];
+let petFrameIndex=0;
+function kittenImage(state){return '/kitten-'+state+'.svg?v=original-gray-cat-1'}
+function groomCat(){
+ if(petAnimation==='eating')return;
+ petAnimation='grooming';clearTimeout(animationTimeout);
+ render();paintKitten();
+ animationTimeout=setTimeout(()=>{petAnimation='';if(currentView!=='play')render();paintKitten()},2800);
+}
+function kittenFrame(){
+ const state=mood();
+ petFrameIndex++;
+ if(state==='eating')return petFrameIndex%2?'eat':'idle';
+ if(state==='grooming')return petFrameIndex%2?'groom':'groom2';
+ if(state==='sleeping')return 'sleep';
+ if(state==='hungry')return petFrameIndex%7===0?'blink':'hungry';
+ // Idle: blink, wipe face naturally, and swish into a relaxed pose.
+ const t=petFrameIndex%27;
+ if(t===7||t===8)return 'blink';
+ if(t===16||t===18)return 'groom';
+ if(t===17||t===19)return 'groom2';
+ return 'idle';
+}
+function paintKitten(){
+ const frame=kittenFrame(),picture=kittenImage(frame);
+ const base=$('.pa-cat-base');
+ if(base)base.style.backgroundImage='url("'+picture+'")';
+ const heroCat=document.querySelector('#intro .garden-cat-sprite');
+ if(heroCat){
+  const safe=(frame==='sleep'||frame==='hungry')?'idle':frame;
+  heroCat.style.backgroundImage='url("'+kittenImage(safe)+'")';
+ }
+ const m=mood();
+ const body=$('.pa-cat');
+ if(body){body.classList.toggle('is-grooming',m==='grooming')}
+}
+const animateKitten=()=>{if(document.hidden)return;paintKitten()};
+window.setInterval(animateKitten,420);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)paintKitten()});
+const originalPetRender=render;
+
+loadPet().then(()=>{render();paintKitten()});
 })();
