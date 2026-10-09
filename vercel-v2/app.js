@@ -1,16 +1,117 @@
 (()=>{
 const D=window.TTHK,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let db=null,user=null;D.profileContext=()=>({db,user});$('#team').innerHTML=D.team.map((x,i)=>'<div class="box member"><div class="memberpic" style="background-position:'+(i*25)+'% center"></div><h3>'+x[0]+'</h3><p class="muted">'+x[1]+'</p></div>').join('');
 function pane(id){$$('.authpane').forEach(x=>x.classList.toggle('on',x.id===id));$('#authStatus').textContent=''}$$('[data-auth]').forEach(b=>b.onclick=()=>pane(b.dataset.auth));
-async function session(){try{const r=await db.auth.getUser();if(r.error)throw r.error;user=r.data.user;$('#gate').hidden=!!user;$('#site').hidden=!user;$('#music').hidden=!user;if(user){$('#hello').textContent='Xin chào, '+(user.user_metadata?.full_name||user.email?.split('@')[0])+' 🌱';if(!D.words.length)D.loadWords().catch(e=>console.warn('Vocabulary data unavailable',e))}else pane('paneLogin');return !!user}catch(e){$('#authStatus').textContent='Không kiểm tra được phiên đăng nhập. Kiểm tra kết nối và thử tải lại trang.';return false}}
+async function session(){try{const r=await db.auth.getUser();if(r.error)throw r.error;user=r.data.user;$('#gate').hidden=!!user;$('#site').hidden=!user;$('#music').hidden=!user;if(user){$('#hello').textContent='Xin chào, '+(user.user_metadata?.full_name||user.email?.split('@')[0])+' 🌱';D.syncUserHeader?.();if(!D.words.length)D.loadWords().catch(e=>console.warn('Vocabulary data unavailable',e))}else{pane('paneLogin');D.syncUserHeader?.()}return !!user}catch(e){$('#authStatus').textContent='Không kiểm tra được phiên đăng nhập. Kiểm tra kết nối và thử tải lại trang.';return false}}
 async function auth(){db=window.supabase?.createClient('https://wcgzdbjmwhyroszvyetv.supabase.co','sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ');if(!db){$('#authStatus').textContent='Chưa tải được dịch vụ đăng nhập.';return}db.auth.onAuthStateChange(e=>{if(e==='PASSWORD_RECOVERY')pane('paneReset')});await session()}
 $('#login').onclick=async()=>{const btn=$('#login');const email=$('#emailLogin').value.trim();const pass=$('#passLogin').value;if(!email||!pass){$('#authStatus').textContent='Vui lòng nhập email và mật khẩu.';return}btn.disabled=true;btn.textContent='Đang đăng nhập…';$('#authStatus').textContent='Đang xác thực với Supabase…';try{if(!db)throw new Error('Chưa kết nối được dịch vụ tài khoản, hãy tải lại trang.');let r=await db.auth.signInWithPassword({email,password:pass});if(r.error)throw r.error;$('#authStatus').textContent='Đăng nhập thành công, đang mở website…';const ok=await session();if(!ok)$('#authStatus').textContent='Đã xác thực, nhưng chưa tải được trang học tập. Vui lòng tải lại trang.';}catch(e){const message=String(e.message||e);$('#authStatus').textContent=/invalid login credentials/i.test(message)?'Email hoặc mật khẩu không chính xác. Bạn có thể chọn Quên mật khẩu để đặt lại.':/email not confirmed/i.test(message)?'Bạn cần xác nhận email trước khi đăng nhập.':message;}finally{btn.disabled=false;btn.textContent='Đăng nhập'}};
 $('#register').onclick=async()=>{let full_name=$('#fullName').value.trim(),student_id=$('#studentId').value.trim().toUpperCase(),phone=$('#phone').value.trim(),email=$('#emailReg').value.trim().toLowerCase(),password=$('#passReg').value;if(!full_name||student_id.length<4||!/^0[0-9]{9}$/.test(phone)||!email.includes('@')||password.length<8){$('#authStatus').textContent='Nhập đủ họ tên, MSSV, SĐT 10 số, email và mật khẩu từ 8 ký tự.';return}let r=await db.auth.signUp({email,password,options:{data:{full_name,student_id,phone},emailRedirectTo:location.origin}});$('#authStatus').textContent=r.error?r.error.message:'Kiểm tra email xác nhận nếu được yêu cầu.'};
 $('#recover').onclick=async()=>{let r=await db.auth.resetPasswordForEmail($('#recoverEmail').value.trim(),{redirectTo:location.origin});$('#authStatus').textContent=r.error?r.error.message:'Nếu email đã đăng ký, hãy kiểm tra hộp thư.'};$('#changePassword').onclick=async()=>{let r=await db.auth.updateUser({password:$('#newPassword').value});$('#authStatus').textContent=r.error?r.error.message:'Mật khẩu đã được cập nhật.'};$('#logout').onclick=async()=>{await db.auth.signOut();session()};
 D.page=function(id){$$('.page').forEach(x=>x.classList.toggle('on',x.id===id));$$('.nav [data-page]').forEach(x=>x.classList.toggle('on',x.dataset.page===id));if(id==='writing')write();if(id==='rank')ranks();if(id==='lookup')D.lookup();window.scrollTo(0,0)};$$('[data-page]').forEach(b=>b.onclick=()=>D.page(b.dataset.page));
 ['level','topic','vocabQuery','onlyPhotos'].forEach(k=>$('#'+k).oninput=()=>{D.shown=32;D.vocab()});$('#loadMore').onclick=()=>{D.shown+=32;D.vocab()};$$('[data-lookup]').forEach(b=>b.onclick=()=>{D.lookupType=b.dataset.lookup;$$('[data-lookup]').forEach(x=>x.classList.toggle('on',x===b));D.lookup()});$('#query').oninput=D.lookup;$('#voice').onclick=()=>{let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert('Trình duyệt chưa hỗ trợ nhận dạng giọng nói.');let r=new SR();r.lang='zh-CN';r.onresult=e=>{$('#query').value=e.results[0][0].transcript;D.lookup()};r.start()};
-let writer=null,ctx=null,drawing=false,hideStrokeGuide=false;function write(){let w=D.words[D.writeIndex];if(!w)return;$('#writeSelect').value=D.writeIndex;$('#writeSelect').hidden=D.isHidden;$('#hanzi').textContent=D.isHidden?'？':w.h;$('#pinyin').textContent=D.isHidden?'Đã ẩn phiên âm':w.p;$('#meaning').textContent=w.m;$('#hideWord').textContent=D.isHidden?'👁 Hiện đáp án':'🙈 Ẩn chữ';$('#chars').innerHTML=[...w.h].map((c,i)=>'<button class="btn soft" data-char="'+i+'">'+(D.isHidden?'Chữ '+(i+1):c)+'</button>').join('');$$('[data-char]').forEach(b=>b.onclick=()=>{D.charIndex=+b.dataset.char;write()});$('#writeCanvas').innerHTML='';if(D.isHidden||hideStrokeGuide){writer=null;let c=document.createElement('canvas');c.width=270;c.height=270;$('#writeCanvas').append(c);ctx=c.getContext('2d');ctx.lineWidth=8;ctx.strokeStyle='#12835e';ctx.lineCap='round';const xy=e=>{let r=c.getBoundingClientRect();return[(e.clientX-r.left)*270/r.width,(e.clientY-r.top)*270/r.height]};c.onpointerdown=e=>{drawing=true;c.setPointerCapture(e.pointerId);ctx.beginPath();ctx.moveTo(...xy(e))};c.onpointermove=e=>{if(drawing){ctx.lineTo(...xy(e));ctx.stroke()}};c.onpointerup=()=>drawing=false;$('#writingHelp').textContent='Không có nét gợi ý. Hãy tự viết trên bảng trống rồi bật chỉ dẫn để kiểm tra.'}else{ctx=null;if(window.HanziWriter){writer=HanziWriter.create('writeCanvas',[...w.h][D.charIndex],{width:265,height:265,padding:16,strokeColor:'#218865'});writer.animateCharacter()}}}
-const guideBtn=document.createElement('button');guideBtn.className='btn soft';guideBtn.type='button';guideBtn.id='toggleStrokeGuide';guideBtn.textContent='🙈 Ẩn chỉ dẫn nét';$('#hideWord').insertAdjacentElement('afterend',guideBtn);guideBtn.onclick=()=>{hideStrokeGuide=!hideStrokeGuide;guideBtn.textContent=hideStrokeGuide?'👁 Hiện chỉ dẫn nét':'🙈 Ẩn chỉ dẫn nét';write();};
-$('#writeSelect').onchange=e=>{D.writeIndex=+e.target.value;D.charIndex=0;write()};$('#hideWord').onclick=()=>{D.isHidden=!D.isHidden;write()};$('#hear').onclick=()=>D.speak(D.words[D.writeIndex]?.h||'你好');$('#animate').onclick=()=>{if(D.isHidden){D.isHidden=false;write()}else writer?.animateCharacter()};$('#trace').onclick=()=>{if(writer)writer.quiz();else $('#writingHelp').textContent='Bạn đang ở chế độ viết tự do, hãy viết vào ô trống.';};$('#clear').onclick=()=>ctx?ctx.clearRect(0,0,270,270):write();
+let writer=null;
+let writingProgress={accepted:0,mistakes:0,completed:0,done:false};
+let writingToken=0;
+const resultPanel=document.createElement('div');
+resultPanel.id='writingResult';
+resultPanel.setAttribute('role','status');
+resultPanel.style.cssText='margin-top:12px;padding:12px;border-radius:12px;background:#edf7ef;color:#185b40;line-height:1.8;';
+$('#writingHelp').insertAdjacentElement('afterend',resultPanel);
+function restartWriting(){
+ writingProgress={accepted:0,mistakes:0,completed:0,done:false};
+ D.charIndex=0;
+ write();
+}
+function writingProgressText(){
+ return 'Đang kiểm tra chữ '+(D.charIndex+1)+'/'+[...D.words[D.writeIndex].h].length+'. Hãy tự viết từng nét vào ô trống. Không có chữ hoặc nét gợi ý.';
+}
+function writingFinish(){
+ writingProgress.done=true;
+ const accepted=writingProgress.accepted,misses=writingProgress.mistakes;
+ const score=accepted?Math.round(100*accepted/(accepted+misses)):0;
+ resultPanel.replaceChildren();
+ const heading=document.createElement('strong');
+ heading.style.fontSize='22px';
+ heading.textContent='✅ Mức độ khớp nét: '+score+'%';
+ const detail=document.createElement('p');
+ detail.textContent='Hoàn thành '+writingProgress.completed+' chữ · '+accepted+' nét được chấp nhận · '+misses+' lần viết chưa đúng.';
+ const note=document.createElement('p');note.style.fontSize='12px';
+ note.textContent='Điểm tham khảo dựa trên hướng, thứ tự và độ gần của nét do Hanzi Writer kiểm tra; không phải tỷ lệ trùng khớp ảnh hay chứng nhận chữ viết tay.';
+ const reset=document.createElement('button');
+ reset.type='button';reset.className='btn soft';reset.textContent='↺ Viết lại và chấm lại';reset.onclick=restartWriting;
+ resultPanel.append(heading,detail,note,reset);
+ $('#writingHelp').textContent='Đã hoàn thành. Bấm Hiện chữ để xem đáp án hoặc Viết lại để luyện tiếp.';
+}
+function write(){
+ const w=D.words[D.writeIndex];if(!w)return;
+ const chars=[...w.h];if(!chars.length)return;
+ const token=++writingToken;
+ try{writer?.cancelQuiz?.()}catch(e){}
+ writer=null;
+ $('#writeSelect').value=D.writeIndex;$('#writeSelect').hidden=D.isHidden;
+ $('#hanzi').textContent=D.isHidden?'？':w.h;
+ $('#pinyin').textContent=D.isHidden?'Đã ẩn pinyin':w.p;
+ $('#meaning').textContent=w.m;
+ $('#hideWord').textContent=D.isHidden?'👁 Hiện chữ':'🙈 Ẩn chữ';
+ $('#chars').replaceChildren();
+ if(D.isHidden){
+  const status=document.createElement('span');status.className='muted';
+  status.textContent='Đang kiểm tra chữ '+(D.charIndex+1)+' / '+chars.length;
+  $('#chars').append(status);
+ }else{
+  $('#chars').innerHTML=chars.map((c,i)=>'<button type="button" class="btn soft" data-char="'+i+'">'+c+'</button>').join('');
+  $$('[data-char]').forEach(b=>b.onclick=()=>{D.charIndex=+b.dataset.char;write()});
+ }
+ $('#writeCanvas').innerHTML='';
+ if(!window.HanziWriter){
+  $('#writingHelp').textContent='Không tải được công cụ kiểm tra nét. Hãy kiểm tra kết nối mạng rồi tải lại trang.';
+  return;
+ }
+ writer=HanziWriter.create('writeCanvas',chars[D.charIndex],{
+  width:265,height:265,padding:16,strokeColor:'#19815b',outlineColor:'#d4e9dd',
+  drawingColor:'#178565',showCharacter:!D.isHidden,showOutline:!D.isHidden,
+  showHintAfterMisses:false,highlightOnComplete:false,
+  onLoadCharDataError:()=>{if(token===writingToken)$('#writingHelp').textContent='Chưa tải được dữ liệu nét chữ này; hãy thử lại.';}
+ });
+ if(!D.isHidden){
+  resultPanel.hidden=true;
+  $('#writingHelp').textContent='Xem chữ Hán và thứ tự nét, sau đó nhấn Ẩn chữ để viết không nhìn mẫu.';
+  writer.animateCharacter();
+  return;
+ }
+ resultPanel.hidden=false;resultPanel.replaceChildren();
+ $('#writingHelp').textContent=writingProgressText();
+ const message=document.createElement('p');message.textContent='✍️ Tự viết vào ô trống. Hệ thống sẽ kiểm tra từng nét và chấm điểm khi hoàn thành từ.';
+ resultPanel.append(message);
+ let correctOnChar=0;
+ writer.quiz({
+  showHintAfterMisses:false,acceptBackwardsStrokes:false,leniency:0.85,highlightOnComplete:false,
+  onCorrectStroke:()=>{
+   if(token!==writingToken)return;
+   correctOnChar++;
+  },
+  onMistake:()=>{},
+  onComplete:summary=>{
+   if(token!==writingToken||writingProgress.done)return;
+   writingProgress.accepted+=correctOnChar;
+   writingProgress.mistakes+=summary.totalMistakes||0;
+   writingProgress.completed++;
+   if(D.charIndex+1<chars.length){
+    $('#writingHelp').textContent='✅ Hoàn thành chữ '+(D.charIndex+1)+'/'+chars.length+'. Hãy chuyển sang chữ kế tiếp.';
+    resultPanel.replaceChildren();
+    const n=document.createElement('button');n.type='button';n.className='btn';
+    n.textContent='Tiếp tục chữ '+(D.charIndex+2)+' / '+chars.length+' →';
+    n.onclick=()=>{D.charIndex++;write()};
+    resultPanel.append(n);
+   }else writingFinish();
+  }
+ });
+}
+$('#writeSelect').onchange=e=>{D.writeIndex=+e.target.value;D.isHidden=false;restartWriting()};
+$('#hideWord').onclick=()=>{D.isHidden=!D.isHidden;restartWriting()};
+$('#hear').onclick=()=>D.speak(D.words[D.writeIndex]?.h||'你好');
+$('#animate').textContent='▶ Xem mẫu';$('#animate').onclick=()=>{if(D.isHidden){D.isHidden=false;restartWriting()}else writer?.animateCharacter()};
+$('#trace').textContent='✍ Bắt đầu chấm';$('#trace').onclick=()=>{D.isHidden=true;restartWriting()};
+$('#clear').textContent='↺ Viết lại';$('#clear').onclick=restartWriting;
 let quizWords=[],qi=0,correct=0,flash=false,testLevel=1,testNum=1;function begin(f){flash=f;testLevel=f?1:+$('#examLevel').value;testNum=f?Math.ceil(Math.random()*300):+$('#examNum').value;quizWords=D.shuffle(D.words.filter(w=>w.l<=testLevel),testLevel*813+testNum*179).slice(0,f?+$('#flashCount').value:testLevel===1?40:60);qi=0;correct=0;question()}
 function question(){let box=flash?$('#flashBody'):$('#examBody');if(qi>=quizWords.length)return finish();let w=quizWords[qi],listen=!flash&&qi<quizWords.length/2,opts=D.shuffle([w,...D.shuffle(D.words.filter(x=>x.h!==w.h&&x.m!==w.m),qi*31).slice(0,3)],testNum+qi*7);box.innerHTML='<p>HSK'+testLevel+' · Câu '+(qi+1)+'/'+quizWords.length+'</p><h1 style="text-align:center">'+(listen?'🎧':w.h)+'</h1>'+(listen?'<button class="btn soft" id="listenQ">🔊 Nghe</button>':'')+opts.map((x,i)=>'<button class="choice" data-answer="'+i+'">'+x.m+'</button>').join('')+'<p id="feedback"></p>';if(listen)$('#listenQ').onclick=()=>D.speak(w.h);$$('[data-answer]').forEach(b=>b.onclick=()=>{if($('#feedback').dataset.done)return;$('#feedback').dataset.done='1';let ok=opts[+b.dataset.answer]===w;if(ok)correct++;$('#feedback').innerHTML=(ok?'✅ Chính xác!':'❌ Đáp án: '+w.m)+' <button class="btn" id="next">Tiếp theo</button>';$('#next').onclick=()=>{qi++;question()}})}
 async function finish(){let rate=Math.round(correct/quizWords.length*100),box=flash?$('#flashBody'):$('#examBody');box.innerHTML='<h2>'+(flash?'🎉 Hoàn thành flashcard!':'🎉 Hoàn thành đề HSK!')+'</h2><h1>'+rate+'%</h1><p>'+correct+'/'+quizWords.length+' câu đúng.</p><p id="scoreSaved"></p><button class="btn" id="retry">Thử lại</button>';$('#retry').onclick=()=>begin(flash);if(flash)return;let r=await db.from('hsk_scores').insert({user_id:user.id,nickname:String(user.user_metadata?.full_name||user.email?.split('@')[0]||'Học viên').slice(0,40),level:testLevel,score:rate,correct,total:quizWords.length});$('#scoreSaved').textContent=r.error?r.error.message:'Đã lưu điểm lên bảng xếp hạng.'}$('#startExam').onclick=()=>begin(false);$('#startFlash').onclick=()=>begin(true);
@@ -189,3 +290,64 @@ $('#uploadPhoto').onclick=async()=>{
  finally{btn.disabled=false;}
 };
 }());
+
+// Unified account chip on every page; remove the entire Notes / Calendar / Documents menu.
+(()=>{
+ const $=s=>document.querySelector(s);
+ const D=window.TTHK;
+ const navNotes=document.querySelector('.nav [data-page="notes"]');
+ if(navNotes)navNotes.remove();
+ const notesPage=$('#notes');
+ if(notesPage)notesPage.remove();
+ const hello=$('#hello');
+ const top=document.createElement('div');top.id='accountTopBar';
+ top.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px;';
+ hello.parentNode.insertBefore(top,hello);top.append(hello);
+ hello.style.margin='0';hello.style.color='#668372';hello.style.fontSize='14px';
+ const accountBtn=document.createElement('button');
+ accountBtn.type='button';accountBtn.id='accountHeaderButton';
+ accountBtn.setAttribute('aria-label','Mở thông tin cá nhân');
+ accountBtn.title='Nhấn để xem và sửa thông tin cá nhân';
+ accountBtn.style.cssText='display:flex;align-items:center;gap:10px;max-width:100%;padding:7px 14px 7px 7px;border-radius:99px;border:1px solid #cfe5d5;background:#fff;color:#195b41;box-shadow:0 6px 22px #125b2b14;font-weight:700;cursor:pointer;';
+ const avatar=document.createElement('span');avatar.id='accountAvatar';
+ avatar.style.cssText='display:grid;place-items:center;overflow:hidden;width:39px;height:39px;border-radius:50%;background:#dcf1e4;font-size:23px;';
+ avatar.textContent='🐼';
+ const name=document.createElement('span');name.id='accountName';name.textContent='Học viên';
+ const arrow=document.createElement('span');arrow.textContent='⌄';arrow.setAttribute('aria-hidden','true');
+ accountBtn.append(avatar,name,arrow);top.append(accountBtn);
+ accountBtn.onclick=()=>D.page('profile');
+ let refreshCounter=0;
+ D.syncUserHeader=async()=>{
+  const {db,user}=D.profileContext?.()||{};
+  const seq=++refreshCounter;
+  if(!db||!user){name.textContent='Học viên';avatar.textContent='🐼';return;}
+  const metadata=user.user_metadata||{};
+  name.textContent=metadata.full_name||user.email?.split('@')[0]||'Học viên';
+  let picPath=metadata.avatar_path||null;
+  try{
+   const r=await db.from('student_profiles').select('full_name,avatar_path').eq('user_id',user.id).maybeSingle();
+   if(seq!==refreshCounter)return;
+   if(!r.error&&r.data){
+    name.textContent=r.data.full_name||name.textContent;
+    picPath=r.data.avatar_path||picPath;
+   }
+  }catch(e){}
+  if(seq!==refreshCounter)return;
+  avatar.replaceChildren();
+  if(picPath){
+   const result=db.storage.from('student-avatars').getPublicUrl(picPath);
+   const url=result.data?.publicUrl;
+   if(url){
+    const img=document.createElement('img');img.alt='Ảnh đại diện của bạn';
+    img.style.cssText='width:100%;height:100%;object-fit:cover;';
+    img.onerror=()=>{avatar.textContent='🐼';};
+    img.src=url;avatar.append(img);return;
+   }
+  }
+  avatar.textContent='🐼';
+ };
+ const prev=D.page;
+ D.page=id=>{prev(id);D.syncUserHeader?.()};
+ document.querySelector('#saveName')?.addEventListener('click',()=>setTimeout(()=>D.syncUserHeader?.(),1200));
+ document.querySelector('#uploadPhoto')?.addEventListener('click',()=>setTimeout(()=>D.syncUserHeader?.(),1600));
+})();
