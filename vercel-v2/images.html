@@ -12,7 +12,7 @@
 <section id="loginSection" class="panel loginbox" hidden><h2>🔐 Đăng nhập quản trị</h2><p class="muted">Dùng chính tài khoản website hiện tại. Bạn không cần tạo tài khoản mới.</p><input type="email" id="email" autocomplete="email" placeholder="Email"><input type="password" id="password" autocomplete="current-password" placeholder="Mật khẩu"><button type="button" id="login" class="btn">Đăng nhập</button><p id="loginStatus" role="status" class="muted"></p></section>
 <section id="editor" class="layout" hidden>
 <div class="panel"><h2>1. Chọn hình cần thay</h2>
-<label for="target">Chọn mục</label><select id="target"><option value="logo">Logo website</option><option value="thanh-dat">Thành Đạt</option><option value="hong-diep">Hồng Diệp</option><option value="yen-vi">Yến Vi</option><option value="ngoc-giau">Ngọc Giàu</option><option value="phuong-nghi">Phương Nghi</option></select>
+<label for="target">Chọn mục</label><select id="target"><option value="logo">Logo website</option><option value="thanh-dat">Thành Đạt</option><option value="hong-diep">Hồng Diệp</option><option value="yen-vi">Yến Vi</option><option value="ngoc-giau">Ngọc Giàu</option><option value="phuong-nghi">Phương Nghi</option><option value="login-background">🖼️ Ảnh nền đăng nhập (toàn màn hình)</option></select>
 <label>Hình hiện đang lưu</label><div class="current"><img id="currentImg" alt="Ảnh hiện tại" hidden><div><strong id="currentName">Chưa có ảnh riêng</strong><small id="currentHint">Có thể đang dùng ảnh mẫu cũ</small></div></div>
 <label for="file">Tải hình gốc mới</label><input id="file" type="file" accept="image/jpeg,image/png,image/webp">
 <p class="help" id="info">JPG, PNG, WebP · tối đa 4 MB khi lưu. Ảnh 3:4 từ 750×1000 px trở lên; logo từ 1024×1024 px.</p>
@@ -31,7 +31,7 @@
 (function(){
 'use strict';
 const $=s=>document.querySelector(s),api='https://wcgzdbjmwhyroszvyetv.supabase.co',key='sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ';
-const targets={'logo':{name:'Logo website',ratio:1},'thanh-dat':{name:'Thành Đạt',ratio:.75},'hong-diep':{name:'Hồng Diệp',ratio:.75},'yen-vi':{name:'Yến Vi',ratio:.75},'ngoc-giau':{name:'Ngọc Giàu',ratio:.75},'phuong-nghi':{name:'Phương Nghi',ratio:.75}};
+const targets={'logo':{name:'Logo website',ratio:1},'thanh-dat':{name:'Thành Đạt',ratio:.75},'hong-diep':{name:'Hồng Diệp',ratio:.75},'yen-vi':{name:'Yến Vi',ratio:.75},'ngoc-giau':{name:'Ngọc Giàu',ratio:.75},'phuong-nghi':{name:'Phương Nghi',ratio:.75},'login-background':{name:'Ảnh nền đăng nhập',ratio:16/9}};
 let db=null,user=null,editor=false,records={},file=null,img=null,zoom=100,offX=0,offY=0,fit='contain',drag=null;
 const canvas=$('#preview');
 function status(s){$('#status').textContent=s;}
@@ -46,8 +46,8 @@ cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality='high';
 cx.drawImage(img,(fullWidth-dw)/2+offX*fullWidth,(fullHeight-dh)/2+offY*fullHeight,dw,dh);
 }
 function redraw(){const d=dims();canvas.width=d.w;canvas.height=d.h;display(canvas,d.w,d.h);$('#zoomValue').textContent=zoom+'%';$('#zoom').value=String(zoom)}
-function reset(){file=null;if(img?.close)img.close();img=null;zoom=100;offX=0;offY=0;fit='contain';$('#file').value='';document.querySelector('input[name=fit][value=contain]').checked=true;$('#info').textContent='JPG, PNG, WebP · tối đa 4 MB khi lưu. Ảnh 3:4 từ 750×1000 px trở lên; logo từ 1024×1024 px.';redraw()}
-function publicUrl(record){if(!record?.image_path)return null;const u=db.storage.from('team-portraits').getPublicUrl(record.image_path).data.publicUrl;return u+'?v='+encodeURIComponent(record.updated_at||'1')}
+function reset(){file=null;if(img?.close)img.close();img=null;zoom=100;offX=0;offY=0;fit='contain';$('#file').value='';document.querySelector('input[name=fit][value=contain]').checked=true;$('#info').textContent=($('#target').value==='login-background'?'Ảnh nền: JPG / PNG / WebP đến 10 MB, tỉ lệ khuyến nghị 16:9 và ít nhất 1920×1080 px.':'JPG, PNG, WebP · tối đa 4 MB khi lưu. Ảnh 3:4 từ 750×1000 px trở lên; logo từ 1024×1024 px.');redraw()}
+function publicUrl(record){if(!record?.image_path)return null;const u=db.storage.from(record.slug==='login-background'?'login-backgrounds':'team-portraits').getPublicUrl(record.image_path).data.publicUrl;return u+'?v='+encodeURIComponent(record.updated_at||'1')}
 function updateCurrent(){const row=records[$('#target').value],i=$('#currentImg');const url=publicUrl(row);i.hidden=!url;if(url)i.src=url;$('#currentName').textContent=row?'Ảnh đã tải lên':'Chưa có ảnh riêng';$('#currentHint').textContent=row?'Ảnh lưu trên máy chủ của website':'Website có thể đang hiển thị ảnh ghép cũ'}
 async function getEditor(){
 const r=await db.from('site_editors').select('user_id').eq('user_id',user.id).maybeSingle();
@@ -96,16 +96,16 @@ const chosen=target(),aspect=img.naturalWidth/img.naturalHeight;
 const unchanged=zoom===100&&Math.abs(offX)<.001&&Math.abs(offY)<.001&&fit==='contain'&&Math.abs(aspect-chosen.ratio)<.01;
 let blob=file,note='Giữ nguyên tệp gốc';
 if(!unchanged){
-const W=Math.min(img.naturalWidth,chosen.ratio===1?2048:1440),H=Math.round(W/chosen.ratio);
+const W=Math.min(img.naturalWidth,$('#target').value==='login-background'?2560:chosen.ratio===1?2048:1440),H=Math.round(W/chosen.ratio);
 const c=document.createElement('canvas');c.width=W;c.height=H;display(c,W,H);
 const mime=chosen.ratio===1?'image/png':'image/webp';
 blob=await new Promise(resolve=>c.toBlob(resolve,mime,.95));if(!blob)throw Error('Không xuất được ảnh đã chỉnh');
 note='Xuất ảnh '+W+'×'+H+' px · '+(chosen.ratio===1?'PNG không mất nét':'WebP 95%');
 }
-if(blob.size>4194304)throw Error('Tệp sau chỉnh vượt 4 MB. Hãy chọn ảnh nhỏ hơn hoặc điều chỉnh.');
+const limit=$('#target').value==='login-background'?10485760:4194304;if(blob.size>limit)throw Error('Tệp sau chỉnh vượt '+(limit/1048576)+' MB. Hãy chọn ảnh nhỏ hơn hoặc điều chỉnh.');
 const ext=blob.type==='image/png'?'png':blob.type==='image/webp'?'webp':'jpg';
-const slug=$('#target').value,path='team/'+slug+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,9)+'.'+ext;
-const saved=await db.storage.from('team-portraits').upload(path,blob,{contentType:blob.type,cacheControl:'31536000',upsert:false});if(saved.error)throw saved.error;
+const slug=$('#target').value,path=(slug==='login-background'?'background/':'team/')+slug+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,9)+'.'+ext;
+const saved=await db.storage.from(slug==='login-background'?'login-backgrounds':'team-portraits').upload(path,blob,{contentType:blob.type,cacheControl:'31536000',upsert:false});if(saved.error)throw saved.error;
 const record={slug,image_path:path,updated_at:new Date().toISOString()};
 const u=await db.from('site_assets').upsert(record,{onConflict:'slug'});if(u.error)throw u.error;
 records[slug]=record;updateCurrent();
