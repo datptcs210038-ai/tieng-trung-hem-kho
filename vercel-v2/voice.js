@@ -1,100 +1,93 @@
-(function () {
-  'use strict';
-  const app = window.TTHK;
-  if (!app) return;
-  const STORAGE_VOICE = 'tthk_voice_v3';
-  const STORAGE_SPEED = 'tthk_speech_speed_v3';
-  const ss = window.speechSynthesis;
-  let candidates = [];
-  let selected = localStorage.getItem(STORAGE_VOICE) || '';
-  let speed = Number(localStorage.getItem(STORAGE_SPEED)) || 0.9;
-  let status = null;
-
-  function isMandarin(voice) {
-    const lang = (voice.lang || '').toLowerCase().replace(/_/g, '-');
-    return lang === 'zh-cn' || lang === 'zh-hans' || lang.startsWith('zh-hans-') || lang === 'cmn' || lang.startsWith('cmn-');
+/* Mandarin voice coach — concise controls & natural Mandarin preference */
+(()=>{
+'use strict';
+const D=window.TTHK;
+if(!D)return;
+const synth=window.speechSynthesis;
+const KEY_VOICE='tthk_voice_v4',KEY_SPEED='tthk_voice_speed_v4';
+let allVoices=[],chosen=localStorage.getItem(KEY_VOICE)||'auto';
+let speed=Number(localStorage.getItem(KEY_SPEED))||0.85;
+const $=s=>document.querySelector(s);
+function mandarin(voice){
+ const lang=(voice.lang||'').toLowerCase().replace(/_/g,'-');
+ return lang==='zh-cn'||lang==='zh-hans'||lang.startsWith('zh-hans-cn')||lang.startsWith('cmn-')||lang==='cmn';
+}
+function score(v){
+ const name=(v.name||'').toLowerCase();
+ let points=0;
+ if(/natural|neural|premium|online|enhanced/.test(name))points+=100;
+ if(/xiaoxiao|xiaoyi|xiaohan|ting.?ting|meijia|google.*(普通话|mandarin|chinese)/i.test(name))points+=65;
+ if(/microsoft|google|apple/.test(name))points+=12;
+ if(/mainland|mandarin|普通话/.test(name))points+=10;
+ if(v.localService===false)points+=7;
+ if(/yuxi|yunxi|yunjian/.test(name))points+=30;
+ if(/compact|eSpeak|espeak|old/.test(name))points-=90;
+ return points;
+}
+function selectedVoice(){
+ return allVoices.find(v=>v.voiceURI===chosen)||allVoices[0]||null;
+}
+function refresh(){
+ allVoices=synth?synth.getVoices().filter(mandarin).sort((a,b)=>score(b)-score(a)||a.name.localeCompare(b.name)):[];
+ const pick=$('#speechVoice'),message=$('#speechStatus');
+ if(!pick)return;
+ pick.replaceChildren();
+ pick.add(new Option('Đề xuất · Quan thoại rõ', 'auto'));
+ for(const v of allVoices){
+  const label=(v.name||'Giọng tiếng Trung')+' · '+v.lang;
+  pick.add(new Option(label,v.voiceURI));
+ }
+ pick.value=allVoices.some(v=>v.voiceURI===chosen)?chosen:'auto';
+ if(message)message.textContent=allVoices.length
+  ?'Có '+allVoices.length+' giọng Quan thoại trên thiết bị. Mặc định ưu tiên giọng rõ, tự nhiên.'
+  :'Thiết bị chưa tải giọng tiếng Trung. Hãy cài thêm giọng Quan thoại trong cài đặt hệ điều hành.';
+}
+function speak(text){
+ if(!synth||!window.SpeechSynthesisUtterance){
+  const msg=$('#speechStatus');if(msg)msg.textContent='Thiết bị chưa hỗ trợ đọc tiếng Trung.';return;
+ }
+ const value=String(text||'').trim().slice(0,220);
+ if(!value)return;
+ synth.cancel();
+ const u=new SpeechSynthesisUtterance(value);
+ u.lang='zh-CN';u.rate=speed;u.pitch=1;u.volume=1;
+ const voice=selectedVoice();
+ if(voice)u.voice=voice;
+ u.onerror=e=>{
+  if(!['canceled','interrupted'].includes(e.error)){
+   const msg=$('#speechStatus');
+   if(msg)msg.textContent='Chưa phát được giọng này. Hãy thử “Đề xuất” hoặc chọn một giọng khác.';
   }
-  function rank(voice) {
-    const name = (voice.name || '').toLowerCase();
-    let score = 0;
-    if (/natural|neural|premium|enhanced|online/.test(name)) score += 110;
-    if (/xiaoxiao|xiaohan|xiaoyi|ting.?ting|google.*(普通话|mandarin|chinese)/.test(name)) score += 60;
-    if (/yuxi|yunxi|yunjian|li.?mu/.test(name)) score += 25;
-    if (/microsoft|google|apple/.test(name)) score += 8;
-    if (/female|woman|nữ/.test(name)) score += 3;
-    return score;
-  }
-  function refreshVoices() {
-    candidates = ss ? ss.getVoices().filter(isMandarin).sort((a, b) => rank(b) - rank(a) || a.name.localeCompare(b.name)) : [];
-    const select = document.getElementById('speechVoice');
-    if (!select) return;
-    const previous = selected;
-    select.replaceChildren();
-    const automatic = new Option('✨ Tự chọn giọng rõ nhất', 'auto');
-    select.add(automatic);
-    for (const voice of candidates) select.add(new Option(voice.name + ' · ' + voice.lang, voice.voiceURI));
-    select.value = previous && candidates.some(v => v.voiceURI === previous) ? previous : 'auto';
-    if (status) status.textContent = candidates.length
-      ? 'Có ' + candidates.length + ' giọng Quan thoại trên trình duyệt này. Giọng tự nhiên phụ thuộc thiết bị.'
-      : 'Trình duyệt chưa cung cấp giọng Quan thoại riêng. Hệ thống sẽ yêu cầu giọng zh-CN mặc định.';
-  }
-  function currentVoice() {
-    return candidates.find(v => v.voiceURI === selected) || candidates[0] || null;
-  }
-  app.speak = function (text) {
-    if (!ss || !window.SpeechSynthesisUtterance) {
-      if (status) status.textContent = 'Thiết bị không hỗ trợ phát âm trực tiếp.';
-      return;
-    }
-    const chinese = String(text || '').trim().slice(0, 180);
-    if (!chinese) return;
-    ss.cancel();
-    const utterance = new SpeechSynthesisUtterance(chinese);
-    utterance.lang = 'zh-CN';
-    utterance.rate = speed;
-    utterance.pitch = 1;
-    utterance.volume = 1;
-    const voice = currentVoice();
-    if (voice) utterance.voice = voice;
-    utterance.onerror = e => {
-      if (e.error !== 'interrupted' && e.error !== 'canceled' && status)
-        status.textContent = 'Chưa phát được giọng đọc. Bạn hãy đổi giọng hoặc thử trình duyệt khác.';
-    };
-    ss.speak(utterance);
-  };
-  function setup() {
-    const section = document.getElementById('vocab');
-    if (!section) return;
-    const panel = document.createElement('div');
-    panel.className = 'box';
-    panel.id = 'speechPanel';
-    panel.style.marginBottom = '16px';
-    panel.innerHTML = '<h3 style="margin:0 0 8px">🎙️ Giọng đọc tiếng Trung</h3>'
-      + '<p class="muted" style="margin:0 0 10px">Chọn giọng Quan thoại tự nhiên và tốc độ phù hợp để luyện nghe.</p>'
-      + '<div class="row"><label for="speechVoice">Giọng đọc</label><select id="speechVoice" style="max-width:100%;min-width:220px"></select>'
-      + '<label for="speechSpeed">Tốc độ</label><select id="speechSpeed"><option value="0.75">Chậm · 0.75×</option><option value="0.9">Vừa · 0.9×</option><option value="1">Bình thường · 1×</option></select>'
-      + '<button type="button" class="btn soft" id="speechTest">🔊 Nghe thử 你好</button></div>'
-      + '<p class="muted" id="speechStatus" style="font-size:12px;margin-bottom:0" role="status"></p>';
-    const grid = document.getElementById('wordGrid');
-    if (grid) section.insertBefore(panel, grid);
-    else section.appendChild(panel);
-    status = document.getElementById('speechStatus');
-    const v = document.getElementById('speechVoice');
-    const rateSelect = document.getElementById('speechSpeed');
-    rateSelect.value = String([.75,.9,1].includes(speed) ? speed : .9);
-    rateSelect.onchange = () => {
-      speed = Number(rateSelect.value);
-      localStorage.setItem(STORAGE_SPEED, String(speed));
-    };
-    v.onchange = () => {
-      selected = v.value === 'auto' ? '' : v.value;
-      if (selected) localStorage.setItem(STORAGE_VOICE, selected);
-      else localStorage.removeItem(STORAGE_VOICE);
-    };
-    document.getElementById('speechTest').onclick = () => app.speak('你好');
-    refreshVoices();
-    if (ss && typeof ss.addEventListener === 'function') ss.addEventListener('voiceschanged', refreshVoices);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup, { once: true });
-  else setup();
-}());
+ };
+ synth.speak(u);
+}
+D.speak=speak;
+function init(){
+ const section=$('#vocab'),grid=$('#wordGrid');
+ if(!section||$('#speechPanel'))return;
+ const panel=document.createElement('details');
+ panel.id='speechPanel';panel.className='speech-panel compact-collapsible';
+ panel.innerHTML='<summary class="compact-detail-summary"><span class="detail-icon" aria-hidden="true">◖))</span><span>Giọng đọc tiếng Trung</span><small>Chạm để chọn giọng và tốc độ</small><span class="detail-caret" aria-hidden="true">⌄</span></summary>'
+ +'<div class="speech-controls">'
+ +'<label for="speechVoice">Giọng Quan thoại</label><select id="speechVoice" aria-label="Chọn giọng đọc Quan thoại"></select>'
+ +'<label for="speechSpeed">Tốc độ phát âm</label><select id="speechSpeed"><option value="0.75">Rõ từng từ · 0,75×</option><option value="0.85">Luyện nghe · 0,85×</option><option value="1">Tự nhiên · 1,0×</option></select>'
+ +'<button type="button" class="btn soft" id="speechTest">▶ Nghe thử 你好</button>'
+ +'<p id="speechStatus" role="status"></p>'
+ +'</div>';
+ if(grid)section.insertBefore(panel,grid);else section.append(panel);
+ const sel=$('#speechVoice'),rate=$('#speechSpeed');
+ rate.value=String([.75,.85,1].includes(speed)?speed:.85);
+ speed=Number(rate.value);
+ rate.onchange=()=>{speed=Number(rate.value);localStorage.setItem(KEY_SPEED,String(speed))};
+ sel.onchange=()=>{chosen=sel.value;localStorage.setItem(KEY_VOICE,chosen);speak('你好，我正在学习中文。')};
+ $('#speechTest').onclick=()=>speak('你好，我正在学习中文。');
+ refresh();
+ if(synth){
+  if(typeof synth.addEventListener==='function')synth.addEventListener('voiceschanged',refresh);
+  else synth.onvoiceschanged=refresh;
+  setTimeout(refresh,350);setTimeout(refresh,1400);
+ }
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+else init();
+})();
