@@ -490,3 +490,91 @@
  #pixelArcade .pa-cat,#pixelArcade .pa-cat-base,
  #intro .hero .garden-running-cat,#intro .hero .garden-cat-sprite{animation:none!important;transition:none!important}
 }
+
+
+/* CAT WARDROBE v7: every garment is rendered in a common 128×100 cat-pose coordinate
+   space. Remove legacy pinned accessory rectangles that made clothing float. */
+#pixelArcade .pa-cat{isolation:isolate}
+#pixelArcade .pa-cat .pa-gear,
+#pixelArcade .pa-cat .pa-gear.head,
+#pixelArcade .pa-cat .pa-gear.neck,
+#pixelArcade .pa-cat .pa-gear.body{
+ display:block!important;
+ position:absolute!important;
+ inset:0!important;
+ left:0!important;
+ top:0!important;
+ right:0!important;
+ bottom:0!important;
+ width:100%!important;
+ height:100%!important;
+ max-width:none!important;
+ max-height:none!important;
+ margin:0!important;
+ padding:0!important;
+ transform:none!important;
+ border:0!important;
+ background-color:transparent!important;
+ background-size:100% 100%!important;
+ background-repeat:no-repeat!important;
+ image-rendering:pixelated!important;
+ pointer-events:none!important;
+ z-index:5!important;
+ filter:none!important;
+}
+#pixelArcade .pa-cat .pa-gear.head{z-index:7!important}
+#pixelArcade .pa-cat .pa-gear.neck{z-index:6!important}
+#pixelArcade .pa-cat .pa-gear.body{z-index:5!important}
+#pixelArcade .pa-shop-sprite{
+ width:112px!important;
+ height:96px!important;
+ background:linear-gradient(150deg,#f6fff5,#e7f4ec)!important;
+ border-color:#b6d4c0!important;
+ padding:2px!important;
+ overflow:hidden!important;
+}
+#pixelArcade .pa-shop-preview{
+ position:relative!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ background:transparent!important;
+ overflow:hidden!important;
+}
+#pixelArcade .pa-shop-preview .pa-shop-cat,
+#pixelArcade .pa-shop-preview .pa-shop-wear{
+ display:block!important;
+ position:absolute!important;
+ inset:0!important;
+ width:100%!important;
+ height:100%!important;
+ background-repeat:no-repeat!important;
+ image-rendering:pixelated!important;
+ pointer-events:none!important;
+}
+#pixelArcade .pa-shop-preview .pa-shop-cat{
+ background-image:var(--cat-atlas-preview,url('/kitten-v2-idle.svg'))!important;
+ background-size:400% 200%!important;
+ background-position:0 0!important;
+}
+#pixelArcade .pa-shop-preview .pa-shop-wear{
+ background-size:100% 100%!important;
+ background-position:center!important;
+}
+#pixelArcade .pa-shop-item:has(.pa-shop-preview){
+ border-color:#a1cdb6!important;
+ background:#fffdf5!important;
+}
+#pixelArcade .pa-shop-item:has(.pa-shop-preview) .pa-price{
+ background:#fff3d0;
+ padding:4px 8px;
+ border-radius:4px;
+}
+@media(max-width:520px){
+ #pixelArcade .pa-shop-sprite{width:99px!important;height:84px!important}
+ #pixelArcade .pa-cat .pa-gear.head,
+ #pixelArcade .pa-cat .pa-gear.neck,
+ #pixelArcade .pa-cat .pa-gear.body{
+  width:100%!important;height:100%!important;top:0!important;left:0!important
+ }
+}
