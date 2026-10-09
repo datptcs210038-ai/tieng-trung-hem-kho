@@ -1,0 +1,113 @@
+/* Compact navigation + clear study screens while retaining pixel accents */
+body{font-family:'Be Vietnam Pro',system-ui,sans-serif!important;font-size:14px!important;line-height:1.6!important}
+body p,body li,body small,body .muted,body .choice,body footer,body .member p,body .word p{font-family:'Be Vietnam Pro',system-ui,sans-serif!important;font-size:13px!important;line-height:1.65!important;letter-spacing:0!important}
+body label,body input,body select,body textarea,body button{font-family:'Be Vietnam Pro',system-ui,sans-serif!important;letter-spacing:0!important;font-size:13px!important}
+body strong,body b{font-family:'Be Vietnam Pro',system-ui,sans-serif!important;letter-spacing:-.015em!important}
+h1,h2,h3,.page>h1,.hero h1,.login-showcase h1,.word h2{font-family:'VT323','Be Vietnam Pro',system-ui,sans-serif!important}
+body h1,.page>h1{font-size:clamp(34px,3.2vw,47px)!important;line-height:1.07!important}
+body h2{font-size:clamp(27px,2.5vw,36px)!important}
+body h3{font-size:clamp(22px,2vw,29px)!important}
+.hero h1{font-size:clamp(37px,4vw,55px)!important;line-height:1.1!important}
+.hero p{font-size:14px!important;line-height:1.75!important}
+.page>p.muted{font-size:13px!important;line-height:1.6!important;color:#6c8598!important}
+.site main{padding-top:clamp(18px,2.2vw,30px)!important}
+.side{padding:17px 13px!important}
+.side h2{min-height:80px!important;margin-bottom:18px!important}
+.nav.nav-organized{display:flex!important;flex-direction:column!important;gap:12px!important}
+.nav-group{display:flex;flex-direction:column;gap:4px;min-width:0}
+.nav-group-label{display:block;padding:5px 10px 4px;font-family:'Be Vietnam Pro',system-ui,sans-serif;font-weight:800;color:#98c7e4;font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.nav.nav-organized button{font-family:'Be Vietnam Pro',system-ui,sans-serif!important;font-size:12px!important;line-height:1.2!important;min-height:42px!important;padding:10px 11px!important;font-weight:650!important;gap:10px}
+.nav .pixel-nav-icon{flex-basis:19px!important;width:19px!important;height:19px!important}
+.nav .pixel-nav-icon svg{width:18px;height:18px}
+.nav button.on{font-weight:800!important}
+.nav-group[data-group="account"]{margin-top:9px;padding-top:8px;border-top:1px solid #3d6480}
+.page>h1{margin:0 0 7px!important}
+.page>p.muted{margin:0 0 17px!important}
+.page>h1::before{height:19px!important}
+.grid{gap:14px!important}
+.words{gap:14px!important}
+.box{padding:16px!important}
+.box:hover{transform:none!important;box-shadow:var(--px-shadow)!important}
+body .btn{font-family:'Be Vietnam Pro',system-ui,sans-serif!important;font-size:12px!important;font-weight:750!important;letter-spacing:0!important;padding:9px 12px!important}
+body .switch button{font-family:'Be Vietnam Pro',system-ui,sans-serif!important;font-size:12px!important}
+.searchbar input{font-size:14px!important}
+.word{padding:11px!important}
+.word h2{font-size:clamp(35px,3.5vw,44px)!important}
+.word p,.word small{font-size:12px!important}
+.word .row{margin-top:8px!important}
+.word .row .btn{font-size:13px!important;min-height:36px}
+#intro>.grid .box h2{font-size:31px!important}
+#intro>.grid .box p{font-size:12px!important}
+.member h3{font-size:26px!important}
+.member p{font-size:11px!important}
+#gate .authcard h2{font-size:36px!important}
+#gate .authcard p,#gate .authcard small,#gate .authcard label,#gate .authcard div{font-size:13px!important;line-height:1.65!important}
+#gate .authcard input{font-size:13px!important}
+#gate .authcard .btn{font-size:13px!important}
+.login-showcase h1{font-size:clamp(37px,4vw,51px)!important}
+.login-showcase p{font-size:13px!important;line-height:1.7!important}
+.login-chips span{font-size:11px!important}
+.login-kicker{font-family:'VT323',sans-serif!important;font-size:23px!important}
+.user-top-bar #hello{font-size:12px!important}
+.quick-signout{font-size:12px!important}
+.pixel-hero-tag{font-size:20px!important}
+#vocab .study-filter-toolbar{background:#fff;border:2px solid #bddbea;border-radius:7px;padding:12px 14px;margin:5px 0 10px!important;display:flex;align-items:center;flex-wrap:wrap;gap:9px!important;box-shadow:3px 3px 0 #c6dfe9;min-width:0}
+#vocab .study-filter-toolbar label{display:flex;align-items:center;gap:6px;margin:0!important;white-space:nowrap;font-size:12px!important}
+#vocab .study-filter-toolbar select{min-height:40px;max-width:min(100%,245px);min-width:0;font-size:12px!important;padding:8px 10px!important}
+#vocab .study-filter-toolbar input[type=text],#vocab .study-filter-toolbar input[type=search]{min-height:40px;flex:1 1 170px;min-width:100px;font-size:12px!important}
+#vocab .study-filter-toolbar input[type=checkbox]{accent-color:#226c98}
+#vocab .word-status-chip{display:inline-flex;align-items:center;padding:7px 11px;border-radius:5px;border:1px solid #cae0eb;background:#edf7fb;font-family:'Be Vietnam Pro',sans-serif;font-size:11px!important;color:#5a7c96;margin:7px 0 10px!important}
+#vocab .study-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 19px;min-width:0}
+#vocab .compact-collapsible{min-width:0;align-self:start;display:block;border:2px solid #b8d9ea;border-radius:7px;background:#fff;box-shadow:3px 3px 0 #d1e3ed;margin:0!important;overflow:hidden}
+#vocab .compact-detail-summary{display:flex;align-items:center;gap:9px;cursor:pointer;font-family:'Be Vietnam Pro',sans-serif!important;font-size:12px!important;font-weight:800;color:#195579;padding:12px 13px;list-style:none;min-height:47px}
+#vocab .compact-detail-summary::-webkit-details-marker{display:none}
+#vocab .compact-detail-summary::marker{content:''}
+#vocab .compact-detail-summary .detail-icon{font-family:'VT323',sans-serif;font-size:24px;color:#186d9a;line-height:1}
+#vocab .compact-detail-summary small{margin-left:auto;color:#7d9aaa;font-size:10px!important;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:148px}
+#vocab .detail-caret{font-family:'VT323',sans-serif;font-size:25px;line-height:1;color:#4d7899;transition:transform .2s}
+#vocab details[open]>.compact-detail-summary .detail-caret{transform:rotate(180deg)}
+#vocab .compact-detail-summary:hover{background:#f0f9ff}
+#vocab .speech-controls{border-top:1px solid #d9e8f1;padding:13px;display:grid;grid-template-columns:1fr;gap:8px}
+#vocab .speech-controls label{font-weight:700;font-size:11px!important;color:#5a7790}
+#vocab .speech-controls select{width:100%;min-width:0;padding:9px 10px!important;font-size:11px!important;text-overflow:ellipsis}
+#vocab .speech-controls .btn{justify-self:start;font-size:12px!important}
+#vocab #speechStatus{color:#7192a4;font-size:11px!important;line-height:1.5;margin:0}
+#vocab #vocabImageAudit{margin:0!important;border:0!important;padding:13px!important;box-shadow:none!important;background:transparent!important}
+#vocab #vocabImageAudit p,#vocab #vocabImageAudit small,#vocab #vocabImageAudit label,#vocab #vocabImageAudit strong{font-size:11px!important;line-height:1.45!important}
+#vocab #vocabImageAudit button{font-size:11px!important}
+#vocab .study-audit-details #vocabImageAudit{border-top:1px solid #dce9f1!important}
+#vocab #wordGrid{margin-top:9px}
+#timerFloatName,#timerFloatPhase{font-family:'Be Vietnam Pro',sans-serif!important;font-size:13px!important}
+.timer-float-time{font-family:'VT323',sans-serif!important;font-size:47px!important}
+#timerFloatingWindow .btn{font-size:11px!important}
+#timeMessage,#toastTitle{font-family:'Be Vietnam Pro',sans-serif!important;font-size:13px!important}
+footer{font-size:11px!important}
+@media(max-width:820px){
+ .nav.nav-organized{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:7px!important;overflow-x:auto;align-items:center;padding-bottom:8px}
+ .nav.nav-organized .nav-group{display:contents}
+ .nav.nav-organized .nav-group-label{display:none}
+ .nav.nav-organized button{font-size:11px!important;padding:9px 10px!important;white-space:nowrap;min-height:39px!important;flex-shrink:0}
+ .side h2{min-height:48px!important}
+ #vocab .study-settings{grid-template-columns:1fr}
+ #vocab .compact-detail-summary small{max-width:none}
+ #vocab .study-filter-toolbar{gap:8px!important}
+ #vocab .study-filter-toolbar select{flex:1 1 130px;max-width:100%}
+ #vocab .study-filter-toolbar input[type=text],#vocab .study-filter-toolbar input[type=search]{flex:1 1 100%}
+ .mobile-dock button{font-family:'Be Vietnam Pro',sans-serif!important;font-size:10px!important}
+ .page>h1{font-size:clamp(34px,5.2vw,42px)!important}
+}
+@media(max-width:520px){
+ .page>h1{font-size:33px!important}
+ .hero h1{font-size:41px!important}
+ .hero p{font-size:12px!important}
+ #vocab .study-filter-toolbar{padding:10px!important}
+ #vocab .study-filter-toolbar label{font-size:11px!important}
+ #vocab .study-settings{margin:11px 0 14px}
+ #vocab .compact-detail-summary{padding:10px 12px}
+ #vocab .compact-detail-summary small{font-size:10px!important}
+ .member h3{font-size:24px!important}
+ .member p{font-size:10px!important}
+ .word h2{font-size:35px!important}
+ .word p,.word small{font-size:11px!important}
+ .site main{padding-top:16px!important}
+}
