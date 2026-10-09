@@ -1,5 +1,5 @@
 /* TIẾNG TRUNG HEM KHÓ · PIXEL STUDIO UI · OCT 2026 */
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Noto+Serif+SC:wght@500;600;700&display=swap');
 :root{
   --px-ink:#12365a;--px-deep:#0c2749;--px-mid:#184f78;
   --px-blue:#2375ab;--px-cyan:#6fd6e9;--px-sky:#ddf4ff;
@@ -157,3 +157,134 @@ footer a{color:#086c9e!important}
 }
 @media(max-width:370px){.member{flex-basis:100%!important}.words{grid-template-columns:repeat(2,minmax(0,1fr))!important}.word h2{font-size:29px!important}}
 @media(prefers-reduced-motion:reduce){.box,.btn,.nav button,.facebook-float{transition:none!important}.login-logo-frame img{animation:none!important}}
+
+
+
+/* Pixel typography v2: VT323 has real Vietnamese glyph coverage, unlike Pixelify Sans. */
+:root{--px-font:'VT323','Be Vietnam Pro',sans-serif}
+html,body{font-family:var(--px-font)!important;font-size:23px!important;line-height:1.24!important}
+body button,body input,body select,body textarea,body label,body summary{font-family:var(--px-font)!important;letter-spacing:.02em!important;font-size:23px!important}
+body p,body li,body small,body .muted,body .choice,body .nav,body footer,body .member p,body .word p{font-family:var(--px-font)!important;letter-spacing:.016em!important;font-size:23px!important;line-height:1.35!important}
+body h1,body h2,body h3,body strong,body b{font-family:var(--px-font)!important;letter-spacing:.012em!important}
+body h1,.page>h1{font-size:clamp(37px,4vw,56px)!important;line-height:1.02!important;letter-spacing:.014em!important}
+body h2{font-size:clamp(30px,2.9vw,40px)!important;line-height:1.06!important}
+body h3{font-size:clamp(26px,2vw,34px)!important;line-height:1.08!important}
+.hero h1{font-size:clamp(41px,5vw,64px)!important;line-height:1.08!important;letter-spacing:0!important}
+.hero p{font-size:26px!important;line-height:1.28!important}
+.page>p.muted{font-size:24px!important;line-height:1.31!important}
+.nav button{font-size:24px!important;line-height:1!important;display:flex!important;gap:10px;align-items:center;font-weight:400!important;min-height:51px!important}
+.nav button.on{font-weight:400!important}
+.nav button.on::before{display:none!important}
+.pixel-nav-icon{display:inline-flex;flex:0 0 22px;justify-content:center;align-items:center;height:22px;color:inherit}
+.pixel-nav-icon svg{width:20px;height:20px;display:block;fill:currentColor;shape-rendering:crispEdges}
+.pixel-nav-label{min-width:0;line-height:1.08}
+#logout .pixel-nav-icon{color:#ffe3a2}
+body .btn{font-family:var(--px-font)!important;font-size:25px!important;font-weight:400!important;padding:10px 15px!important;line-height:1.1!important}
+body .switch button{font-size:24px!important}
+.word h2,#hanzi,#result h2,#lookup .box h2,#flashBody h2,.authcard [lang=zh],
+.login-crisp-hanzi,.side-crisp-hanzi,.page-loader-crisp-hanzi{
+  font-family:'Noto Serif SC','Noto Sans SC','Microsoft YaHei',serif!important;
+  font-weight:600!important;letter-spacing:.025em!important
+}
+.word h2{font-size:clamp(36px,3.8vw,49px)!important}
+.word p,.word small{font-size:23px!important}
+.word .row .btn{min-width:40px}
+.word .placeholder{font-family:var(--px-font)!important;font-size:26px!important}
+.word .placeholder small{font-size:20px!important}
+.searchbar input{font-size:25px!important}
+.searchbar .btn{font-size:25px!important}
+#vocabImageAudit{font-size:23px!important}
+#vocabImageAudit p,#vocabImageAudit small,#vocabImageAudit label{font-size:21px!important;line-height:1.25!important}
+.member h3{font-size:29px!important}
+.member p{font-size:22px!important;line-height:1.18!important}
+#intro>.grid .box h2{font-size:37px!important}
+#intro>.grid .box p{font-size:22px!important}
+.user-top-bar #hello{font-size:22px!important}
+.quick-signout{font-size:23px!important}
+.pixel-hero-tag{font-family:var(--px-font)!important;font-size:22px!important;font-weight:400!important}
+.login-kicker{font-family:var(--px-font)!important;font-size:24px!important;font-weight:400!important}
+.login-showcase h1{font-family:var(--px-font)!important;font-size:clamp(42px,5.1vw,65px)!important;line-height:1.02!important}
+.login-showcase p{font-size:27px!important;line-height:1.18!important}
+.login-chips span{font-family:var(--px-font)!important;font-size:23px!important;line-height:1.1!important;padding:8px 10px}
+#gate .authcard h2{font-family:var(--px-font)!important;font-size:43px!important}
+#gate .authcard p,#gate .authcard small,#gate .authcard label,#gate .authcard div{font-size:22px!important}
+#gate .authcard input{font-size:24px!important}
+#gate .authcard .btn{font-size:27px!important}
+.page-loader-title{font-family:var(--px-font)!important;font-size:33px!important}
+.page-loader-text{font-size:24px!important}
+#timerFloatName,#timerFloatPhase{font-family:var(--px-font)!important;font-size:23px!important}
+.timer-float-time{font-family:var(--px-font)!important;font-size:51px!important}
+#timerFloatingWindow .btn{font-size:19px!important}
+#timerFloatingChip{font-size:27px!important}
+#notify,#toggleClock,#resetClock{font-family:var(--px-font)!important}
+#clock{font-family:var(--px-font)!important}
+#timeMessage,#toastTitle{font-size:24px!important}
+.mobile-dock button{font-family:var(--px-font)!important;font-size:19px!important;font-weight:400!important}
+.mobile-dock button .dock-icon{font-size:20px!important}
+.mobile-dock button .dock-icon svg{width:20px;height:20px;fill:currentColor;shape-rendering:crispEdges}
+footer{font-size:21px!important}
+
+/* Crisp typography brandmark replaces the undersized legacy image; uploaded high-res logo takes priority */
+.login-logo-frame{min-height:340px;display:grid;place-items:center;padding:18px!important}
+.login-logo-frame > img{display:none!important}
+.login-logo-frame.brand-has-uploaded-original > img{display:block!important;max-height:420px;object-fit:contain}
+.login-logo-frame.brand-has-uploaded-original > .crisp-logo-art{display:none!important}
+.crisp-logo-art{position:relative;display:grid;place-items:center;width:min(100%,410px);aspect-ratio:1/1;isolation:isolate}
+.crisp-logo-art::before{content:'';position:absolute;width:90%;height:90%;left:4%;top:5%;border-radius:50%;background:radial-gradient(circle at 38% 67%,#9dcff7 0%,#b5e2f9 38%,#e5f9fd 76%,#fcfefe 100%);z-index:-1}
+.crisp-logo-art .crisp-lotus{position:absolute;width:42%;height:50%;right:0;top:1%;opacity:.45;fill:none;stroke:#75adce;stroke-width:3}
+.crisp-logo-art .crisp-hanzi{font-family:'Noto Serif SC','Noto Sans SC',serif;font-size:clamp(43px,5vw,70px);color:#07527b;font-weight:600;line-height:1;white-space:nowrap;letter-spacing:.025em;text-shadow:0 1px 0 #fff6}
+.crisp-logo-art .crisp-viet{font-family:var(--px-font)!important;color:#153d55;font-size:clamp(20px,2.1vw,29px)!important;white-space:nowrap;line-height:1.12!important;letter-spacing:.11em!important;text-align:center}
+.crisp-logo-art .crisp-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;transform:translateY(15px)}
+.side h2>.side-brand{display:none!important}
+.side h2.brand-has-uploaded-original>.side-brand{display:block!important}
+.side h2.brand-has-uploaded-original>.crisp-side-logo{display:none!important}
+.crisp-side-logo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;text-align:center;padding:9px 5px}
+.crisp-side-logo .side-crisp-hanzi{font-size:clamp(24px,2.3vw,32px)!important;color:#0f5276!important;letter-spacing:.01em!important;line-height:1!important;white-space:nowrap}
+.crisp-side-logo .side-crisp-viet{font:400 17px/1 var(--px-font)!important;letter-spacing:.05em!important;color:#265a78!important;white-space:nowrap}
+.page-loader-img{display:none!important}
+.page-loader-crisp{display:block;text-align:center;font-family:'Noto Serif SC','Noto Sans SC',serif!important;font-size:48px;color:#0b567e;line-height:1.25}
+.page-loader-inner:has(.page-loader-img.brand-has-uploaded-original) .page-loader-img{display:block!important}
+.page-loader-inner:has(.page-loader-img.brand-has-uploaded-original) .page-loader-crisp{display:none!important}
+.hero-brand-watermark{display:none!important}
+.hero-brand-watermark.brand-has-uploaded-original{display:block!important}
+
+@media(max-width:820px){
+  .nav button{font-size:21px!important;min-height:39px!important;gap:6px;padding:9px 10px!important}
+  .pixel-nav-icon{flex-basis:18px;width:18px;height:18px}
+  .pixel-nav-icon svg{width:17px;height:17px}
+  .side h2{padding:2px 8px!important;min-height:52px!important}
+  .side-crisp-logo .side-crisp-hanzi{font-size:25px!important}
+  .site main{padding-top:17px!important}
+  .mobile-dock button{font-size:18px!important}
+  .page>h1{font-size:clamp(33px,5.2vw,41px)!important}
+  .page>p.muted{font-size:22px!important}
+  .hero h1{font-size:clamp(36px,5.7vw,48px)!important}
+  .hero p{font-size:24px!important;max-width:100%!important}
+}
+@media(max-width:540px){
+ body{font-size:22px!important}
+ .page>h1{font-size:34px!important}
+ .page>p.muted{font-size:21px!important}
+ .hero h1{font-size:40px!important}
+ .hero p{font-size:22px!important}
+ .member h3{font-size:26px!important}
+ .member p{font-size:19px!important}
+ .word h2{font-size:36px!important}
+ .word p,.word small{font-size:21px!important}
+ .nav button{font-size:20px!important}
+ .login-logo-frame{min-height:0!important}
+ .crisp-logo-art{width:min(100%,340px)}
+ .crisp-logo-art .crisp-hanzi{font-size:clamp(42px,10.4vw,58px)!important}
+ .crisp-logo-art .crisp-viet{font-size:clamp(19px,4.6vw,24px)!important;letter-spacing:.035em!important}
+ .crisp-logo-art .crisp-center{transform:translateY(10px)}
+ .login-showcase h1{font-size:44px!important}
+ .login-showcase p{font-size:23px!important}
+ .login-chips span{font-size:20px!important}
+ #gate .authcard h2{font-size:38px!important}
+ #gate .authcard input{font-size:23px!important}
+ #gate .authcard .btn{font-size:25px!important}
+ .pixel-hero-tag{font-size:20px!important}
+ .user-top-bar #hello{font-size:18px!important}
+ .quick-signout{font-size:20px!important}
+ .page-loader-inner{padding:23px 18px}
+}
