@@ -434,7 +434,7 @@ const WARDROBE_COLORS={
  gold:'#f3c763',amber:'#a97936',navy:'#405d83',purple:'#987db1',
  purpleLight:'#d1b6db',red:'#bf596e',redLight:'#efa1ad',soft:'#f5e1c7'
 };
-const CLOTHES={student:['navy','blue','blueLight'],aoba:['purple','purpleLight','roseLight'],royal:['red','redLight','gold']};
+const CLOTHES={student:['navy','blue','blueLight'],aoba:['purple','purpleLight','roseLight'],royal:['red','redLight','gold'],pajamas:['sage','soft','roseLight']};
 function wearableSvg(id,pose='idle'){
  const p=[],C=WARDROBE_COLORS;
  const r=(x,y,w,h,color)=>p.push('<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+(C[color]||color)+'"/>');
@@ -478,6 +478,9 @@ function wearableSvg(id,pose='idle'){
     r(34,70,5,2,'blueLight');
    }else if(id==='aoba'){
     r(51,55,2,17,'white');r(54,60,2,2,'gold');r(54,67,2,2,'gold');
+   }else if(id==='pajamas'){
+    r(54,58,3,8,'white');r(42,59,3,3,'roseLight');
+    r(35,69,3,2,'white');r(48,67,3,2,'sageDark');r(34,75,16,2,'roseLight');
    }else{
     r(52,55,3,14,'gold');r(39,59,6,4,'gold');r(39,61,3,2,'red');
     r(31,72,20,2,'gold');
@@ -541,6 +544,36 @@ function drawWornClothes(pose){
   el.style.setProperty('background-repeat','no-repeat','important');
  });
 }
+
+function outfitSetCard(set){
+ const missing=set.items.filter(id=>!(pet.owned_items||[]).includes(id));
+ const due=missing.reduce((n,id)=>n+(ITEMS.find(i=>i.id===id)?.cost||0),0);
+ const wearing=set.items.every(id=>pet.equipped?.[ITEMS.find(x=>x.id===id)?.category]===id)&&Object.keys(pet.equipped||{}).length===set.items.length;
+ const sorted=set.items.filter(id=>ITEMS.find(i=>i.id===id)?.category==='body').concat(set.items.filter(id=>ITEMS.find(i=>i.id===id)?.category==='neck'),set.items.filter(id=>ITEMS.find(i=>i.id===id)?.category==='head'));
+ const preview='<span class="pa-shop-preview pa-set-preview" aria-hidden="true"><span class="pa-shop-cat"></span>'+sorted.map((id,i)=>'<span class="pa-shop-wear pa-set-layer pa-set-layer-'+i+'" style="background-image:url(&quot;'+wardrobeUrl(id,'idle')+'&quot;)"></span>').join('')+'</span>';
+ return '<article class="pa-set-card pa-set-'+set.scheme+'"><div class="pa-set-top"><span>'+set.icon+' '+set.tag+'</span><span>🪙 '+set.price+' xu</span></div>'+
+ preview+'<h3>'+set.name+'</h3><p>'+set.description+'</p><div class="pa-set-detail">'+(missing.length?'Cần mua: '+missing.map(id=>ITEMS.find(i=>i.id===id)?.name||id).join(' + '):'Đã sở hữu đầy đủ ✓')+'</div>'+
+ '<button type="button" data-pa-set="'+set.id+'" '+(wearing?'disabled':'')+' '+(due>Number(pet.coins||0)?'disabled title="Chưa đủ xu"':'')+'>'+
+ (wearing?'✓ Đang mặc':due?'Mua & mặc · '+due+' xu':'Mặc set miễn phí')+'</button></article>';
+}
+let outfitSetBusy=false;
+async function applyOutfitSet(id,btn){
+ const ctx=statusAccount(),set=OUTFIT_SETS.find(x=>x.id===id);
+ if(!ctx||!set||outfitSetBusy){if(!ctx)toast('Đăng nhập để thay đồ cho mèo.');return}
+ const missing=set.items.filter(x=>!(pet.owned_items||[]).includes(x));
+ const due=missing.reduce((n,x)=>n+(ITEMS.find(i=>i.id===x)?.cost||0),0);
+ if(due>Number(pet.coins||0)){toast('Mèo cần thêm '+(due-pet.coins)+' xu nữa nha!');return}
+ outfitSetBusy=true;btn.disabled=true;
+ try{
+  const {data,error}=await ctx.db.rpc('pixel_pet_apply_set',{p_set:id,p_buy_missing:!!missing.length});
+  if(error)throw Error(error.message);
+  pet=data;$('#paCoins').textContent=Number(data.coins||0).toLocaleString('vi-VN');
+  render();paintKitten(performance.now());
+  toast('Đã phối bộ '+set.name+' cho mèo! '+(data.paid?'−'+data.paid+' xu':'Không tốn thêm xu')+' 🐾');
+ }catch(e){toast('Chưa thay được set: '+e.message);btn.disabled=false}
+ finally{outfitSetBusy=false}
+}
+
 function wardrobePreview(id){
  const url=wardrobeUrl(id,'idle');
  return '<span class="pa-shop-preview"><span class="pa-shop-cat" aria-hidden="true"></span><span class="pa-shop-wear" aria-hidden="true" style="background-image:url(&quot;'+url+'&quot;)"></span></span>';
