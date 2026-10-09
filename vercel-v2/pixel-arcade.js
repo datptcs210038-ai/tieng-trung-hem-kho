@@ -3,11 +3,11 @@
 'use strict';
 const D=window.TTHK,flash=document.getElementById('flash');
 if(!D||!flash||document.getElementById('pixelArcade'))return;
-const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=cat-outfits-v7';document.head.append(sheet);
+const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=matching-pixel-sets-v9';document.head.append(sheet);
 flash.classList.add('pixel-arcade-page');
 Array.from(flash.children).forEach(el=>el.classList.add('old-flash-content'));
 const root=document.createElement('div');root.id='pixelArcade';
-root.innerHTML='<h1 class="pa-title">🐾 Khu Game Pixel</h1><p class="pa-subtitle">Chơi game luyện HSK, mỗi câu đúng nhận 1 xu. Tích xu để nuôi và sắm đồ cho mèo!</p><nav class="pa-tabs" aria-label="Khu game"><button type="button" data-pa-tab="home" aria-selected="true">🎮 Chơi game</button><button type="button" data-pa-tab="cat" aria-selected="false">🐱 Mèo của tui</button><button type="button" data-pa-tab="shop" aria-selected="false">🛍️ Cửa hàng</button><button type="button" data-pa-tab="inventory" aria-selected="false">🎒 Tủ đồ</button><span class="pa-wallet">🪙 <span id="paCoins">0</span> xu</span></nav><div id="paContent"></div><div id="paToast" class="pa-toast" hidden role="status" aria-live="polite"></div>';
+root.innerHTML='<h1 class="pa-title">🐾 Khu Game Pixel</h1><p class="pa-subtitle">Chơi game luyện HSK, mỗi câu đúng nhận 1 xu. Tích xu để nuôi và sắm đồ cho mèo!</p><nav class="pa-tabs" aria-label="Khu game"><button type="button" data-pa-tab="home" aria-selected="true">🎮 Chơi game</button><button type="button" data-pa-tab="cat" aria-selected="false">🐱 Mèo của tui</button><button type="button" data-pa-tab="shop" aria-selected="false">🛍️ Cửa hàng</button><button type="button" data-pa-tab="sets" aria-selected="false">🎀 Bộ phối sẵn</button><button type="button" data-pa-tab="inventory" aria-selected="false">🎒 Tủ đồ</button><span class="pa-wallet">🪙 <span id="paCoins">0</span> xu</span></nav><div id="paContent"></div><div id="paToast" class="pa-toast" hidden role="status" aria-live="polite"></div>';
 flash.prepend(root);
 const $=sel=>root.querySelector(sel),content=$('#paContent');
 const ITEMS=[
@@ -23,7 +23,15 @@ const ITEMS=[
  {id:'bell',name:'Chuông vàng',cost:125,category:'neck',caption:'Leng keng · phụ kiện cổ'},
  {id:'student',name:'Áo sinh viên',cost:180,category:'body',caption:'Chăm học · trang phục'},
  {id:'aoba',name:'Áo bà ba',cost:260,category:'body',caption:'Nét đẹp miền Tây · trang phục'},
- {id:'royal',name:'Long bào',cost:400,category:'body',caption:'Bộ đồ cao cấp · trang phục'}
+ {id:'royal',name:'Long bào',cost:400,category:'body',caption:'Bộ đồ cao cấp · trang phục'},
+ {id:'pajamas',name:'Áo ngủ mây kem',cost:200,category:'body',caption:'Đồ ngủ màu kem và xanh lá nhạt'}
+];
+const OUTFIT_SETS=[
+ {id:'cute',name:'Miu dễ thương',tag:'DỄ THƯƠNG',icon:'🩷',items:['bow','bell'],description:'Nơ xanh · Chuông nhỏ',price:175,scheme:'cute'},
+ {id:'campus',name:'Miu đi học',tag:'ĐI HỌC',icon:'📚',items:['glasses','student'],description:'Kính tròn · Áo navy',price:260,scheme:'campus'},
+ {id:'heritage',name:'Miu miền Tây',tag:'MIỀN TÂY',icon:'🌾',items:['scarf','aoba'],description:'Khăn đỏ · Áo bà ba tím dịu',price:355,scheme:'heritage'},
+ {id:'royal',name:'Miu hoàng gia',tag:'CAO CẤP',icon:'👑',items:['crown','royal'],description:'Vương miện vàng · Long bào đỏ',price:640,scheme:'royal'},
+ {id:'sleep',name:'Miu ngủ ngoan',tag:'ĐỒ NGỦ',icon:'🌙',items:['beanie','pajamas'],description:'Mũ len xanh · Áo ngủ mây kem',price:310,scheme:'sleep'}
 ];
 const PATTERNS={
  fish:"................ /......AAAA...... /....AABBBBAA.... /..AABBBBBBBBA... /AABBBBCCCCBBBAAA /..AABBBBBBBBA... /....AABBBBAA.... /......AAAA......",
@@ -153,12 +161,15 @@ function render(){
    '<section class="pa-panel pa-cat-care"><div class="pa-panel-top"><div><h2>🍽️ Bữa ăn của mèo</h2><p>Chọn món bạn đã mua để cho bé ăn</p></div><button class="pa-small" data-pa-open="shop">🛒 Cửa hàng →</button></div><div class="pa-shop-grid pa-food-grid">'+food.map(foodCard).join('')+
    '</div><p class="pa-hint">Độ no giảm 15 điểm mỗi giờ. Mèo no vẫn ăn được; từ 90 điểm trở lên sẽ ngủ.</p></section></div>';
  }else if(currentView==='shop'){
-  content.innerHTML='<section class="pa-panel pa-shop-panel"><div class="pa-panel-top"><div><h2>🛍️ Cửa hàng Pixel</h2><p>Tích xu chơi game rồi sắm đồ cho '+escapeHtml(catName)+'</p></div><span class="pa-status-pill">🪙 '+Number(pet.coins||0)+' xu</span></div>'+
+  content.innerHTML='<section class="pa-panel pa-shop-panel"><div class="pa-panel-top"><div><h2>🛍️ Cửa hàng Pixel</h2><p>Tích xu chơi game rồi sắm đồ cho '+escapeHtml(catName)+'</p></div><button class="pa-small" data-pa-open="sets">🎀 Xem 5 bộ phối sẵn →</button><span class="pa-status-pill">🪙 '+Number(pet.coins||0)+' xu</span></div>'+
    '<div class="pa-store-groups">'+[
     ['all','Tất cả'],['food','🍣 Đồ ăn'],['head','🎀 Đầu'],['neck','🧣 Cổ'],['body','👕 Trang phục']
    ].map(([id,name])=>'<button type="button" data-filter="'+id+'" aria-pressed="'+(storeFilter===id)+'">'+name+'</button>').join('')+'</div>'+
    '<div class="pa-shop-grid">'+ITEMS.filter(i=>storeFilter==='all'||i.category===storeFilter).map(shopCard).join('')+'</div>'+
    '<p class="pa-hint">Đồ ăn từ 5 xu; phụ kiện từ 50 xu; trang phục quý hiếm đến 400 xu. Đã mua là sở hữu vĩnh viễn.</p></section>';
+ }else if(currentView==='sets'){
+  content.innerHTML='<section class="pa-panel pa-sets-area"><div class="pa-panel-top"><div><h2>🎀 5 bộ phối cho '+escapeHtml(catName)+'</h2><p>Đồ pixel đồng bộ với mèo xám trắng · Mua một lần, mặc mãi mãi</p></div><span class="pa-status-pill">🪙 '+Number(pet.coins||0)+' xu</span></div>'+
+  '<div class="pa-set-grid">'+OUTFIT_SETS.map(outfitSetCard).join('')+'</div><p class="pa-hint">Sở hữu món nào thì không cần mua lại. Mặc set chỉ cần một lần bấm.</p></section>';
  }else if(currentView==='inventory'){
   const owned=ITEMS.filter(i=>i.category!=='food'&&(pet.owned_items||[]).includes(i.id));
   const food=ITEMS.filter(i=>i.category==='food'&&Number((pet.food_stock||{})[i.id]||0)>0);
@@ -174,6 +185,7 @@ function render(){
  content.querySelectorAll('[data-pa-walk]').forEach(b=>b.onclick=()=>toggleCatWalk());
  content.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{storeFilter=b.dataset.filter;render()});
  content.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>doShopAction(b.dataset.action,b.dataset.item,b));
+ content.querySelectorAll('[data-pa-set]').forEach(b=>b.onclick=()=>applyOutfitSet(b.dataset.paSet,b));
 }
 function foodCard(item){
  const count=Number((pet.food_stock||{})[item.id]||0);
