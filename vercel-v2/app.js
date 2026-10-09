@@ -1120,3 +1120,24 @@ if(gate&&window.supabase){
  deps.onerror=loadDetail;
  document.head.append(deps);
 })();
+
+
+// HSK 1–2 complete grammar study flow with explanations and assessed exercises.
+
+;(()=>{
+ 'use strict';
+ if(document.getElementById('hskGrammarBootstrap'))return;
+ const script=document.createElement('script');
+ script.id='hskGrammarBootstrap';
+ script.src='/grammar-lessons.js?v=hsk-grammar-20261009-v1';
+ const load=()=>{
+  if(document.getElementById('hskGrammarCourseLoader'))return;
+  const ui=document.createElement('script');
+  ui.id='hskGrammarCourseLoader';
+  ui.src='/grammar-course.js?v=hsk-grammar-ui-20261009-v1';
+  document.head.append(ui);
+ };
+ script.onload=load;
+ script.onerror=()=>console.warn('Could not load HSK grammar bank');
+ document.head.append(script);
+})();
