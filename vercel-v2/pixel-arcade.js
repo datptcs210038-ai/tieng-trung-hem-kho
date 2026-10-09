@@ -442,108 +442,153 @@ function renderPetOnly(){
 }
 
 
-/* PIXEL CAT v4 — one consistent 8-pose character; home appearance is opt-in. */
-let petFrameIndex=0;
-const catWalkStart=performance.now();
-let lastPetPosition=.5,lastPetDirection=1;
+/* PIXEL CAT v6 · single pixel atlas, frame-accurate grooming and RAF-based walking on a fixed ground line */
+const POSES={idle:[0,0],blink:[1,0],walk1:[2,0],walk2:[3,0],groom1:[0,1],groom2:[1,1],eat:[2,1],sleep:[3,1]};
+const animationOrigin=performance.now();
 const reducedMotion=!!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-const frameUrl=state=>'/kitten-v2-'+state+'.svg?v=catroom-20261009-v4';
+let prevRoomFraction=.53,prevRoomDirection=1,prevHeroDirection=1,hasTrack=false,lastRenderMood='';
+function catTravel(timeMs,walkMs=8000,restMs=1900){
+ const cycle=2*(walkMs+restMs),t=((timeMs%cycle)+cycle)%cycle;
+ if(t<walkMs)return {fraction:t/walkMs,direction:1,moving:true};
+ if(t<walkMs+restMs)return {fraction:1,direction:1,moving:false};
+ if(t<2*walkMs+restMs)return {fraction:1-(t-walkMs-restMs)/walkMs,direction:-1,moving:true};
+ return {fraction:0,direction:-1,moving:false};
+}
+function setCatSprite(node,state){
+ if(!node)return;
+ const [col,row]=POSES[state]||POSES.idle;
+ if(node.dataset.catPose===state&&node.dataset.catAtlas==='v6')return;
+ node.dataset.catPose=state;node.dataset.catAtlas='v6';
+ if(window.TTHK_CAT_ATLAS){
+  node.style.setProperty('background-image','url("'+window.TTHK_CAT_ATLAS+'")','important');
+  node.style.setProperty('background-size','400% 200%','important');
+  node.style.setProperty('background-position',(col*100/3)+'% '+(row*100)+'%','important');
+ }else{
+  const fallback=state==='groom1'?'groom1':state==='groom2'?'groom2':state;
+  node.style.setProperty('background-image','url("/kitten-v2-'+fallback+'.svg")','important');
+  node.style.setProperty('background-size','contain','important');
+  node.style.setProperty('background-position','center','important');
+ }
+ node.style.setProperty('background-repeat','no-repeat','important');
+ node.style.setProperty('image-rendering','pixelated','important');
+ node.style.setProperty('animation','none','important');
+}
+function ensureHomeTrack(){
+ const hero=document.querySelector('#intro .hero');
+ if(!hero)return null;
+ let track=hero.querySelector('.garden-cat-lane-overlay');
+ if(!track){
+  track=document.createElement('div');
+  track.className='garden-cat-lane-overlay';
+  track.setAttribute('aria-hidden','true');
+  hero.append(track);
+ }
+ return hero;
+}
 function syncGardenVisibility(){
  const hero=document.querySelector('#intro .garden-running-cat');
- if(hero)hero.style.setProperty('display',(petWalk&&mood()!=='sleeping')?'block':'none','important');
- const tag=hero?.querySelector('.garden-cat-name');
- if(tag)tag.textContent=catName;
+ if(!hero)return;
+ const show=!!petWalk && mood()!=='sleeping' && mood()!=='eating' && mood()!=='grooming';
+ hero.style.setProperty('display',show?'block':'none','important');
+ const name=hero.querySelector('.garden-cat-name');
+ if(name)name.textContent=catName;
 }
 async function changePreference(name,walk){
  const ctx=statusAccount();
  if(!ctx){toast('Hãy đăng nhập để đặt tên hoặc cho mèo đi dạo.');return}
- const args={p_name:name===undefined?null:name,p_walk:walk===undefined?null:walk};
- const {data,error}=await ctx.db.rpc('pixel_pet_preferences',args);
+ const {data,error}=await ctx.db.rpc('pixel_pet_preferences',{p_name:name===undefined?null:name,p_walk:walk===undefined?null:walk});
  if(error){toast('Không lưu được: '+error.message);return}
  catName=data.pet_name||'Miu Miu';petWalk=!!data.is_walking;
- syncGardenVisibility();render();paintKitten();
+ render();syncGardenVisibility();paintKitten(performance.now());
 }
 function renameCat(){
- const proposed=window.prompt('Đặt tên cho bé mèo (1–24 ký tự):',catName);
- if(proposed===null)return;
- const name=proposed.trim();
- if(!name||[...name].length>24){toast('Tên mèo cần từ 1 đến 24 ký tự.');return}
+ const value=window.prompt('Bạn muốn đặt tên bé mèo là gì? (1–24 ký tự)',catName);
+ if(value===null)return;
+ const name=value.trim();
+ if(!name||[...name].length>24){toast('Tên cần từ 1 đến 24 ký tự.');return}
  changePreference(name,undefined);
 }
 function toggleCatWalk(){
- if(mood()==='sleeping'){toast(catName+' đang ngủ. Đợi mèo bớt no rồi cho đi dạo nhé.');return}
+ if(petAnimation){toast('Đợi mèo làm xong hoạt động này nha!');return}
+ if(mood()==='sleeping'){toast(catName+' đang ngủ. Đợi bé thức dậy rồi đi dạo nha!');return}
  changePreference(undefined,!petWalk);
 }
 function groomCat(){
- if(petAnimation==='eating')return;
+ if(petAnimation==='eating'||petAnimation==='grooming'){toast('Bé đang bận một chút nhé!');return}
  petAnimation='grooming';clearTimeout(animationTimeout);
  if(currentView!=='play')render();
- paintKitten();syncGardenVisibility();
+ syncGardenVisibility();
+ paintKitten(performance.now());
  animationTimeout=setTimeout(()=>{
   petAnimation='';
   if(currentView!=='play')render();
-  paintKitten();syncGardenVisibility();
- },2600);
+  syncGardenVisibility();
+  paintKitten(performance.now());
+ },3200);
 }
-function catTravel(ms,period,walkMs,restMs){
- const t=((ms%period)+period)%period;
- if(t<walkMs)return {fraction:t/walkMs,facing:1,moving:true};
- if(t<walkMs+restMs)return {fraction:1,facing:1,moving:false};
- if(t<2*walkMs+restMs)return {fraction:1-(t-walkMs-restMs)/walkMs,facing:-1,moving:true};
- return {fraction:0,facing:-1,moving:false};
+function tickFace(time,moving){
+ if(moving)return Math.floor(time/155)%2?'walk1':'walk2';
+ // Tiny idle blink every 5 seconds; spontaneous, gentle face wash.
+ const loop=time%24500;
+ if(loop>16800&&loop<17700)return Math.floor(time/230)%2?'groom1':'groom2';
+ if(loop>4600&&loop<4930)return 'blink';
+ return 'idle';
 }
-function setCatSprite(node,name){
- if(!node)return;
- node.style.setProperty('background-image','url("'+frameUrl(name)+'")','important');
- node.style.setProperty('background-position','center','important');
- node.style.setProperty('background-size','contain','important');
- node.style.setProperty('background-repeat','no-repeat','important');
- node.style.setProperty('animation','none','important');
-}
-function paintKitten(){
- const now=performance.now()-catWalkStart;
- const m=mood(),phase=petFrameIndex++;
- const walk=catTravel(now,18600,7400,1900);
- const canMove=(m==='happy'&&!reducedMotion);
- const moving=canMove&&walk.moving;
- let pose=m==='sleeping'?'sleep':
-   m==='eating'?'eat':
-   m==='grooming'?(phase%2?'groom1':'groom2'):
-   m==='hungry'?(phase%9?'idle':'blink'):
-   moving?(phase%2?'walk1':'walk2'):
-   (phase%15===0?'blink':'idle');
- setCatSprite($('.pa-cat-base'),pose);
- const scene=$('.pa-scene'),stage=$('.pa-pet-stage'),body=$('.pa-cat');
- if(stage&&scene){
-  const max=Math.max(0,scene.clientWidth-stage.offsetWidth-20);
-  if(canMove){lastPetPosition=walk.fraction;lastPetDirection=walk.facing}
-  const x=10+lastPetPosition*max;
-  // In the room, stationary actions NEVER travel.
-  stage.style.setProperty('transform','translate3d('+x.toFixed(1)+'px,0,0) scaleX('+lastPetDirection+')','important');
+function paintKitten(now=performance.now()){
+ const elapsed=now-animationOrigin;
+ const moodNow=mood();
+ const roomTrip=catTravel(elapsed,7000,2300);
+ const canMove=moodNow==='happy'&&!reducedMotion;
+ const roomMoving=canMove&&roomTrip.moving;
+ let pose;
+ if(moodNow==='sleeping')pose='sleep';
+ else if(moodNow==='eating')pose='eat';
+ else if(moodNow==='grooming')pose=Math.floor(elapsed/230)%2?'groom1':'groom2';
+ else if(moodNow==='hungry')pose=Math.floor(elapsed/5500)%2?'blink':'idle';
+ else pose=tickFace(elapsed,roomMoving);
+ const base=$('.pa-cat-base'),scene=$('.pa-scene'),stage=$('.pa-pet-stage'),body=$('.pa-cat');
+ setCatSprite(base,pose);
+ if(scene&&stage){
+  if(canMove){prevRoomFraction=roomTrip.fraction;prevRoomDirection=roomTrip.direction}
+  const travel=Math.max(0,scene.clientWidth-stage.offsetWidth-20);
+  const frac=moodNow==='sleeping'?.72:prevRoomFraction;
+  const x=10+Math.max(0,Math.min(1,frac))*travel;
+  stage.style.setProperty('transform','translate3d('+x.toFixed(2)+'px,0,0)','important');
  }
  if(body){
-  body.classList.toggle('is-walking',moving);
-  body.classList.toggle('is-grooming',m==='grooming');
+  body.style.setProperty('transform','scaleX('+prevRoomDirection+')','important');
+  const updated=moodNow!==lastRenderMood;
+  if(updated){body.dataset.mood=moodNow;lastRenderMood=moodNow}
+  body.classList.toggle('is-walking',roomMoving);
+  body.classList.toggle('is-grooming',moodNow==='grooming');
  }
- const hero=document.querySelector('#intro .garden-running-cat');
- if(hero){
-  const enabled=petWalk&&m!=='sleeping';
-  hero.style.setProperty('display',enabled?'block':'none','important');
-  if(enabled){
-   const trip=catTravel(now,22000,9200,1800);
-   const hpose=trip.moving?(phase%2?'walk1':'walk2'):(phase%16===0?'blink':'idle');
-   setCatSprite(hero.querySelector('.garden-cat-sprite'),hpose);
-   const max=Math.max(0,(hero.parentElement?.clientWidth||800)-hero.offsetWidth-15);
-   hero.style.setProperty('animation','none','important');
-   hero.style.setProperty('transform','translate3d('+(8+trip.fraction*max).toFixed(1)+'px,0,0) scaleX('+trip.facing+')','important');
-   let tag=hero.querySelector('.garden-cat-name');
-   if(!tag){tag=document.createElement('span');tag.className='garden-cat-name';hero.append(tag)}
-   tag.textContent=catName;
+ const heroCat=document.querySelector('#intro .garden-running-cat');
+ if(heroCat){
+  const visible=!!petWalk && moodNow!=='sleeping' && moodNow!=='eating' && moodNow!=='grooming';
+  heroCat.style.setProperty('display',visible?'block':'none','important');
+  if(visible){
+   const hero=ensureHomeTrack();
+   const trip=catTravel(elapsed,9000,2400);
+   const sprite=heroCat.querySelector('.garden-cat-sprite');
+   const hpose=trip.moving?tickFace(elapsed,true):tickFace(elapsed,false);
+   setCatSprite(sprite,hpose);
+   const laneWidth=Math.max(0,(hero?.clientWidth||800)-heroCat.offsetWidth-20);
+   const x=10+Math.max(0,Math.min(1,trip.fraction))*laneWidth;
+   heroCat.style.setProperty('animation','none','important');
+   heroCat.style.setProperty('transform','translate3d('+x.toFixed(2)+'px,0,0)','important');
+   sprite?.style.setProperty('transform','scaleX('+trip.direction+')','important');
+   if(prevHeroDirection!==trip.direction)prevHeroDirection=trip.direction;
+   let name=heroCat.querySelector('.garden-cat-name');
+   if(!name){name=document.createElement('span');name.className='garden-cat-name';heroCat.append(name)}
+   name.textContent=catName;
   }
  }
 }
-const animateKitten=()=>{if(!document.hidden)paintKitten()};
-window.setInterval(animateKitten,400);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)paintKitten()});
-loadPet().then(()=>{render();paintKitten();syncGardenVisibility()});
+function animateKitten(t){
+ if(!document.hidden)paintKitten(t);
+ window.requestAnimationFrame(animateKitten);
+}
+window.requestAnimationFrame(animateKitten);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)paintKitten(performance.now())});
+loadPet().then(()=>{render();paintKitten(performance.now());syncGardenVisibility()});
 })();
