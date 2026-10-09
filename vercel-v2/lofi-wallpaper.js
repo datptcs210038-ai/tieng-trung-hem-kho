@@ -35,6 +35,7 @@ function play(){
  try{widget.setVolume(35);widget.play()}catch(e){notify('Không phát được SoundCloud. Bạn có thể mở nhạc qua liên kết nguồn.')}
 }
 function toggle(){
+ if(want&&!playing){play();if(!ready)notify('Đang kết nối SoundCloud…');reflect();return;}
  want=!want;
  try{localStorage.setItem('tthk-lofi-desired-v1',String(want))}catch(e){}
  if(want){if(ready)play();else notify('Đang kết nối SoundCloud…')}
