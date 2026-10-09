@@ -501,7 +501,12 @@ function wearableSvg(id,pose='idle'){
    r(82,43,6,3,'navy');r(70,43,3,3,'blueLight');r(91,43,3,3,'blueLight');
   }
  }else if(id==='beanie'){
-  if(!sleep&&!eat){
+  if(sleep){
+   // Small soft nightcap stays visible when the kitten curls up.
+   poly('32,54 34,44 42,36 51,35 59,39 64,49 64,54','sage');
+   r(32,53,33,5,'sageDark');r(59,35,6,6,'roseLight');
+   r(38,44,8,3,'blueLight');
+  }else if(!eat){
    const sx=groom?-13:0,sy=groom?1:0;
    p.push('<g transform="translate('+sx+' '+sy+')">');
    poly('71,27 72,18 79,12 85,9 98,10 105,15 107,26','sage');
