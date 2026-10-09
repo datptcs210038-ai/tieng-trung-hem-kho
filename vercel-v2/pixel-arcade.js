@@ -228,10 +228,11 @@ async function startGame(id){
  if(pool.length<20){toast('Chưa tải được kho từ HSK. Hãy thử lại.');tab('home');return}
  const game=GAMES.find(g=>g.id===id);if(!game)return;
  if(timer)clearInterval(timer);
- const sample=randomize(pool).slice(0,id==='pairs'?6:12);
+ const sample=id==='order'?randomize(SENTENCES).slice(0,12):randomize(pool).slice(0,id==='pairs'?6:12);
  const uuid=globalThis.crypto?.randomUUID?.()||'00000000-0000-4000-8000-'+Math.random().toString(16).slice(2).padEnd(12,'0').slice(0,12);
  run={id:uuid,game,words:sample,n:0,correct:0,deadline:Date.now()+game.time*1000,done:false,busy:false,rewarded:false,pairs:null,openPairs:[],pairsMatched:new Set()};
  if(id==='pairs')run.pairs=randomize(sample.flatMap((w,i)=>[{pair:i,content:w.h},{pair:i,content:w.m}]));
+ if(id==='order')run.orderIndices=[];
  currentView='play';render();
  timer=setInterval(()=>{
   if(!run||run.done){clearInterval(timer);return}
@@ -250,6 +251,7 @@ function renderGame(){
  '<div id="paGameBody"></div><div class="pa-feedback" id="paFeedback" aria-live="polite"></div><button type="button" data-pa-quit class="pa-primary" style="margin-top:15px">Dừng & nhận kết quả</button></section>';
  content.querySelector('[data-pa-quit]').onclick=finishGame;
  if(game.id==='pairs')renderPairs();
+ else if(game.id==='order')renderOrder();
  else renderQuestion();
 }
 function choicesFor(w,key){
@@ -293,6 +295,50 @@ function renderQuestion(){
   };
   answerBox.append(b);
  });
+}
+function renderOrder(){
+ if(!run||run.done)return;
+ if(run.n>=run.words.length){finishGame();return}
+ const sentence=run.words[run.n];
+ if(!Array.isArray(run.orderIndices))run.orderIndices=[];
+ const chosen=run.orderIndices;
+ const zone=$('#paGameBody');if(!zone)return;
+ // Shuffle once per question and keep stable across every click.
+ if(!run.orderTiles||run.orderTilesIndex!==run.n){
+  run.orderTiles=randomize(sentence.parts.map((word,i)=>({word,index:i})));
+  run.orderTilesIndex=run.n;chosen.length=0;
+ }
+ const arranged=chosen.map(index=>run.orderTiles[index]);
+ zone.innerHTML='<div class="pa-question pa-sentence-question">'+escapeHtml(sentence.vi)+'</div>'+
+  '<p class="pa-question-sub">Chạm các mảnh chữ Hán theo đúng thứ tự để xếp thành câu.</p>'+
+  '<div class="pa-sentence-built" id="paBuilt" aria-label="Câu đang sắp xếp">'+
+  (arranged.length?arranged.map((t,i)=>'<button class="pa-sentence-token is-selected" data-pa-remove="'+i+'">'+escapeHtml(t.word)+'</button>').join(''):'<span class="pa-sentence-placeholder">Chạm vào các từ ở phía dưới…</span>')+'</div>'+
+  '<div class="pa-sentence-pieces" id="paPieces">'+run.orderTiles.map((part,index)=>
+   '<button type="button" class="pa-sentence-token" data-pa-piece="'+index+'" '+(chosen.includes(index)?'disabled':'')+'>'+escapeHtml(part.word)+'</button>'
+  ).join('')+'</div>'+
+  '<div class="pa-sentence-actions"><button type="button" class="pa-primary pa-secondary" id="paClearSentence">↺ Làm lại</button><button type="button" class="pa-primary" id="paCheckSentence" '+(chosen.length===run.orderTiles.length?'':'disabled')+'>✓ Kiểm tra</button></div>';
+ zone.querySelectorAll('[data-pa-piece]').forEach(b=>b.onclick=()=>{
+  if(!run||run.done||run.busy||Date.now()>=run.deadline)return;
+  run.orderIndices.push(Number(b.dataset.paPiece));renderOrder();
+ });
+ zone.querySelectorAll('[data-pa-remove]').forEach(b=>b.onclick=()=>{
+  if(!run||run.done||run.busy)return;
+  run.orderIndices.splice(Number(b.dataset.paRemove),1);renderOrder();
+ });
+ $('#paClearSentence').onclick=()=>{run.orderIndices=[];renderOrder()};
+ $('#paCheckSentence').onclick=()=>{
+  if(!run||run.done||run.busy||Date.now()>=run.deadline){finishGame();return}
+  const guess=run.orderIndices.map(i=>run.orderTiles[i].index);
+  if(guess.length!==sentence.parts.length)return;
+  const good=guess.every((v,i)=>v===i);
+  run.busy=true;if(good)run.correct++;
+  $('#paFeedback').textContent=good?'✓ Chính xác! +1 xu 🪙':'Câu đúng: '+sentence.parts.join('');
+  zone.querySelectorAll('button').forEach(x=>x.disabled=true);
+  setTimeout(()=>{
+   if(!run||run.done||Date.now()>=run.deadline){if(run&&!run.done)finishGame();return}
+   run.n++;run.busy=false;run.orderIndices=[];run.orderTiles=null;renderGame();
+  },900);
+ };
 }
 function renderPairs(){
  if(!run||run.done)return;
