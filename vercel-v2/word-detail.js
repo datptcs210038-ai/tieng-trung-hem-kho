@@ -256,5 +256,8 @@ $('#wdSpeakSentence').onclick=()=>{const w=activeWord();if(w)D.speak(currentExam
 detailFav.onclick=()=>{const w=activeWord();if(w)toggleFavorite(w.h)};
 $('#wdBack').onclick=()=>D.page(origin==='wordDetail'?'vocab':origin);
 D.openWordDetail=openWord;
+// Attach detail openers to any cards rendered before this script finished loading.
+if($('#wordGrid'))D.bindCards($('#wordGrid'));
+if($('#result'))D.bindCards($('#result'));
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&detail.classList.contains('on'))D.page(origin==='wordDetail'?'vocab':origin)});
 })();
