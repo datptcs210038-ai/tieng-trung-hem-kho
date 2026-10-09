@@ -578,3 +578,37 @@
   width:100%!important;height:100%!important;top:0!important;left:0!important
  }
 }
+
+
+/* Matching Pixel Wardrobe · v9: 5 coordinated collectible looks */
+#pixelArcade .pa-set-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:5px 0 13px}
+#pixelArcade .pa-set-card{min-width:0;padding:15px 14px 14px;border:2px solid #a5c5b8;border-radius:11px;background:#fffdf8;box-shadow:4px 4px 0 #d6e5d9;display:flex;align-items:center;flex-direction:column;gap:8px;text-align:center}
+#pixelArcade .pa-set-top{display:flex;align-items:center;justify-content:space-between;gap:7px;width:100%;color:#5b8678;font:750 10px/1.45 'Be Vietnam Pro',sans-serif}
+#pixelArcade .pa-set-top span:last-child{white-space:nowrap;color:#90703c}
+#pixelArcade .pa-set-preview{position:relative;display:block;width:min(100%,220px)!important;height:166px!important;margin:2px auto 3px;border:2px solid #bdcfc0;border-radius:9px;background:linear-gradient(180deg,#edf7ed 0%,#fcf9e7 77%,#f3e8ce 77%)!important;overflow:hidden;image-rendering:pixelated}
+#pixelArcade .pa-set-preview .pa-shop-cat,#pixelArcade .pa-set-preview .pa-shop-wear{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;background-repeat:no-repeat!important;pointer-events:none!important;image-rendering:pixelated!important}
+#pixelArcade .pa-set-preview .pa-shop-cat{background-image:var(--cat-atlas-preview,url('/kitten-v2-idle.svg'))!important;background-size:400% 200%!important;background-position:0 0!important;z-index:0}
+#pixelArcade .pa-set-preview .pa-set-layer{background-size:100% 100%!important;background-position:center!important}
+#pixelArcade .pa-set-preview .pa-set-layer-0{z-index:1}
+#pixelArcade .pa-set-preview .pa-set-layer-1{z-index:2}
+#pixelArcade .pa-set-preview .pa-set-layer-2{z-index:3}
+#pixelArcade .pa-set-card h3{font:400 clamp(25px,2.6vw,32px)/1 'VT323','Be Vietnam Pro',sans-serif;color:#316e66;margin:4px 0 0}
+#pixelArcade .pa-set-card p{font:650 11px/1.55 'Be Vietnam Pro',sans-serif;color:#7d8b7d;margin:0;min-height:30px}
+#pixelArcade .pa-set-detail{font:550 10px/1.5 'Be Vietnam Pro',sans-serif;color:#729087;min-height:30px;overflow-wrap:anywhere}
+#pixelArcade .pa-set-card button{margin-top:auto;width:100%;border:2px solid #5a9d85;background:#e6f5e9;color:#286c59;border-radius:8px;padding:12px 8px;font:800 11px/1.4 'Be Vietnam Pro',sans-serif;cursor:pointer;min-height:45px}
+#pixelArcade .pa-set-card button:hover:not(:disabled){background:#d3f0db;transform:translateY(-2px)}
+#pixelArcade .pa-set-card button:disabled{cursor:not-allowed;opacity:.7}
+#pixelArcade .pa-set-card button[title="Chưa đủ xu"]{border-color:#c5bbb0;color:#997f68;background:#f4efe8}
+#pixelArcade .pa-set-cute{border-color:#f5c6d5;background:#fffafb}
+#pixelArcade .pa-set-cute .pa-set-preview{border-color:#efc6d0;background:linear-gradient(180deg,#ffedf1,#fff7ec 77%,#f3e1d0 77%)!important}
+#pixelArcade .pa-set-campus{border-color:#a6cfde}
+#pixelArcade .pa-set-campus .pa-set-preview{border-color:#b7d4dc;background:linear-gradient(180deg,#dceefa,#f6f7e9 77%,#e5dfd3 77%)!important}
+#pixelArcade .pa-set-heritage{border-color:#d2b8d7}
+#pixelArcade .pa-set-heritage .pa-set-preview{border-color:#e1c4df;background:linear-gradient(180deg,#eee0f4,#fff7eb 77%,#efdfd5 77%)!important}
+#pixelArcade .pa-set-royal{border-color:#e6c77a;background:#fffdf3}
+#pixelArcade .pa-set-royal .pa-set-preview{border-color:#e9c783;background:linear-gradient(180deg,#fff0d0,#fff8e7 77%,#f1d8a6 77%)!important}
+#pixelArcade .pa-set-sleep{border-color:#abcab6}
+#pixelArcade .pa-set-sleep .pa-set-preview{border-color:#afc3b7;background:linear-gradient(180deg,#e2e7f4,#f7f4eb 77%,#c4d9bc 77%)!important}
+@media(max-width:1020px){#pixelArcade .pa-set-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}}
+@media(max-width:530px){#pixelArcade .pa-set-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#pixelArcade .pa-set-card{padding:10px 8px}#pixelArcade .pa-set-preview{height:118px!important}#pixelArcade .pa-set-top{font-size:9px}#pixelArcade .pa-set-card h3{font-size:23px}#pixelArcade .pa-set-card p{font-size:10px}#pixelArcade .pa-set-detail{font-size:9px}#pixelArcade .pa-set-card button{font-size:10px;padding:8px 5px}}
+@media(max-width:375px){#pixelArcade .pa-set-grid{grid-template-columns:1fr}#pixelArcade .pa-set-preview{height:160px!important}}
