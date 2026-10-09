@@ -3,11 +3,11 @@
 'use strict';
 const D=window.TTHK,flash=document.getElementById('flash');
 if(!D||!flash||document.getElementById('pixelArcade'))return;
-const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=cat-rebuild-room-v4';document.head.append(sheet);
+const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=cat-final-v6';document.head.append(sheet);
 flash.classList.add('pixel-arcade-page');
 Array.from(flash.children).forEach(el=>el.classList.add('old-flash-content'));
 const root=document.createElement('div');root.id='pixelArcade';
-root.innerHTML='<h1 class="pa-title">🐾 Khu Game Pixel</h1><p class="pa-subtitle">Chơi game luyện HSK, mỗi câu đúng nhận 1 xu. Tích xu để nuôi và sắm đồ cho mèo!</p><nav class="pa-tabs" aria-label="Khu game"><button type="button" data-pa-tab="home" aria-selected="true">🎮 Chơi game</button><button type="button" data-pa-tab="cat" aria-selected="false">🐱 Mèo của tui</button><button type="button" data-pa-tab="shop" aria-selected="false">🛍️ Cửa hàng</button><span class="pa-wallet">🪙 <span id="paCoins">0</span> xu</span></nav><div id="paContent"></div><div id="paToast" class="pa-toast" hidden role="status" aria-live="polite"></div>';
+root.innerHTML='<h1 class="pa-title">🐾 Khu Game Pixel</h1><p class="pa-subtitle">Chơi game luyện HSK, mỗi câu đúng nhận 1 xu. Tích xu để nuôi và sắm đồ cho mèo!</p><nav class="pa-tabs" aria-label="Khu game"><button type="button" data-pa-tab="home" aria-selected="true">🎮 Chơi game</button><button type="button" data-pa-tab="cat" aria-selected="false">🐱 Mèo của tui</button><button type="button" data-pa-tab="shop" aria-selected="false">🛍️ Cửa hàng</button><button type="button" data-pa-tab="inventory" aria-selected="false">🎒 Tủ đồ</button><span class="pa-wallet">🪙 <span id="paCoins">0</span> xu</span></nav><div id="paContent"></div><div id="paToast" class="pa-toast" hidden role="status" aria-live="polite"></div>';
 flash.prepend(root);
 const $=sel=>root.querySelector(sel),content=$('#paContent');
 const ITEMS=[
@@ -56,7 +56,22 @@ const GAMES=[
  {id:'pick',name:'Bắt chữ đúng',icon:'🀄',time:60,info:'Chọn đúng nghĩa tiếng Việt'},
  {id:'pinyin',name:'Ghép Pinyin',icon:'🔡',time:60,info:'Chọn đúng cách đọc'},
  {id:'listen',name:'Nghe rồi chọn',icon:'🔊',time:75,info:'Nghe và nhận diện Hán tự'},
- {id:'pairs',name:'Lật thẻ trí nhớ',icon:'🧠',time:90,info:'Ghép 6 cặp từ đúng'}
+ {id:'pairs',name:'Lật thẻ trí nhớ',icon:'🧠',time:90,info:'Ghép 6 cặp từ đúng'},
+ {id:'order',name:'Xếp câu',icon:'🧩',time:105,info:'Sắp từ thành câu hoàn chỉnh'}
+];
+const SENTENCES=[
+ {vi:'Tôi thích học tiếng Trung.',parts:['我','喜欢','学习','中文。']},
+ {vi:'Ngày mai tôi đến trường.',parts:['明天','我','去','学校。']},
+ {vi:'Hôm nay thời tiết rất đẹp.',parts:['今天','天气','很','好。']},
+ {vi:'Mẹ tôi đang nấu cơm.',parts:['我妈妈','正在','做饭。']},
+ {vi:'Tôi có ba người bạn.',parts:['我','有','三个','朋友。']},
+ {vi:'Anh ấy biết nói tiếng Trung.',parts:['他','会','说','中文。']},
+ {vi:'Bạn muốn uống trà không?',parts:['你','想','喝茶','吗？']},
+ {vi:'Tôi đã ăn cơm rồi.',parts:['我','已经','吃饭','了。']},
+ {vi:'Tôi cao hơn anh ấy.',parts:['我','比','他','高。']},
+ {vi:'Tôi đang đọc sách ở nhà.',parts:['我','在家','看书。']},
+ {vi:'Bạn học tiếng Trung ở đâu?',parts:['你','在哪儿','学习','中文？']},
+ {vi:'Chiều mai chúng ta cùng đi chơi.',parts:['明天下午','我们','一起','出去玩。']}
 ];
 const cachedDefault={coins:0,fullness:70,last_hunger_at:new Date().toISOString(),owned_items:[],food_stock:{},equipped:{}};
 let catName='Miu Miu',petWalk=false;let pet={...cachedDefault},loadedFor=null,currentView='home',storeFilter='all',run=null,timer=null,finished=false,petAnimation='',animationTimeout=null;
@@ -128,22 +143,29 @@ function render(){
  $('#paCoins').textContent=Number(pet.coins||0).toLocaleString('vi-VN');
  root.querySelectorAll('[data-pa-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.paTab===currentView||(currentView==='play'&&b.dataset.paTab==='home'))));
  if(currentView==='home'){
-  content.innerHTML='<div class="pa-home"><div class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🐱 '+escapeHtml(catName)+'</h2>'+petScene()+petStatus()+
-   '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:16px"><button class="pa-primary" data-pa-open="cat">Cho mèo ăn ♡</button><button class="pa-primary" data-pa-open="shop">🛍️ Mua trang phục</button><button class="pa-primary" data-pa-groom>🐾 Lau mặt</button><button class="pa-primary" data-pa-name>✎ Đặt tên</button><button class="pa-primary" data-pa-walk>🌿 '+(petWalk?'Về nhà':'Cho đi dạo')+'</button></div></div>'+
-   '<section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 11px">★ Chọn trò chơi</h2>'+gameButtons()+'</section></div>';
+  content.innerHTML='<div class="pa-home pa-home-refined"><section class="pa-panel pa-game-hub"><div class="pa-panel-top"><div><h2>🎮 Chọn trò chơi</h2><p>5 thử thách HSK 1–2 · mỗi đáp án đúng +1 xu</p></div><span class="pa-status-pill">🪙 Tích xu nuôi mèo</span></div>'+gameButtons()+'</section>'+
+   '<aside class="pa-panel pa-pet-summary"><div class="pa-panel-top"><div><h2>🐱 '+escapeHtml(catName)+'</h2><p>Mèo đồng hành cùng bạn học</p></div><span class="pa-status-pill">'+(mood()==='sleeping'?'💤 Đang ngủ':mood()==='hungry'?'🍽 Đang đói':'💚 Khỏe mạnh')+'</span></div>'+petScene()+petStatus()+
+   '<div class="pa-actions"><button class="pa-primary" data-pa-open="cat">🐾 Chăm sóc mèo</button><button class="pa-primary pa-secondary" data-pa-open="shop">🛍️ Mua đồ</button></div></aside></div>';
  }else if(currentView==='cat'){
   const food=ITEMS.filter(x=>x.category==='food');
-  content.innerHTML='<div class="pa-home"><section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🏠 Nhà của '+escapeHtml(catName)+'</h2>'+petScene()+petStatus()+
-   '<div class="pa-cat-tools"><button class="pa-primary" data-pa-groom>🐾 Lau mặt</button><button class="pa-primary" data-pa-name>✎ Đặt tên</button><button class="pa-primary" data-pa-walk>🌿 '+(petWalk?'Về nhà':'Cho đi dạo')+'</button></div><p class="pa-hint" style="margin-top:13px">Bạn có thể cho mèo ăn ngay cả khi no. Mèo no sẽ nằm ngủ và hiện Zzz.</p></section>'+
-   '<section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🍽️ Cho mèo ăn</h2><p class="pa-hint">Mua món tại cửa hàng trước, sau đó bấm Cho ăn.</p><div class="pa-shop-grid">'+food.map(i=>foodCard(i)).join('')+
-   '</div><button class="pa-primary" data-pa-open="shop" style="margin-top:15px">🛒 Đến cửa hàng</button></section></div>';
+  content.innerHTML='<div class="pa-home pa-cat-home"><section class="pa-panel pa-cat-room"><div class="pa-panel-top"><div><h2>🏠 Nhà của '+escapeHtml(catName)+'</h2><p>Không gian riêng của bé</p></div><button class="pa-small" data-pa-name>✎ Đổi tên</button></div>'+petScene()+petStatus()+
+   '<div class="pa-actions"><button class="pa-primary" data-pa-groom>🐾 Lau mặt</button><button class="pa-primary" data-pa-walk>🌿 '+(petWalk?'Về nhà':'Cho đi dạo')+'</button><button class="pa-primary pa-secondary" data-pa-open="inventory">🎒 Thay đồ</button></div></section>'+
+   '<section class="pa-panel pa-cat-care"><div class="pa-panel-top"><div><h2>🍽️ Bữa ăn của mèo</h2><p>Chọn món bạn đã mua để cho bé ăn</p></div><button class="pa-small" data-pa-open="shop">🛒 Cửa hàng →</button></div><div class="pa-shop-grid pa-food-grid">'+food.map(foodCard).join('')+
+   '</div><p class="pa-hint">Độ no giảm 15 điểm mỗi giờ. Mèo no vẫn ăn được; từ 90 điểm trở lên sẽ ngủ.</p></section></div>';
  }else if(currentView==='shop'){
-  content.innerHTML='<section class="pa-panel"><h2 style="font:400 37px VT323;color:#31776a;margin:0 0 8px">🛍️ Cửa hàng Pixel</h2>'+
-   '<p class="pa-hint">Đồ ăn chỉ 5–18 xu. Phụ kiện từ 50 xu, trang phục cao cấp đến 400 xu. Mua một lần, mặc được mãi!</p>'+
+  content.innerHTML='<section class="pa-panel pa-shop-panel"><div class="pa-panel-top"><div><h2>🛍️ Cửa hàng Pixel</h2><p>Tích xu chơi game rồi sắm đồ cho '+escapeHtml(catName)+'</p></div><span class="pa-status-pill">🪙 '+Number(pet.coins||0)+' xu</span></div>'+
    '<div class="pa-store-groups">'+[
-     ['all','Tất cả'],['food','🍣 Đồ ăn'],['head','🎀 Mũ & kính'],['neck','🧣 Phụ kiện cổ'],['body','👕 Trang phục']
+    ['all','Tất cả'],['food','🍣 Đồ ăn'],['head','🎀 Đầu'],['neck','🧣 Cổ'],['body','👕 Trang phục']
    ].map(([id,name])=>'<button type="button" data-filter="'+id+'" aria-pressed="'+(storeFilter===id)+'">'+name+'</button>').join('')+'</div>'+
-   '<div class="pa-shop-grid">'+ITEMS.filter(i=>storeFilter==='all'||i.category===storeFilter).map(i=>shopCard(i)).join('')+'</div></section>';
+   '<div class="pa-shop-grid">'+ITEMS.filter(i=>storeFilter==='all'||i.category===storeFilter).map(shopCard).join('')+'</div>'+
+   '<p class="pa-hint">Đồ ăn từ 5 xu; phụ kiện từ 50 xu; trang phục quý hiếm đến 400 xu. Đã mua là sở hữu vĩnh viễn.</p></section>';
+ }else if(currentView==='inventory'){
+  const owned=ITEMS.filter(i=>i.category!=='food'&&(pet.owned_items||[]).includes(i.id));
+  const food=ITEMS.filter(i=>i.category==='food'&&Number((pet.food_stock||{})[i.id]||0)>0);
+  content.innerHTML='<div class="pa-home pa-inventory"><section class="pa-panel"><div class="pa-panel-top"><div><h2>🎒 Tủ đồ của '+escapeHtml(catName)+'</h2><p>Phụ kiện mua một lần, mặc được nhiều lần</p></div><button class="pa-small" data-pa-open="shop">+ Mua thêm</button></div>'+petScene()+petStatus()+'</section>'+
+   '<section class="pa-panel"><h2>✨ Phụ kiện đang sở hữu</h2>'+
+   (owned.length?'<div class="pa-shop-grid">'+owned.map(shopCard).join('')+'</div>':'<div class="pa-empty">Chưa có phụ kiện nào. Chơi game tích xu rồi ghé cửa hàng nha! 🐱</div>')+
+   '<h3 class="pa-inventory-label">🍣 Đồ ăn trong kho</h3>'+(food.length?'<div class="pa-shop-grid pa-food-grid">'+food.map(foodCard).join('')+'</div>':'<p class="pa-hint">Kho đồ ăn đang trống.</p>')+'</section></div>';
  }else if(currentView==='play'){renderGame();return}
  content.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>startGame(b.dataset.game));
  content.querySelectorAll('[data-pa-open]').forEach(b=>b.onclick=()=>tab(b.dataset.paOpen));
@@ -192,7 +214,7 @@ root.querySelectorAll('[data-pa-tab]').forEach(b=>b.onclick=()=>{
  if(run&&!run.done&&currentView==='play')toast('Đã kết thúc ván và ghi nhận những câu đúng.');
  tab(target);
 });
-function randomize(list){return [...list].sort(()=>Math.random()-.5)}
+function randomize(list){const out=[...list];for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
 function vocab(){
  return (D.words||[]).filter(w=>[1,2].includes(Number(w.l))&&w.h&&w.p&&w.m);
 }
