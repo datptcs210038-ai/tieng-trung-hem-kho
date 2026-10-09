@@ -716,3 +716,30 @@ render();
    finally{btn.disabled=false;btn.textContent='Kiểm tra link ảnh';}
  };
 })();
+
+
+// Pixel Quest UI — visual-only stylesheet and hero decoration
+
+;(()=>{
+  'use strict';
+  if(document.getElementById('pixelThemeCss'))return;
+  const link=document.createElement('link');
+  link.id='pixelThemeCss';
+  link.rel='stylesheet';
+  link.href='/pixel-ui.css?v=pixel-20261009-v1';
+  document.head.append(link);
+  function decorate(){
+    const hero=document.querySelector('#intro .hero');
+    if(hero&&!hero.querySelector('.pixel-hero-tag')){
+      const tag=document.createElement('span');
+      tag.className='pixel-hero-tag';
+      tag.innerHTML='<span class="pixel-tag-pips" aria-hidden="true"></span><span>HỌC TIẾNG TRUNG · PIXEL QUEST</span>';
+      const title=hero.querySelector('h1');
+      if(title)hero.insertBefore(tag,title);else hero.prepend(tag);
+    }
+    const nav=document.querySelector('.nav');
+    if(nav)nav.setAttribute('aria-label','Các mục học tập');
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorate,{once:true});
+  else decorate();
+})();
