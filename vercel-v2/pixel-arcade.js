@@ -3,7 +3,7 @@
 'use strict';
 const D=window.TTHK,flash=document.getElementById('flash');
 if(!D||!flash||document.getElementById('pixelArcade'))return;
-const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=matching-pixel-sets-v9';document.head.append(sheet);
+const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=matching-pixel-sets-v10';document.head.append(sheet);
 flash.classList.add('pixel-arcade-page');
 Array.from(flash.children).forEach(el=>el.classList.add('old-flash-content'));
 const root=document.createElement('div');root.id='pixelArcade';
