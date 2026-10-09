@@ -13,10 +13,179 @@ const guideBtn=document.createElement('button');guideBtn.className='btn soft';gu
 $('#writeSelect').onchange=e=>{D.writeIndex=+e.target.value;D.charIndex=0;write()};$('#hideWord').onclick=()=>{D.isHidden=!D.isHidden;write()};$('#hear').onclick=()=>D.speak(D.words[D.writeIndex]?.h||'你好');$('#animate').onclick=()=>{if(D.isHidden){D.isHidden=false;write()}else writer?.animateCharacter()};$('#trace').onclick=()=>{if(writer)writer.quiz();else $('#writingHelp').textContent='Bạn đang ở chế độ viết tự do, hãy viết vào ô trống.';};$('#clear').onclick=()=>ctx?ctx.clearRect(0,0,270,270):write();
 let quizWords=[],qi=0,correct=0,flash=false,testLevel=1,testNum=1;function begin(f){flash=f;testLevel=f?1:+$('#examLevel').value;testNum=f?Math.ceil(Math.random()*300):+$('#examNum').value;quizWords=D.shuffle(D.words.filter(w=>w.l<=testLevel),testLevel*813+testNum*179).slice(0,f?+$('#flashCount').value:testLevel===1?40:60);qi=0;correct=0;question()}
 function question(){let box=flash?$('#flashBody'):$('#examBody');if(qi>=quizWords.length)return finish();let w=quizWords[qi],listen=!flash&&qi<quizWords.length/2,opts=D.shuffle([w,...D.shuffle(D.words.filter(x=>x.h!==w.h&&x.m!==w.m),qi*31).slice(0,3)],testNum+qi*7);box.innerHTML='<p>HSK'+testLevel+' · Câu '+(qi+1)+'/'+quizWords.length+'</p><h1 style="text-align:center">'+(listen?'🎧':w.h)+'</h1>'+(listen?'<button class="btn soft" id="listenQ">🔊 Nghe</button>':'')+opts.map((x,i)=>'<button class="choice" data-answer="'+i+'">'+x.m+'</button>').join('')+'<p id="feedback"></p>';if(listen)$('#listenQ').onclick=()=>D.speak(w.h);$$('[data-answer]').forEach(b=>b.onclick=()=>{if($('#feedback').dataset.done)return;$('#feedback').dataset.done='1';let ok=opts[+b.dataset.answer]===w;if(ok)correct++;$('#feedback').innerHTML=(ok?'✅ Chính xác!':'❌ Đáp án: '+w.m)+' <button class="btn" id="next">Tiếp theo</button>';$('#next').onclick=()=>{qi++;question()}})}
-async function finish(){let rate=Math.round(correct/quizWords.length*100),box=flash?$('#flashBody'):$('#examBody');box.innerHTML='<h2>'+'🎉 Hoàn thành bài ôn!'+'</h2><h1>'+rate+'%</h1><p>'+correct+'/'+quizWords.length+' câu đúng.</p><p id="scoreSaved"></p><button class="btn" id="retry">Thử lại</button>';$('#retry').onclick=()=>begin(flash);if(flash)return;let r=await db.from('hsk_scores').insert({user_id:user.id,nickname:String(user.user_metadata?.full_name||user.email?.split('@')[0]||'Học viên').slice(0,40),level:testLevel,score:rate,correct,total:quizWords.length});$('#scoreSaved').textContent=r.error?r.error.message:'Đã lưu điểm lên bảng xếp hạng.'}$('#startExam').onclick=()=>begin(false);$('#startFlash').onclick=()=>begin(true);
+async function finish(){let rate=Math.round(correct/quizWords.length*100),box=flash?$('#flashBody'):$('#examBody');box.innerHTML='<h2>'+(flash?'🎉 Hoàn thành flashcard!':'🎉 Hoàn thành đề HSK!')+'</h2><h1>'+rate+'%</h1><p>'+correct+'/'+quizWords.length+' câu đúng.</p><p id="scoreSaved"></p><button class="btn" id="retry">Thử lại</button>';$('#retry').onclick=()=>begin(flash);if(flash)return;let r=await db.from('hsk_scores').insert({user_id:user.id,nickname:String(user.user_metadata?.full_name||user.email?.split('@')[0]||'Học viên').slice(0,40),level:testLevel,score:rate,correct,total:quizWords.length});$('#scoreSaved').textContent=r.error?r.error.message:'Đã lưu điểm lên bảng xếp hạng.'}$('#startExam').onclick=()=>begin(false);$('#startFlash').onclick=()=>begin(true);
 async function ranks(){let r=await db.from('hsk_scores').select('user_id,nickname,level,score,total').order('score',{ascending:false}).limit(300);if(r.error)return;for(let l of [1,2]){let ids=new Set(),a=r.data.filter(x=>x.level===l&&x.total===(l===1?40:60)&&!ids.has(x.user_id)&&ids.add(x.user_id));let box=$('#rank'+l);box.replaceChildren();if(!a.length)box.textContent='Chưa có kết quả.';a.forEach((x,i)=>{let p=document.createElement('p');p.textContent=(i+1)+'. '+x.nickname+' — '+x.score+'%';box.append(p)})}}
 let timerMode='pomo',phase='study',remain=1500000,elapsed=0,started=0,running=false,interval=null;function durations(){return{study:Math.max(1,(+$('#studyMin').value||0)*60+(+$('#studySec').value||0))*1000,break:Math.max(1,(+$('#breakMin').value||0)*60+(+$('#breakSec').value||0))*1000}}function clock(){let ms=running?(timerMode==='watch'?elapsed+Date.now()-started:Math.max(0,remain-Date.now()+started)):(timerMode==='watch'?elapsed:remain),n=Math.floor(ms/1000);$('#clock').textContent=timerMode==='watch'?String(Math.floor(n/3600)).padStart(2,'0')+':'+String(Math.floor(n/60)%60).padStart(2,'0')+':'+String(n%60).padStart(2,'0'):String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');if(running&&timerMode==='pomo'&&ms<=0){clearInterval(interval);running=false;phase=phase==='study'?'break':'study';remain=durations()[phase];$('#toastTitle').textContent=phase==='break'?'🌿 Đến giờ nghỉ rồi!':'📚 Quay lại học nhé!';$('#toast').hidden=false;$('#toggleClock').textContent='▶ Bắt đầu';if('Notification'in window&&Notification.permission==='granted')new Notification($('#toastTitle').textContent);clock()}}$('#toggleClock').onclick=()=>{if(running){let d=Date.now()-started;if(timerMode==='watch')elapsed+=d;else remain=Math.max(0,remain-d);clearInterval(interval);running=false;$('#toggleClock').textContent='▶ Tiếp tục'}else{started=Date.now();running=true;interval=setInterval(clock,280);$('#toggleClock').textContent='⏸ Tạm dừng'}clock()};$('#resetClock').onclick=()=>{clearInterval(interval);running=false;phase='study';remain=durations().study;elapsed=0;$('#toggleClock').textContent='▶ Bắt đầu';clock()};$$('[data-timer]').forEach(b=>b.onclick=()=>{clearInterval(interval);running=false;timerMode=b.dataset.timer;$$('[data-timer]').forEach(x=>x.classList.toggle('on',x===b));$('#pomofields').hidden=timerMode==='watch';elapsed=0;remain=durations().study;clock()});$('#notify').onclick=async()=>{if('Notification'in window){let r=await Notification.requestPermission();$('#timeMessage').textContent=r==='granted'?'Đã bật thông báo chạy nền.':'Trình duyệt chưa cấp quyền.'}};$('#dismiss').onclick=()=>$('#toast').hidden=true;clock();
 $('#memo').value=localStorage.getItem('tthk_memo')||'';$('#memo').oninput=()=>localStorage.setItem('tthk_memo',$('#memo').value);$('#planDate').value=new Date().toISOString().slice(0,10);function plans(){let a=JSON.parse(localStorage.getItem('tthk_plans')||'[]');$('#planList').replaceChildren();a.forEach((x,i)=>{let p=document.createElement('p');p.textContent=x.date+' · '+x.text+' ';let del=document.createElement('button');del.textContent='Xóa';del.className='btn soft';del.onclick=()=>{a.splice(i,1);localStorage.setItem('tthk_plans',JSON.stringify(a));plans()};p.append(del);$('#planList').append(p)})}$('#addPlan').onclick=()=>{let a=JSON.parse(localStorage.getItem('tthk_plans')||'[]'),text=$('#plan').value.trim();if(!text)return;a.push({date:$('#planDate').value,text});localStorage.setItem('tthk_plans',JSON.stringify(a));$('#plan').value='';plans()};plans();
 let audio=null,musicLoop=null,note=0,melody=[392,440,493.88,440,392,349.23,329.63];function playNote(){let t=audio.currentTime,o=audio.createOscillator(),g=audio.createGain(),f=audio.createBiquadFilter();o.type='sawtooth';o.frequency.value=melody[note++%melody.length];f.type='lowpass';f.frequency.value=700;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.017,t+.2);g.gain.exponentialRampToValueAtTime(.0001,t+1.5);o.connect(f);f.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+1.6)}$('#music').onclick=async()=>{if(audio){clearInterval(musicLoop);await audio.close();audio=null;$('#music').textContent='🎻 Bật nhạc nhẹ'}else{audio=new(window.AudioContext||window.webkitAudioContext)();playNote();musicLoop=setInterval(playNote,1600);$('#music').textContent='🔇 Tắt nhạc'}};window.addEventListener('load',auth);
 
 })();
+
+(function(){
+"use strict";
+const D=window.TTHK;
+if(!D)return;
+const $=s=>document.querySelector(s);
+const enhanceStyle=document.createElement('style');
+enhanceStyle.textContent=`
+.memberpic{background-image:url('/team.webp')!important;background-repeat:no-repeat!important;background-size:500% 100%!important;width:100%;aspect-ratio:3/4!important;display:block;filter:none}
+.member{max-width:330px;min-width:225px}
+#profile .profile-grid{display:grid;grid-template-columns:minmax(160px,230px) 1fr;gap:22px}
+#profile .profile-avatar{width:175px;height:175px;border-radius:50%;background:#e8f6ec;display:grid;place-items:center;overflow:hidden;font-size:72px;margin:6px auto 16px;border:4px solid #d1ebd8}
+#profile .profile-avatar img{width:100%;height:100%;object-fit:cover}
+#profile .profile-field{display:flex;flex-direction:column;gap:6px;min-width:0;margin-bottom:16px}
+#profile .profile-field label{font-weight:700;font-size:12px;color:#53745e}
+#profile .profile-field input{width:100%;max-width:100%;background:#fff}
+#profile .profile-field input[readonly]{background:#edf4ed;color:#637b69;cursor:not-allowed}
+#profile .profile-section{border:1px solid #dcebe1;border-radius:18px;padding:21px;background:#fff;margin:15px 0}
+#profile .profile-status{font-weight:600;font-size:13px;line-height:1.7;color:#147b5d;min-height:18px}
+#profile .subtext{font-size:12px;color:#7a9685;line-height:1.7}
+#profile .profile-avatar-controls{text-align:center}
+#profile .profile-avatar-controls input[type=file]{max-width:100%;font-size:12px}
+.placeholder{flex-direction:column;gap:7px;color:#91a89a;font-size:28px!important}
+.placeholder small{font-size:10px;color:#7b9687!important;font-family:'Be Vietnam Pro',sans-serif!important}
+#flashBody{line-height:1.8}
+@media(max-width:660px){#profile .profile-grid{grid-template-columns:1fr}#profile .profile-avatar{width:145px;height:145px}}
+`;
+document.head.appendChild(enhanceStyle);
+const nav=$('.nav');
+if(!nav)return;
+const notesBtn=nav.querySelector('[data-page="notes"]');
+if(notesBtn)notesBtn.textContent='📅 Lịch học & tài liệu';
+const notesPage=$('#notes');
+if(notesPage){
+ const heading=notesPage.querySelector('h1');if(heading)heading.textContent='📅 Lịch học và tài liệu';
+ const oldMemo=notesPage.querySelector('#memo')?.closest('.box');
+ if(oldMemo)oldMemo.remove();
+ const split=notesPage.querySelector('.split');if(split)split.style.display='block';
+}
+const flashBox=$('#flashBody');
+if(flashBox)flashBox.textContent='Luyện tập và xem kết quả đúng/sai, không tính điểm vào bảng xếp hạng HSK.';
+const navBtn=document.createElement('button');
+navBtn.textContent='👤 Thông tin cá nhân';
+navBtn.dataset.page='profile';
+nav.insertBefore(navBtn,$('#logout'));
+const section=document.createElement('section');
+section.id='profile';section.className='page';
+section.innerHTML=`
+<h1>👤 Thông tin cá nhân</h1>
+<p class="muted">Quản lý tên hiển thị, ảnh đại diện và mật khẩu. Email, số điện thoại và MSSV không thể thay đổi ở đây.</p>
+<div class="profile-grid">
+ <div class="box">
+   <div id="profileAvatar" class="profile-avatar" aria-label="Ảnh đại diện">🐼</div>
+   <div class="profile-avatar-controls">
+     <label for="profilePhoto" style="font-weight:700">Ảnh đại diện cá nhân</label>
+     <input id="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp">
+     <p class="subtext">JPG, PNG hoặc WebP · tối đa 2 MB. Ảnh đại diện có thể được xem công khai.</p>
+     <button class="btn soft" type="button" id="uploadPhoto">📷 Cập nhật ảnh</button>
+     <p class="profile-status" id="photoStatus" role="status"></p>
+   </div>
+ </div>
+ <div>
+ <div class="profile-section">
+   <h3>Hồ sơ học viên</h3>
+   <div class="profile-field"><label for="profileName">Họ tên / tên hiển thị</label><input id="profileName" maxlength="60" autocomplete="name"></div>
+   <button class="btn" id="saveName">Lưu tên mới</button>
+   <p class="profile-status" id="nameStatus" role="status"></p>
+   <div class="profile-field"><label for="profileEmail">Email đăng nhập · không thể đổi</label><input id="profileEmail" type="email" readonly></div>
+   <div class="profile-field"><label for="profilePhone">Số điện thoại · không thể đổi</label><input id="profilePhone" readonly></div>
+   <div class="profile-field"><label for="profileStudent">MSSV · không thể đổi</label><input id="profileStudent" readonly></div>
+ </div>
+ <div class="profile-section">
+   <h3>🔐 Thay đổi mật khẩu</h3>
+   <p class="subtext">Mật khẩu mới phải dài ít nhất 8 ký tự.</p>
+   <div class="profile-field"><label for="profileNewPassword">Mật khẩu mới</label><input id="profileNewPassword" type="password" autocomplete="new-password"></div>
+   <div class="profile-field"><label for="profileConfirmPassword">Nhập lại mật khẩu mới</label><input id="profileConfirmPassword" type="password" autocomplete="new-password"></div>
+   <button class="btn" id="saveProfilePassword">Đổi mật khẩu</button>
+   <p class="profile-status" id="passwordStatus" role="status"></p>
+ </div>
+ </div>
+</div>`;
+const foot=document.querySelector('footer');
+if(foot)foot.before(section);else document.querySelector('main')?.append(section);
+const oldPage=D.page;
+D.page=function(id){oldPage(id);if(id==='profile')loadProfile();};
+navBtn.addEventListener('click',()=>D.page('profile'));
+const getContext=()=>D.profileContext?.()||{};
+function status(id,msg){const el=$('#'+id);if(el)el.textContent=msg;}
+function renderAvatar(path){
+ const area=$('#profileAvatar');area.replaceChildren();
+ if(!path){area.textContent='🐼';return;}
+ const {db}=getContext();
+ if(!db){area.textContent='🐼';return;}
+ const result=db.storage.from('student-avatars').getPublicUrl(path);
+ const url=result.data?.publicUrl;
+ if(!url){area.textContent='🐼';return;}
+ const img=document.createElement('img');img.alt='Ảnh đại diện';
+ img.src=url;img.onerror=()=>{area.textContent='🐼';};
+ area.append(img);
+}
+async function loadProfile(){
+ const {db,user}=getContext();if(!db||!user){status('nameStatus','Vui lòng đăng nhập lại.');return;}
+ const meta=user.user_metadata||{};
+ $('#profileEmail').value=user.email||'';
+ $('#profileName').value=meta.full_name||meta.nickname||'';
+ $('#profilePhone').value=meta.phone||'Chưa có';
+ $('#profileStudent').value=meta.student_id||'Chưa có';
+ renderAvatar(meta.avatar_path||'');
+ const {data,error}=await db.from('student_profiles').select('full_name,phone,student_id,avatar_path').eq('user_id',user.id).maybeSingle();
+ if(error){status('nameStatus','Chưa đọc được hồ sơ từ hệ thống.');return;}
+ if(data){
+  $('#profileName').value=data.full_name||meta.full_name||'';
+  $('#profilePhone').value=data.phone||meta.phone||'Chưa có';
+  $('#profileStudent').value=data.student_id||meta.student_id||'Chưa có';
+  renderAvatar(data.avatar_path||meta.avatar_path||'');
+ }
+}
+$('#saveName').onclick=async()=>{
+ const {db,user}=getContext(),value=$('#profileName').value.trim();
+ if(!db||!user)return status('nameStatus','Vui lòng đăng nhập.');
+ if(value.length<2||value.length>60)return status('nameStatus','Tên cần dài 2–60 ký tự.');
+ const btn=$('#saveName');btn.disabled=true;
+ try{
+  const rpc=await db.rpc('update_my_display_name',{new_full_name:value});
+  if(rpc.error)throw rpc.error;
+  const up=await db.auth.updateUser({data:{...user.user_metadata,full_name:value}});
+  if(up.error)throw up.error;
+  status('nameStatus','✅ Đã cập nhật tên hiển thị và tên trên bảng xếp hạng.');
+  $('#hello').textContent='Xin chào, '+value+' 🌱';
+ }catch(e){status('nameStatus','Không cập nhật được: '+e.message);}finally{btn.disabled=false;}
+};
+$('#saveProfilePassword').onclick=async()=>{
+ const {db,user}=getContext();
+ if(!db||!user)return status('passwordStatus','Bạn cần đăng nhập.');
+ const p=$('#profileNewPassword').value,c=$('#profileConfirmPassword').value;
+ if(p.length<8)return status('passwordStatus','Mật khẩu phải có ít nhất 8 ký tự.');
+ if(p!==c)return status('passwordStatus','Hai mật khẩu không khớp.');
+ const btn=$('#saveProfilePassword');btn.disabled=true;
+ try{
+  const r=await db.auth.updateUser({password:p});
+  if(r.error)throw r.error;
+  $('#profileNewPassword').value='';$('#profileConfirmPassword').value='';
+  status('passwordStatus','✅ Mật khẩu đã được thay đổi.');
+ }catch(e){status('passwordStatus','Không đổi được mật khẩu: '+e.message);}
+ finally{btn.disabled=false;}
+};
+$('#uploadPhoto').onclick=async()=>{
+ const {db,user}=getContext();
+ if(!db||!user)return status('photoStatus','Bạn cần đăng nhập.');
+ const f=$('#profilePhoto').files?.[0];
+ if(!f)return status('photoStatus','Hãy chọn một ảnh trước.');
+ const extensions={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+ if(!extensions[f.type])return status('photoStatus','Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.');
+ if(f.size>2*1024*1024)return status('photoStatus','Ảnh lớn hơn 2 MB. Hãy chọn ảnh nhỏ hơn.');
+ const btn=$('#uploadPhoto');btn.disabled=true;status('photoStatus','Đang tải ảnh lên…');
+ try{
+  const path=user.id+'/'+Date.now()+'-'+(crypto.randomUUID?crypto.randomUUID().slice(0,8):'avatar')+'.'+extensions[f.type];
+  const sent=await db.storage.from('student-avatars').upload(path,f,{contentType:f.type,upsert:false,cacheControl:'3600'});
+  if(sent.error)throw sent.error;
+  const update=await db.from('student_profiles').update({avatar_path:path}).eq('user_id',user.id);
+  if(update.error)throw update.error;
+  const meta=await db.auth.updateUser({data:{...user.user_metadata,avatar_path:path}});
+  if(meta.error)throw meta.error;
+  renderAvatar(path);
+  status('photoStatus','✅ Ảnh đại diện đã được cập nhật.');
+ }catch(e){status('photoStatus','Tải ảnh thất bại: '+e.message);}
+ finally{btn.disabled=false;}
+};
+}());
