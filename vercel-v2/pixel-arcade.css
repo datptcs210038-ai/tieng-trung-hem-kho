@@ -85,3 +85,80 @@
 @media(max-width:900px){#pixelArcade .pa-home{grid-template-columns:1fr}#pixelArcade .pa-scene{min-height:290px}}
 @media(max-width:520px){#pixelArcade .pa-tabs{gap:7px}#pixelArcade .pa-tabs button{font-size:11px;padding:10px}#pixelArcade .pa-wallet{width:100%;text-align:center}#pixelArcade .pa-home-cards{gap:9px}#pixelArcade .pa-game-card{padding:12px}#pixelArcade .pa-game-card strong{font-size:26px}#pixelArcade .pa-game-card small{font-size:10px}#pixelArcade .pa-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#pixelArcade .pa-shop-item{padding:10px}#pixelArcade .pa-answers button{min-height:57px;font-size:13px}#pixelArcade .pa-pair-grid{gap:6px}#pixelArcade .pa-pair-grid button{height:68px;font-size:14px}#pixelArcade .pa-scene{min-height:270px}#pixelArcade .pa-cat-bubble{font-size:10px;right:5px}#pixelArcade .pa-panel{padding:15px}}
 @media(prefers-reduced-motion:reduce){#pixelArcade .pa-cat-base,#pixelArcade .pa-cat,#pixelArcade .pa-zzz,#pixelArcade .pa-crumb{animation:none!important}}
+
+
+
+/* Reference kitten override: reproduce the user's gray-white front-facing cat, do not use orange running sprite. */
+#pixelArcade .pa-pet-stage{
+ width:100%;max-width:430px;height:218px;margin-top:57px;
+ display:flex;align-items:center;justify-content:center;
+}
+#pixelArcade .pa-cat{
+ width:min(100%,350px);height:160px;flex:0 0 auto;
+ max-width:calc(100% - 10px);
+ filter:drop-shadow(0 6px 1px #365a526a);
+ transform:translateY(0);
+}
+#pixelArcade .pa-cat-base{
+ background:url('/kitten-idle.svg?v=original-gray-cat-1') center center/contain no-repeat;
+ image-rendering:pixelated;
+ animation:none!important;
+}
+#pixelArcade .pa-cat.is-sleeping{
+ transform:none!important;
+ animation:grayKittenBreath 3.4s ease-in-out infinite!important;
+}
+#pixelArcade .pa-cat.is-eating{
+ animation:grayKittenMunch .32s steps(2,end) infinite!important;
+}
+#pixelArcade .pa-cat.is-hungry{
+ animation:grayKittenHungry 2.6s ease-in-out infinite!important;
+}
+#pixelArcade .pa-cat.is-grooming{
+ animation:grayKittenGroom .45s steps(2,end) infinite!important;
+}
+#pixelArcade .pa-gear.head{
+ width:70px;height:54px;left:20%;top:8px;
+}
+#pixelArcade .pa-gear.neck{
+ width:54px;height:54px;left:29%;top:62px;
+}
+#pixelArcade .pa-gear.body{
+ width:110px;height:66px;left:60%;top:66px;
+}
+#pixelArcade .pa-cat-bubble{background:#fffdf2;color:#5d7768}
+#intro .hero .garden-running-cat{
+ width:135px!important;height:75px!important;bottom:9px!important;
+}
+#intro .hero .garden-cat-sprite{
+ background-size:contain!important;
+ background-position:center!important;
+ image-rendering:pixelated!important;
+}
+@keyframes grayKittenBreath{
+ 0%,100%{transform:scaleY(1) translateY(0)}
+ 50%{transform:scaleY(.975) translateY(3px)}
+}
+@keyframes grayKittenMunch{
+ 0%,100%{transform:translateY(0)}
+ 50%{transform:translateY(4px)}
+}
+@keyframes grayKittenHungry{
+ 0%,100%{transform:translateY(0) rotate(0deg)}
+ 50%{transform:translateY(4px) rotate(-1deg)}
+}
+@keyframes grayKittenGroom{
+ 0%,100%{transform:translateY(0)}
+ 50%{transform:translateY(2px)}
+}
+@media(max-width:520px){
+ #pixelArcade .pa-cat{height:135px;width:min(100%,295px)}
+ #pixelArcade .pa-pet-stage{height:190px;margin-top:48px}
+ #pixelArcade .pa-gear.head{left:20%;top:6px;width:58px;height:47px}
+ #pixelArcade .pa-gear.neck{left:31%;top:50px;width:44px;height:42px}
+ #pixelArcade .pa-gear.body{left:59%;top:55px;width:94px;height:55px}
+ #intro .hero .garden-running-cat{width:110px!important;height:62px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #pixelArcade .pa-cat,#pixelArcade .pa-cat-base{animation:none!important}
+}
