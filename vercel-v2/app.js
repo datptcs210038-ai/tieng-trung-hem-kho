@@ -1197,3 +1197,17 @@ if(gate&&window.supabase){
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refreshHero,{once:true});
  else refreshHero();
 })();
+
+
+// Interactive pixel game hub, virtual cat, food and expensive equippable clothes
+
+;(()=>{
+ 'use strict';
+ if(document.getElementById('pixelArcadeBootstrap'))return;
+ const script=document.createElement('script');
+ script.id='pixelArcadeBootstrap';
+ script.src='/pixel-arcade.js?v=outfits-20261009-v1';
+ script.defer=true;
+ script.onerror=()=>console.warn('Pixel Arcade is not available. Please refresh.');
+ document.head.append(script);
+})();
