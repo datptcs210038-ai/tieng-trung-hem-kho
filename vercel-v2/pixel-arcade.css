@@ -350,3 +350,143 @@
  #intro .hero .garden-running-cat{width:93px!important;height:71px!important;bottom:7px!important}
 }
 @media(prefers-reduced-motion:reduce){#pixelArcade .pa-zzz{animation:none!important}}
+
+
+/* v6 — finished mini-game hub, inventory, crisp pixel kitty and level ground track */
+#pixelArcade{--ink:#285a5e;--mint:#4a9d81;--cream:#fffdf6;--line:#aad4c5}
+#pixelArcade .pa-panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin:0 0 18px}
+#pixelArcade .pa-panel-top h2,#pixelArcade .pa-cat-care h2,#pixelArcade .pa-inventory h2{font:400 clamp(28px,3vw,38px)/1.03 'VT323','Be Vietnam Pro',sans-serif!important;color:#29756a!important;margin:0 0 5px!important}
+#pixelArcade .pa-panel-top p{font:500 12px/1.55 'Be Vietnam Pro',sans-serif;color:#698b7d;margin:0}
+#pixelArcade .pa-status-pill{display:inline-flex;align-items:center;padding:8px 10px;background:#fff1c9;border:2px solid #d6b67b;border-radius:7px;color:#91693a;font:700 11px 'Be Vietnam Pro',sans-serif;white-space:nowrap}
+#pixelArcade .pa-small{border:2px solid #a0c7b4;background:#fffefa;color:#47766a;font:700 12px 'Be Vietnam Pro',sans-serif;padding:9px 13px;border-radius:7px;cursor:pointer}
+#pixelArcade .pa-secondary{background:#fff4d8!important;color:#5d765c!important;border-color:#d6b87a!important;box-shadow:3px 3px 0 #d7dcbc!important}
+#pixelArcade .pa-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 3px}
+#pixelArcade .pa-actions .pa-primary{flex:1 1 135px;white-space:normal}
+#pixelArcade .pa-home-refined{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important;gap:19px!important;align-items:start!important}
+#pixelArcade .pa-home-refined>.pa-panel{min-width:0;padding:clamp(16px,2vw,23px)!important}
+#pixelArcade .pa-home-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:13px!important}
+#pixelArcade .pa-home-cards .pa-game-card{background:#fffef8!important;border:2px solid #afd4c0!important;border-radius:8px!important;box-shadow:4px 4px 0 #d6e7d9!important;padding:16px!important;min-height:155px!important;gap:7px!important;transition:transform .12s,box-shadow .12s!important}
+#pixelArcade .pa-home-cards .pa-game-card:hover{transform:translate(-2px,-2px)!important;box-shadow:6px 6px 0 #c7dfce!important}
+#pixelArcade .pa-home-cards .pa-game-card:last-child{grid-column:1/-1;min-height:115px!important}
+#pixelArcade .pa-home-cards .pa-game-card strong{font:400 clamp(25px,2.5vw,31px)/1.06 'VT323','Be Vietnam Pro',sans-serif!important;color:#2c7567}
+#pixelArcade .pa-home-cards .pa-game-card small{color:#6f8984;font:500 11px/1.38 'Be Vietnam Pro',sans-serif!important}
+#pixelArcade .pa-home-cards .pa-game-icon{display:inline-flex;width:40px;height:39px;align-items:center;justify-content:center;background:#fff1d6;border:2px solid #a9c6ac;box-shadow:2px 2px 0 #cee2cb;border-radius:5px;font-size:23px!important}
+#pixelArcade .pa-home-cards .pa-price{margin-top:3px;font-size:10px!important}
+#pixelArcade .pa-pet-summary .pa-scene{min-height:355px!important}
+#pixelArcade .pa-cat-home{grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr)!important;align-items:start!important}
+#pixelArcade .pa-inventory{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;align-items:start!important}
+#pixelArcade .pa-inventory-label{margin:24px 0 12px;font:400 28px 'VT323','Be Vietnam Pro',sans-serif;color:#2d786d}
+#pixelArcade .pa-empty{padding:25px 17px;border:2px dashed #adcab8;background:#f5fcf4;border-radius:10px;font:600 13px/1.65 'Be Vietnam Pro',sans-serif;color:#6b8f7f;text-align:center}
+#pixelArcade .pa-food-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+#pixelArcade .pa-shop-grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
+#pixelArcade .pa-shop-item{background:#fffefa!important;border-color:#bad8c4!important}
+#pixelArcade .pa-shop-item button:hover:not(:disabled){background:#e0f5e6}
+#pixelArcade .pa-wardrobe .pa-shop-item strong{line-height:1.12}
+#pixelArcade .pa-tabs{gap:8px!important;margin-bottom:17px!important}
+#pixelArcade .pa-tabs button{white-space:nowrap;font-size:11px!important;padding:12px 13px!important}
+#pixelArcade .pa-wallet{box-shadow:3px 3px 0 #dcd3ae!important}
+#pixelArcade .pa-stat{margin-top:16px!important}
+#pixelArcade .pa-scene{background:#ece1c7 url('/pixel-cat-room-v2.svg?v=cat-final-v6') center/cover no-repeat!important;isolation:isolate;overflow:hidden!important}
+#pixelArcade .pa-pet-stage{
+ position:absolute!important;
+ width:192px!important;height:150px!important;
+ left:0!important;bottom:18px!important;top:auto!important;
+ display:block!important;max-width:none!important;
+ margin:0!important;animation:none!important;
+ pointer-events:none!important;transform-origin:center center!important;
+ will-change:transform!important;z-index:4!important;
+}
+#pixelArcade .pa-cat{
+ position:relative!important;width:192px!important;height:150px!important;
+ max-width:none!important;margin:0!important;filter:drop-shadow(0 5px 0 #5d59485b)!important;
+ transform-origin:center center!important;animation:none!important;will-change:transform!important;
+}
+#pixelArcade .pa-cat-base{
+ position:absolute!important;inset:0!important;
+ width:100%!important;height:100%!important;
+ background-position:0% 0%;background-size:400% 200%;
+ image-rendering:pixelated!important;image-rendering:crisp-edges;
+ animation:none!important;
+}
+#pixelArcade .pa-cat.is-walking,#pixelArcade .pa-cat.is-sleeping,#pixelArcade .pa-cat.is-eating,#pixelArcade .pa-cat.is-grooming,#pixelArcade .pa-cat.is-hungry{animation:none!important}
+#pixelArcade .pa-cat-bubble{z-index:6!important;max-width:160px;font-size:11px!important;box-shadow:3px 3px 0 #ccb18f!important}
+#pixelArcade .pa-gear.head{left:60%!important;top:17%!important;width:43px!important;height:35px!important}
+#pixelArcade .pa-gear.neck{left:63%!important;top:50%!important;width:36px!important;height:31px!important}
+#pixelArcade .pa-gear.body{left:29%!important;top:56%!important;width:75px!important;height:43px!important}
+#pixelArcade .pa-cat:has(.pa-cat-base[data-cat-pose^="groom"]) .pa-gear.head{left:39%!important;top:11%!important}
+#pixelArcade .pa-cat:has(.pa-cat-base[data-cat-pose^="groom"]) .pa-gear.neck{left:44%!important;top:53%!important}
+#pixelArcade .pa-cat:has(.pa-cat-base[data-cat-pose="sleep"]) .pa-gear.body{left:37%!important;top:52%!important}
+#intro .hero{isolation:isolate}
+#intro .hero .garden-cat-lane-overlay{
+ position:absolute!important;inset:auto 0 0!important;height:32px!important;
+ z-index:6!important;pointer-events:none!important;
+ background:repeating-linear-gradient(90deg,#d4774f 0 28px,#b45d42 28px 31px,#ecc08b 31px 34px,#ba6945 34px 61px);
+ border-top:6px solid #89523e!important;box-shadow:0 -3px 0 #d0a277!important;opacity:.96!important;
+}
+#intro .hero .garden-running-cat{
+ position:absolute!important;top:auto!important;bottom:19px!important;left:0!important;
+ width:128px!important;height:100px!important;
+ margin:0!important;transform-origin:center bottom!important;
+ pointer-events:none!important;z-index:8!important;will-change:transform!important;
+ animation:none!important;
+}
+#intro .hero .garden-cat-sprite{
+ width:100%!important;height:100%!important;display:block!important;
+ background-size:400% 200%;background-position:0% 0%;
+ background-repeat:no-repeat!important;image-rendering:pixelated!important;
+ animation:none!important;transform-origin:center!important;
+}
+#intro .hero .garden-cat-name{
+ top:-20px!important;left:50%!important;transform:translateX(-50%)!important;
+ background:#fff8df!important;border:2px solid #a7a078!important;color:#337266!important;
+ border-radius:5px!important;white-space:nowrap!important;font:700 10px/1.35 'Be Vietnam Pro',sans-serif!important;
+ padding:3px 8px!important;
+}
+#pixelArcade .pa-play-head{margin-bottom:12px!important}
+#pixelArcade .pa-play-title{font:400 35px 'VT323',sans-serif!important}
+#pixelArcade .pa-question{font-size:clamp(30px,5vw,55px)!important;margin:22px 0 10px!important}
+#pixelArcade .pa-sentence-question{font:800 clamp(22px,3vw,33px)/1.5 'Be Vietnam Pro',sans-serif!important}
+#pixelArcade .pa-sentence-built{
+ min-height:67px;border:2px dashed #9ac7ad;background:#f6faf2;border-radius:8px;
+ display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;margin:12px 0 16px;
+}
+#pixelArcade .pa-sentence-placeholder{color:#90a99b;font:550 12px 'Be Vietnam Pro',sans-serif}
+#pixelArcade .pa-sentence-pieces{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:15px auto}
+#pixelArcade .pa-sentence-token{
+ border:2px solid #96c9b0;border-radius:7px;padding:10px 13px;background:#fffefa;color:#2b715f;
+ box-shadow:3px 3px 0 #cbded4;font:600 18px/1.25 'Noto Sans SC','Be Vietnam Pro',sans-serif;cursor:pointer;
+}
+#pixelArcade .pa-sentence-token.is-selected{background:#ffebb8;border-color:#d3b27f}
+#pixelArcade .pa-sentence-token:disabled{opacity:.36;cursor:default}
+#pixelArcade .pa-sentence-actions{display:flex;justify-content:center;gap:12px;margin-top:21px;flex-wrap:wrap}
+#pixelArcade .pa-answers{max-width:680px;margin:auto}
+#pixelArcade .pa-results{max-width:690px;margin:0 auto}
+@media(max-width:1050px){
+ #pixelArcade .pa-home-refined,#pixelArcade .pa-cat-home,#pixelArcade .pa-inventory{grid-template-columns:1fr!important}
+ #pixelArcade .pa-pet-summary .pa-scene{min-height:325px!important}
+}
+@media(max-width:560px){
+ #pixelArcade .pa-home-cards{gap:10px!important}
+ #pixelArcade .pa-home-cards .pa-game-card{min-height:140px!important;padding:12px!important;gap:6px!important}
+ #pixelArcade .pa-home-cards .pa-game-card:last-child{min-height:106px!important}
+ #pixelArcade .pa-game-card strong{font-size:24px!important}
+ #pixelArcade .pa-tabs{justify-content:center!important}
+ #pixelArcade .pa-tabs button{padding:9px!important;font-size:10px!important}
+ #pixelArcade .pa-wallet{margin:5px 0 0!important;width:100%!important;text-align:center!important}
+ #pixelArcade .pa-pet-stage{width:128px!important;height:100px!important;bottom:17px!important}
+ #pixelArcade .pa-cat{width:128px!important;height:100px!important}
+ #pixelArcade .pa-gear.head{width:30px!important;height:23px!important}
+ #pixelArcade .pa-gear.neck{width:26px!important;height:20px!important}
+ #pixelArcade .pa-gear.body{width:54px!important;height:34px!important}
+ #pixelArcade .pa-scene{min-height:263px!important}
+ #intro .hero .garden-running-cat{width:96px!important;height:75px!important;bottom:18px!important}
+ #intro .hero .garden-cat-name{font-size:9px!important;top:-17px!important}
+ #intro .hero .garden-cat-lane-overlay{height:28px!important}
+ #pixelArcade .pa-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
+ #pixelArcade .pa-pet-summary .pa-scene{min-height:268px!important}
+ #pixelArcade .pa-sentence-token{font-size:15px!important;padding:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ #pixelArcade .pa-cat,#pixelArcade .pa-cat-base,
+ #intro .hero .garden-running-cat,#intro .hero .garden-cat-sprite{animation:none!important;transition:none!important}
+}
