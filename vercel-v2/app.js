@@ -1067,3 +1067,23 @@ if(gate&&window.supabase){
  }
  render();
 })();
+
+// Interactive individual vocabulary lesson, saved hearts and Hanzi writer
+
+;(()=>{
+ 'use strict';
+ if(document.getElementById('wordDetailBootstrap'))return;
+ const deps=document.createElement('script');
+ deps.id='wordDetailBootstrap';
+ deps.src='/word-examples.js?v=hsksentence-20261009-v1';
+ function loadDetail(){
+  if(document.getElementById('wordDetailLoader'))return;
+  const script=document.createElement('script');
+  script.id='wordDetailLoader';
+  script.src='/word-detail.js?v=learning-word-20261009-v1';
+  document.head.append(script);
+ }
+ deps.onload=loadDetail;
+ deps.onerror=loadDetail;
+ document.head.append(deps);
+})();
