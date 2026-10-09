@@ -395,7 +395,10 @@ function paintKitten(){
  const heroCat=document.querySelector('#intro .garden-cat-sprite');
  if(heroCat){
   const safe=(frame==='sleep'||frame==='hungry')?'idle':frame;
-  heroCat.style.backgroundImage='url("'+kittenImage(safe)+'")';
+  heroCat.style.setProperty('background-image','url("'+kittenImage(safe)+'")','important');
+  heroCat.style.setProperty('background-size','contain','important');
+  heroCat.style.setProperty('background-position','center','important');
+  heroCat.style.setProperty('animation','none','important');
  }
  const m=mood();
  const body=$('.pa-cat');
