@@ -457,6 +457,9 @@ function wearableSvg(id,pose='idle'){
    line('M34 55 L40 53 L47 54',trim,2.4);
    r(35,61,7,2,trim);
    r(36,66,4,2,trim);
+   // Tailored neckline joins the back vest to the chest: visually a shirt, not a backpack.
+   poly('59,60 66,66 72,72 70,83 65,83 63,72 57,66',main,'ink',1.3);
+   line('M60 61 L68 67 L65 72',id==='royal'?'gold':'white',2.8);
    if(id==='student'){
     // Very small varsity-like trim and one gold stitch, not a floating blue rectangle.
     r(55,59,3,9,'white');r(45,62,4,3,'gold');
