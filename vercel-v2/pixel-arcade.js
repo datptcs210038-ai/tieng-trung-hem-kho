@@ -3,7 +3,7 @@
 'use strict';
 const D=window.TTHK,flash=document.getElementById('flash');
 if(!D||!flash||document.getElementById('pixelArcade'))return;
-const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=gray-kitten-walk-20261009-v2';document.head.append(sheet);
+const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=cat-rebuild-room-v4';document.head.append(sheet);
 flash.classList.add('pixel-arcade-page');
 Array.from(flash.children).forEach(el=>el.classList.add('old-flash-content'));
 const root=document.createElement('div');root.id='pixelArcade';
@@ -59,7 +59,7 @@ const GAMES=[
  {id:'pairs',name:'Lật thẻ trí nhớ',icon:'🧠',time:90,info:'Ghép 6 cặp từ đúng'}
 ];
 const cachedDefault={coins:0,fullness:70,last_hunger_at:new Date().toISOString(),owned_items:[],food_stock:{},equipped:{}};
-let pet={...cachedDefault},loadedFor=null,currentView='home',storeFilter='all',run=null,timer=null,finished=false,petAnimation='',animationTimeout=null;
+let catName='Miu Miu',petWalk=false;let pet={...cachedDefault},loadedFor=null,currentView='home',storeFilter='all',run=null,timer=null,finished=false,petAnimation='',animationTimeout=null;
 const escapeHtml=t=>String(t??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 let toastTimer;
 function toast(msg){const node=$('#paToast');node.textContent=msg;node.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>node.hidden=true,4500)}
@@ -72,11 +72,18 @@ async function call(action,item=null,count=0,runid=null){
  pet=res.data;$('#paCoins').textContent=pet.coins.toLocaleString('vi-VN');return pet;
 }
 async function loadPet(){
- const ctx=statusAccount();if(!ctx){loadedFor=null;pet={...cachedDefault};return}
+ const ctx=statusAccount();if(!ctx){loadedFor=null;pet={...cachedDefault};catName='Miu Miu';petWalk=false;syncGardenVisibility();return}
  if(loadedFor===ctx.user.id)return;
  pet={...cachedDefault,owned_items:[],food_stock:{},equipped:{}};
  loadedFor=ctx.user.id;
- try{await call('status');if(currentView!=='play')render()}catch(e){loadedFor=null;toast('Không tải được mèo: '+e.message)}
+ try{
+   await call('status');
+   const {data,error}=await ctx.db.from('pixel_pet_profiles').select('pet_name,is_walking').eq('user_id',ctx.user.id).maybeSingle();
+   if(!error&&data){catName=data.pet_name||'Miu Miu';petWalk=!!data.is_walking}
+   else{catName='Miu Miu';petWalk=false}
+   syncGardenVisibility();
+   if(currentView!=='play')render();
+ }catch(e){loadedFor=null;toast('Không tải được mèo: '+e.message)}
 }
 function fullnessNow(){
  const hours=Math.max(0,Math.floor((Date.now()-new Date(pet.last_hunger_at).getTime())/3600000));
@@ -90,7 +97,7 @@ function mood(){
  if(fullness>=90)return 'sleeping';
  return 'happy';
 }
-function moodText(){const m=mood();return m==='eating'?'Nhăm nhăm! ♡':m==='grooming'?'Miu đang lau mặt! 🐾':m==='hungry'?'Meo… đói rồi!':m==='sleeping'?'No quá… Zzz':'Meo! Chơi cùng tui!'}
+function moodText(){const m=mood();return m==='eating'?'Nhăm nhăm! ♡':m==='grooming'?catName+' đang lau mặt! 🐾':m==='hungry'?'Meo… đói rồi!':m==='sleeping'?'No quá… Zzz':'Meo! Chơi cùng tui!'}
 function petScene(){
  const catMood=mood();
  const over=Object.entries(pet.equipped||{}).map(([slot,id])=>
@@ -121,13 +128,13 @@ function render(){
  $('#paCoins').textContent=Number(pet.coins||0).toLocaleString('vi-VN');
  root.querySelectorAll('[data-pa-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.paTab===currentView||(currentView==='play'&&b.dataset.paTab==='home'))));
  if(currentView==='home'){
-  content.innerHTML='<div class="pa-home"><div class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🐱 Bé mèo của bạn</h2>'+petScene()+petStatus()+
-   '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:16px"><button class="pa-primary" data-pa-open="cat">Cho mèo ăn ♡</button><button class="pa-primary" data-pa-open="shop">🛍️ Mua trang phục</button><button class="pa-primary" data-pa-groom>🐾 Lau mặt</button></div></div>'+
+  content.innerHTML='<div class="pa-home"><div class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🐱 '+escapeHtml(catName)+'</h2>'+petScene()+petStatus()+
+   '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:16px"><button class="pa-primary" data-pa-open="cat">Cho mèo ăn ♡</button><button class="pa-primary" data-pa-open="shop">🛍️ Mua trang phục</button><button class="pa-primary" data-pa-groom>🐾 Lau mặt</button><button class="pa-primary" data-pa-name>✎ Đặt tên</button><button class="pa-primary" data-pa-walk>🌿 '+(petWalk?'Về nhà':'Cho đi dạo')+'</button></div></div>'+
    '<section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 11px">★ Chọn trò chơi</h2>'+gameButtons()+'</section></div>';
  }else if(currentView==='cat'){
   const food=ITEMS.filter(x=>x.category==='food');
-  content.innerHTML='<div class="pa-home"><section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">Nhà của Miu Miu</h2>'+petScene()+petStatus()+
-   '<button class="pa-primary" data-pa-groom style="margin-top:14px">🐾 Lau mặt cho bé</button><p class="pa-hint" style="margin-top:13px">Bạn có thể cho mèo ăn ngay cả khi no. Mèo no sẽ nằm ngủ và hiện Zzz.</p></section>'+
+  content.innerHTML='<div class="pa-home"><section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🏠 Nhà của '+escapeHtml(catName)+'</h2>'+petScene()+petStatus()+
+   '<div class="pa-cat-tools"><button class="pa-primary" data-pa-groom>🐾 Lau mặt</button><button class="pa-primary" data-pa-name>✎ Đặt tên</button><button class="pa-primary" data-pa-walk>🌿 '+(petWalk?'Về nhà':'Cho đi dạo')+'</button></div><p class="pa-hint" style="margin-top:13px">Bạn có thể cho mèo ăn ngay cả khi no. Mèo no sẽ nằm ngủ và hiện Zzz.</p></section>'+
    '<section class="pa-panel"><h2 style="font:400 35px VT323;color:#31776a;margin:0 0 10px">🍽️ Cho mèo ăn</h2><p class="pa-hint">Mua món tại cửa hàng trước, sau đó bấm Cho ăn.</p><div class="pa-shop-grid">'+food.map(i=>foodCard(i)).join('')+
    '</div><button class="pa-primary" data-pa-open="shop" style="margin-top:15px">🛒 Đến cửa hàng</button></section></div>';
  }else if(currentView==='shop'){
@@ -141,6 +148,8 @@ function render(){
  content.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>startGame(b.dataset.game));
  content.querySelectorAll('[data-pa-open]').forEach(b=>b.onclick=()=>tab(b.dataset.paOpen));
  content.querySelectorAll('[data-pa-groom]').forEach(b=>b.onclick=()=>groomCat());
+ content.querySelectorAll('[data-pa-name]').forEach(b=>b.onclick=()=>renameCat());
+ content.querySelectorAll('[data-pa-walk]').forEach(b=>b.onclick=()=>toggleCatWalk());
  content.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{storeFilter=b.dataset.filter;render()});
  content.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>doShopAction(b.dataset.action,b.dataset.item,b));
 }
@@ -364,87 +373,109 @@ function renderPetOnly(){
  }
 }
 
-/* User-selected gray/white kitten: real four-step walking, turning, grooming, eating and sleeping. */
+
+/* PIXEL CAT v4 — one consistent 8-pose character; home appearance is opt-in. */
 let petFrameIndex=0;
-const catWalkStart=Date.now();
-let lastPetPosition=.5,lastPetDirection=-1;
-const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches||false;
-function kittenImage(state){return '/kitten-'+state+'.svg?v=gray-kitten-walk-2'}
+const catWalkStart=performance.now();
+let lastPetPosition=.5,lastPetDirection=1;
+const reducedMotion=!!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+const frameUrl=state=>'/kitten-v2-'+state+'.svg?v=catroom-20261009-v4';
+function syncGardenVisibility(){
+ const hero=document.querySelector('#intro .garden-running-cat');
+ if(hero)hero.style.setProperty('display',(petWalk&&mood()!=='sleeping')?'block':'none','important');
+ const tag=hero?.querySelector('.garden-cat-name');
+ if(tag)tag.textContent=catName;
+}
+async function changePreference(name,walk){
+ const ctx=statusAccount();
+ if(!ctx){toast('Hãy đăng nhập để đặt tên hoặc cho mèo đi dạo.');return}
+ const args={p_name:name===undefined?null:name,p_walk:walk===undefined?null:walk};
+ const {data,error}=await ctx.db.rpc('pixel_pet_preferences',args);
+ if(error){toast('Không lưu được: '+error.message);return}
+ catName=data.pet_name||'Miu Miu';petWalk=!!data.is_walking;
+ syncGardenVisibility();render();paintKitten();
+}
+function renameCat(){
+ const proposed=window.prompt('Đặt tên cho bé mèo (1–24 ký tự):',catName);
+ if(proposed===null)return;
+ const name=proposed.trim();
+ if(!name||[...name].length>24){toast('Tên mèo cần từ 1 đến 24 ký tự.');return}
+ changePreference(name,undefined);
+}
+function toggleCatWalk(){
+ if(mood()==='sleeping'){toast(catName+' đang ngủ. Đợi mèo bớt no rồi cho đi dạo nhé.');return}
+ changePreference(undefined,!petWalk);
+}
 function groomCat(){
  if(petAnimation==='eating')return;
  petAnimation='grooming';clearTimeout(animationTimeout);
- render();paintKitten();
- animationTimeout=setTimeout(()=>{petAnimation='';if(currentView!=='play')render();paintKitten()},3200);
+ if(currentView!=='play')render();
+ paintKitten();syncGardenVisibility();
+ animationTimeout=setTimeout(()=>{
+  petAnimation='';
+  if(currentView!=='play')render();
+  paintKitten();syncGardenVisibility();
+ },2600);
 }
-function kittenFrame(){
- const state=mood();petFrameIndex++;
- if(state==='eating')return petFrameIndex%2?'eat':'idle';
- if(state==='grooming')return petFrameIndex%2?'groom':'groom2';
- if(state==='sleeping')return 'sleep';
- if(state==='hungry')return petFrameIndex%7===0?'blink':'hungry';
- const t=petFrameIndex%36;
- if(t===6||t===7)return 'blink';
- if(t===18||t===20)return 'groom';
- if(t===19||t===21)return 'groom2';
- return 'idle';
+function catTravel(ms,period,walkMs,restMs){
+ const t=((ms%period)+period)%period;
+ if(t<walkMs)return {fraction:t/walkMs,facing:1,moving:true};
+ if(t<walkMs+restMs)return {fraction:1,facing:1,moving:false};
+ if(t<2*walkMs+restMs)return {fraction:1-(t-walkMs-restMs)/walkMs,facing:-1,moving:true};
+ return {fraction:0,facing:-1,moving:false};
 }
-function catTravel(now,cycle,move,rest){
- const t=((now%cycle)+cycle)%cycle;
- if(t<move)return {fraction:t/move,facing:-1,walking:true};
- if(t<move+rest)return {fraction:1,facing:-1,walking:false};
- if(t<2*move+rest)return {fraction:1-(t-move-rest)/move,facing:1,walking:true};
- return {fraction:0,facing:1,walking:false};
-}
-function setCatSprite(el,state){
- if(!el)return;
- const url='url("'+kittenImage(state)+'")';
- el.style.setProperty('background-image',url,'important');
- el.style.setProperty('background-size','contain','important');
- el.style.setProperty('background-position','center','important');
- el.style.setProperty('background-repeat','no-repeat','important');
- el.style.setProperty('animation','none','important');
+function setCatSprite(node,name){
+ if(!node)return;
+ node.style.setProperty('background-image','url("'+frameUrl(name)+'")','important');
+ node.style.setProperty('background-position','center','important');
+ node.style.setProperty('background-size','contain','important');
+ node.style.setProperty('background-repeat','no-repeat','important');
+ node.style.setProperty('animation','none','important');
 }
 function paintKitten(){
- const now=Date.now()-catWalkStart;
- const moodNow=mood();
- const walk=catTravel(now,20400,8100,2100);
- const isWalking=!reducedMotion&&moodNow==='happy'&&walk.walking;
- const frame=isWalking?'walk-'+((petFrameIndex%4)+1):kittenFrame();
- if(isWalking)petFrameIndex++;
- const base=$('.pa-cat-base');
- if(base)setCatSprite(base,frame);
- const petStage=$('.pa-pet-stage');
- if(petStage){
-  const scene=petStage.closest('.pa-scene');
-  const travel=Math.max(0,(scene?.clientWidth||410)-petStage.offsetWidth-14);
-  if(moodNow==='happy'){lastPetPosition=walk.fraction;lastPetDirection=walk.facing}
-  const x=7+lastPetPosition*travel;
-  petStage.style.setProperty('transform','translate3d('+x.toFixed(1)+'px,0,0) scaleX('+lastPetDirection+')','important');
-  petStage.style.setProperty('animation','none','important');
+ const now=performance.now()-catWalkStart;
+ const m=mood(),phase=petFrameIndex++;
+ const walk=catTravel(now,18600,7400,1900);
+ const canMove=(m==='happy'&&!reducedMotion);
+ const moving=canMove&&walk.moving;
+ let pose=m==='sleeping'?'sleep':
+   m==='eating'?'eat':
+   m==='grooming'?(phase%2?'groom1':'groom2'):
+   m==='hungry'?(phase%9?'idle':'blink'):
+   moving?(phase%2?'walk1':'walk2'):
+   (phase%15===0?'blink':'idle');
+ setCatSprite($('.pa-cat-base'),pose);
+ const scene=$('.pa-scene'),stage=$('.pa-pet-stage'),body=$('.pa-cat');
+ if(stage&&scene){
+  const max=Math.max(0,scene.clientWidth-stage.offsetWidth-20);
+  if(canMove){lastPetPosition=walk.fraction;lastPetDirection=walk.facing}
+  const x=10+lastPetPosition*max;
+  // In the room, stationary actions NEVER travel.
+  stage.style.setProperty('transform','translate3d('+x.toFixed(1)+'px,0,0) scaleX('+lastPetDirection+')','important');
  }
- const body=$('.pa-cat');
  if(body){
-  body.classList.toggle('is-walking',isWalking);
-  body.classList.toggle('is-grooming',moodNow==='grooming');
+  body.classList.toggle('is-walking',moving);
+  body.classList.toggle('is-grooming',m==='grooming');
  }
- // On the homepage the same gray kitten walks across the pixel brick path and turns at both ends.
- const heroSprite=document.querySelector('#intro .garden-cat-sprite');
- if(heroSprite){
-  const heroWalk=catTravel(now,24600,10000,2300);
-  const heroFrame=reducedMotion?'idle':heroWalk.walking?'walk-'+((petFrameIndex%4)+1):petFrameIndex%11===0?'blink':'idle';
-  setCatSprite(heroSprite,heroFrame);
-  const heroContainer=heroSprite.closest('.garden-running-cat');
-  const hero=heroContainer?.closest('.hero');
-  if(heroContainer&&hero){
-   const travel=Math.max(0,hero.clientWidth-heroContainer.offsetWidth-12);
-   heroContainer.style.setProperty('animation','none','important');
-   const x=7+(reducedMotion?.5:heroWalk.fraction)*travel;
-   heroContainer.style.setProperty('transform','translate3d('+x.toFixed(1)+'px,0,0) scaleX('+(reducedMotion?1:heroWalk.facing)+')','important');
+ const hero=document.querySelector('#intro .garden-running-cat');
+ if(hero){
+  const enabled=petWalk&&m!=='sleeping';
+  hero.style.setProperty('display',enabled?'block':'none','important');
+  if(enabled){
+   const trip=catTravel(now,22000,9200,1800);
+   const hpose=trip.moving?(phase%2?'walk1':'walk2'):(phase%16===0?'blink':'idle');
+   setCatSprite(hero.querySelector('.garden-cat-sprite'),hpose);
+   const max=Math.max(0,(hero.parentElement?.clientWidth||800)-hero.offsetWidth-15);
+   hero.style.setProperty('animation','none','important');
+   hero.style.setProperty('transform','translate3d('+(8+trip.fraction*max).toFixed(1)+'px,0,0) scaleX('+trip.facing+')','important');
+   let tag=hero.querySelector('.garden-cat-name');
+   if(!tag){tag=document.createElement('span');tag.className='garden-cat-name';hero.append(tag)}
+   tag.textContent=catName;
   }
  }
 }
 const animateKitten=()=>{if(!document.hidden)paintKitten()};
-window.setInterval(animateKitten,195);
+window.setInterval(animateKitten,400);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)paintKitten()});
-loadPet().then(()=>{render();paintKitten()});
+loadPet().then(()=>{render();paintKitten();syncGardenVisibility()});
 })();
