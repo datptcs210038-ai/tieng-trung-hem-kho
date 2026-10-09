@@ -1141,3 +1141,59 @@ if(gate&&window.supabase){
  script.onerror=()=>console.warn('Could not load HSK grammar bank');
  document.head.append(script);
 })();
+
+
+// Refresh homepage project brief and animate a two-frame pixel cat in the garden.
+
+;(()=>{
+ 'use strict';
+ if(document.getElementById('gardenHeroRefreshSheet'))return;
+ const link=document.createElement('link');
+ link.id='gardenHeroRefreshSheet';link.rel='stylesheet';
+ link.href='/hero-garden-update.css?v=hero-cat-short-intro-20261009';
+ document.head.append(link);
+ function refreshHero(){
+  const hero=document.querySelector('#intro .hero');
+  if(!hero)return;
+  let sign=hero.querySelector('.pixel-hero-tag');
+  if(!sign){
+   sign=document.createElement('span');
+   sign.className='pixel-hero-tag';
+   hero.insertBefore(sign,hero.firstChild);
+  }
+  // Only the project name is printed on the yellow sign.
+  sign.textContent='TIẾNG TRUNG HEM KHÓ';
+  hero.querySelector('.garden-sign')?.remove();
+  let intro=hero.querySelector('p');
+  if(!intro){
+   intro=document.createElement('p');
+   const title=hero.querySelector('h1');
+   if(title)title.insertAdjacentElement('afterend',intro);
+   else hero.append(intro);
+  }
+  intro.classList.add('garden-study-description');
+  intro.textContent='Dự án môn Kỹ năng học thuật dành cho hai nhóm sinh viên FPT: sinh viên học tiếng Trung như ngoại ngữ thứ hai và sinh viên ngành Ngôn ngữ Trung ở trình độ sơ cấp. Cùng ôn từ vựng, luyện viết, nghe phát âm và làm bài tập tương tác.';
+  let cat=hero.querySelector('.garden-running-cat');
+  if(!cat){
+   cat=document.createElement('div');
+   cat.className='garden-running-cat';
+   cat.setAttribute('aria-hidden','true');
+   const art=document.createElement('span');
+   art.className='garden-cat-sprite';
+   cat.append(art);hero.append(cat);
+  }
+  const sizing=()=>hero.style.setProperty('--garden-cat-width',Math.max(300,hero.clientWidth)+'px');
+  sizing();
+  if(window.ResizeObserver){
+   const observer=new ResizeObserver(sizing);
+   observer.observe(hero);
+  }else window.addEventListener('resize',sizing,{passive:true});
+  const site=document.getElementById('site');
+  if(site){
+   const observer=new MutationObserver(()=>requestAnimationFrame(sizing));
+   observer.observe(site,{attributes:true,attributeFilter:['hidden']});
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refreshHero,{once:true});
+ else refreshHero();
+})();
