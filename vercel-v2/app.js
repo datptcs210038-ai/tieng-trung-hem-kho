@@ -1031,7 +1031,7 @@ if(gate&&window.supabase){
   if(CJK.test(value)){
    let index=D.words.findIndex(w=>w.h===value);
    if(index<0){
-    const custom={h:value,p:'',m:'Chữ tự chọn',en:'',l:0,topic:'✍ Tự chọn'};
+    const custom={h:value,p:'',m:'Chữ tự chọn',en:'',l:3,topic:'✍ Tự chọn'};
     D.words.push(custom);index=D.words.length-1;
    }
    choose(index,true);return;
