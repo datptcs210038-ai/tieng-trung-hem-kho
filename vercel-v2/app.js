@@ -129,7 +129,7 @@ if(!D)return;
 const $=s=>document.querySelector(s);
 const enhanceStyle=document.createElement('style');
 enhanceStyle.textContent=`
-.memberpic{background-image:url('/team.webp')!important;background-repeat:no-repeat!important;background-size:500% 100%!important;width:100%;aspect-ratio:3/4!important;display:block;filter:none}
+.memberpic{background-image:url('/team.webp');background-repeat:no-repeat;background-size:500% 100%;width:100%;aspect-ratio:3/4;display:block;filter:none}
 .member{max-width:330px;min-width:225px}
 #profile .profile-grid{display:grid;grid-template-columns:minmax(160px,230px) 1fr;gap:22px}
 #profile .profile-avatar{width:175px;height:175px;border-radius:50%;background:#e8f6ec;display:grid;place-items:center;overflow:hidden;font-size:72px;margin:6px auto 16px;border:4px solid #d1ebd8}
@@ -353,3 +353,124 @@ $('#uploadPhoto').onclick=async()=>{
 })();
 
 ;(()=>{const css="\n:root{--brand-900:#084870;--brand-800:#125c85;--brand-700:#2c729b;--brand-200:#c8e0f0;--brand-100:#e9f4fb;--text-main:#163950}\nbody{background:radial-gradient(ellipse at 7% 4%,#d5ebfbb8,transparent 38%),linear-gradient(180deg,#fbfdff,#f0f8ff);color:var(--text-main)}\n.side{background:#ffffffed;backdrop-filter:blur(14px);border-right:1px solid #d5e6f3;padding-top:16px}\n.side h2{display:flex;align-items:center;justify-content:center;margin:0 0 23px;padding:0;font-size:16px;color:#084870}\n.side-brand{width:100%;max-width:210px;aspect-ratio:440/267;object-fit:contain;mix-blend-mode:multiply}\n.nav button{color:#557c95;transition:background .2s ease,color .2s ease,transform .2s ease}\n.nav button.on,.nav button:hover{background:linear-gradient(100deg,#dceefa,#ecf6fc);color:#084870;transform:translateX(2px)}\nh1,h2,h3{color:#084870}.muted,footer{color:#6c8b9d}\n.hero{background:linear-gradient(115deg,#ddecf9,#f9fcff 57%,#e3f1fa);border:1px solid #cde2f1;min-height:235px;box-shadow:0 20px 56px #08487012;position:relative;isolation:isolate;overflow:hidden}\n.hero h1,.hero p,.hero button{position:relative;z-index:2}.hero em{color:#1473a6}.hero:after{content:'';background:none!important}\n.hero-brand-watermark{position:absolute;right:-50px;top:-12%;width:min(46%,385px);opacity:.17;mix-blend-mode:multiply;pointer-events:none}\n.btn{background:linear-gradient(135deg,#1670a1,#084870);box-shadow:0 7px 18px #08487015;transition:transform .2s,box-shadow .2s}.btn:hover{transform:translateY(-2px);box-shadow:0 12px 27px #08487027}.btn.soft{background:#e6f2fb;color:#0b577f}\n.box{border-color:#d8e8f5;background:#fffffff2;box-shadow:0 12px 32px #0e52700e}.word h2,#hanzi{color:#0e6087!important}.word small{color:#397997}\n.searchbar{border-color:#b2d8ef;box-shadow:0 10px 30px #0848700b}input,select,textarea{border-color:#cfe3f1;color:#184159}\ninput:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #83c4ed;outline-offset:2px}.switch{background:#e6f1fa}.switch button.on{color:#0c5e8a}.popup{border-color:#aad7ee}\n#gate.authgate{grid-template-columns:minmax(0,1.12fr) minmax(320px,460px);gap:clamp(26px,5vw,76px);padding:clamp(20px,5vw,65px);background:radial-gradient(circle at 18% 50%,#ceeaff,transparent 46%),linear-gradient(122deg,#fafdff,#eaf5fd);overflow-y:auto;align-items:center;justify-items:center}\n.login-showcase{position:relative;z-index:1;width:min(100%,655px);padding:14px 12px 24px;animation:welcomeIn .8s both}\n.login-logo-frame{position:relative;border-radius:30px;background:#ffffffee;box-shadow:0 28px 72px #0b537018;border:1px solid #c4e3f3;padding:12px;margin-bottom:23px;overflow:hidden}\n.login-logo-frame:before{content:'';position:absolute;inset:15% 5%;background:#a9dffa5f;filter:blur(38px);border-radius:50%}\n.login-logo-frame img{position:relative;z-index:1;width:100%;height:auto;display:block;border-radius:18px;mix-blend-mode:multiply;animation:logoFloat 7s ease-in-out infinite}\n.login-showcase h1{font-size:clamp(28px,3.8vw,49px);letter-spacing:-1.8px;line-height:1.24;margin:12px 0;color:#073d61}\n.login-showcase h1 span{color:#1977a7}.login-showcase p{max-width:560px;color:#5b7f95;font-size:14px;line-height:1.9}\n.login-kicker{letter-spacing:2.4px;font-size:10px;font-weight:800;color:#297aa5}.login-chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}\n.login-chips span{padding:10px 12px;background:#ffffffdd;border:1px solid #d1e7f6;box-shadow:0 8px 24px #0848700b;border-radius:999px;font-size:11px;color:#1d6387;font-weight:700}\n#gate .authcard{position:relative;z-index:2;width:100%;max-width:465px;margin:0;border:1px solid #cee3f1;background:#ffffffee;backdrop-filter:blur(22px);box-shadow:0 30px 82px #08487025;border-radius:29px;padding:clamp(22px,3vw,36px);animation:cardIn .65s ease both}\n#gate .authcard:before{content:'✦';position:absolute;right:22px;top:18px;color:#a1d6f5;font-size:21px}#gate .authcard h2{font-size:29px;color:#084870;margin:12px 0 10px}\n#gate .authcard .authpane input{background:#f9fdff;border:1px solid #c6dfed;border-radius:14px;padding:14px 15px;margin:10px 0}\n#gate .authcard .authpane input:focus{border-color:#4c9dce;box-shadow:0 0 0 4px #c6e8fc85;outline:0}\n#gate .authcard .btn{padding:13px 18px;border-radius:13px}#gate .authcard .row{gap:10px}\n#gate .authcard #paneLogin #login{min-width:150px;flex:1}\n@keyframes welcomeIn{from{opacity:0;transform:translateY(21px)}to{opacity:1;transform:none}}\n@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}\n@keyframes logoFloat{50%{transform:translateY(-7px)}}\n@media(max-width:880px){#gate.authgate{grid-template-columns:1fr;gap:16px;padding:20px 16px;align-content:center}.login-showcase{max-width:470px;padding:4px}.login-logo-frame{max-width:410px;margin:0 auto 12px;padding:7px}.login-showcase h1{font-size:25px;text-align:center;margin:8px}.login-showcase p{display:none}.login-kicker{text-align:center;display:block}.login-chips{justify-content:center;margin-top:10px;gap:6px}.login-chips span{font-size:10px;padding:7px 9px}#gate .authcard{max-width:475px;padding:22px;border-radius:22px}}\n@media(max-width:480px){.login-showcase h1{font-size:21px}.login-logo-frame{max-width:265px;margin-bottom:8px}.login-chips span:nth-child(n+3){display:none}#gate .authcard .row{gap:7px}#gate .authcard .btn{font-size:12px;padding:11px}}\n@media(prefers-reduced-motion:reduce){.login-showcase,#gate .authcard,.login-logo-frame img{animation:none!important}}";const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);const logo="/logo-tthk.webp";const siteTitle=document.querySelector('.side h2');if(siteTitle){siteTitle.textContent='';const img=document.createElement('img');img.className='side-brand';img.alt='Tiếng Trung Hem Khó';img.src=logo;img.onerror=()=>{siteTitle.textContent='中文不难 · Tiếng Trung Hem Khó'};siteTitle.append(img)}const gate=document.querySelector('#gate');if(gate&&!gate.querySelector('.login-showcase')){const story=document.createElement('div');story.className='login-showcase';story.innerHTML="<div class=\"login-logo-frame\"><img src=\"/logo-tthk.webp\" alt=\"中文不难 — Tiếng Trung Hem Khó\"></div><div class=\"login-kicker\">KHÁM PHÁ NGÔN NGỮ · 发现中文</div><h1>Mở ra một thế giới mới<br><span>qua từng chữ Hán.</span></h1><p>Góc học tập nhỏ để cùng nhau luyện từ vựng, nghe phát âm, tập viết chữ Hán và chinh phục HSK mỗi ngày.</p><div class=\"login-chips\"><span>✦ HSK 1–2</span><span>◈ Từ vựng trực quan</span><span>✍ Luyện viết</span><span>♫ Phát âm</span></div>";gate.insertBefore(story,gate.firstChild)}const intro=document.querySelector('#intro .hero');if(intro&&!intro.querySelector('.hero-brand-watermark')){const img=document.createElement('img');img.className='hero-brand-watermark';img.alt='';img.setAttribute('aria-hidden','true');img.src=logo;intro.append(img)}const fav=document.createElement('link');fav.rel='icon';fav.type='image/webp';fav.href=logo;document.head.append(fav);})();
+
+// Administrator-only original-resolution team photo manager
+(()=> {
+  'use strict';
+  const D=window.TTHK; if (!D) return;
+  const $=s=>document.querySelector(s);
+  const MEMBERS=[
+    ['thanh-dat','Thành Đạt'],
+    ['hong-diep','Hồng Diệp'],
+    ['yen-vi','Yến Vi'],
+    ['ngoc-giau','Ngọc Giàu'],
+    ['phuong-nghi','Phương Nghi']
+  ];
+  const team=$('#team');
+  if (!team) return;
+  const panel=document.createElement('section');
+  panel.className='box';
+  panel.id='teamUploadManager';
+  panel.hidden=true;
+  panel.style.cssText='max-width:880px;margin:28px auto;background:#fafffb;border:1px solid #bce0ca;';
+  panel.innerHTML='<h3 style="margin-top:0">📷 Thay ảnh thành viên (quản trị)</h3>'
+    +'<p class="muted">Chọn từng <b>ảnh gốc</b> để thay ảnh mờ. Website lưu ảnh riêng từng thành viên và giữ đúng khung 3:4, không kéo giãn. Nên chọn ảnh dọc từ 900 × 1200 px trở lên.</p>'
+    +MEMBERS.map(([slug,name])=>
+      '<div class="row" style="padding:12px 0;border-bottom:1px solid #e1efe5">'
+      +'<b style="min-width:125px">'+name+'</b>'
+      +'<input type="file" accept="image/jpeg,image/png,image/webp" data-member-photo="'+slug+'" aria-label="Chọn ảnh '+name+'">'
+      +'<button type="button" class="btn soft" data-member-submit="'+slug+'">Tải ảnh lên</button>'
+      +'</div>').join('')
+    +'<p id="teamUploadStatus" role="status" class="muted" style="font-size:13px"></p>';
+  const toggle=document.createElement('button');toggle.type='button';toggle.className='btn soft';toggle.textContent='🖼 Quản lý ảnh thành viên';toggle.hidden=true;toggle.style.cssText='display:block;margin:16px auto 0';team.insertAdjacentElement('afterend',toggle);toggle.insertAdjacentElement('afterend',panel);let isOpen=false;toggle.onclick=()=>{isOpen=!isOpen;panel.hidden=!isOpen;toggle.textContent=isOpen?'✕ Đóng quản lý ảnh':'🖼 Quản lý ảnh thành viên';};
+  const getContext=()=>D.profileContext?.()||{};
+  let loaded=false;
+  function status(message){const el=$('#teamUploadStatus');if(el)el.textContent=message;}
+  function portraitCard(i){return team.querySelectorAll('.memberpic')[i]||null;}
+  function setPortrait(slug,path,version){
+    const i=MEMBERS.findIndex(m=>m[0]===slug);
+    const node=portraitCard(i);if(!node||!path)return;
+    const {db}=getContext();if(!db)return;
+    const obj=db.storage.from('team-portraits').getPublicUrl(path);
+    const url=obj.data?.publicUrl;if(!url)return;
+    const safe=url+'?v='+encodeURIComponent(String(version||'1'));
+    node.style.setProperty('background-image','url("'+safe+'")','important');
+    node.style.setProperty('background-size','contain','important');
+    node.style.backgroundRepeat='no-repeat';
+    node.style.backgroundPosition='center';
+    node.style.aspectRatio='3 / 4';
+    node.setAttribute('role','img');
+    node.setAttribute('aria-label','Ảnh rõ nét của '+MEMBERS[i][1]);
+    node.dataset.hires='true';
+  }
+  async function refreshTeam() {
+    const {db,user}=getContext();if(!db||!user)return;
+    const [assetResult,editorResult]=await Promise.all([
+      db.from('site_assets').select('slug,image_path,updated_at'),
+      db.from('site_editors').select('user_id').eq('user_id',user.id).maybeSingle()
+    ]);
+    if(!assetResult.error) {
+      for(const asset of (assetResult.data||[])) setPortrait(asset.slug,asset.image_path,asset.updated_at);
+    }
+    const isEditor=!!editorResult.data&&!editorResult.error;
+    toggle.hidden=!isEditor;
+    panel.hidden=!isEditor||!isOpen;
+    loaded=true;
+  }
+  async function toWebp(file) {
+    if(!['image/jpeg','image/png','image/webp'].includes(file.type))
+      throw new Error('Ảnh phải là JPG, PNG hoặc WebP.');
+    const img=await new Promise((resolve,reject)=>{
+      const el=new Image();const u=URL.createObjectURL(file);
+      el.onload=()=>{URL.revokeObjectURL(u);resolve(el)};
+      el.onerror=()=>{URL.revokeObjectURL(u);reject(new Error('Không mở được file ảnh.'))};
+      el.src=u;
+    });
+    const w=img.naturalWidth,h=img.naturalHeight;
+    if(w<750||h<1000) throw new Error('Ảnh này nhỏ ('+w+' × '+h+' px), dễ bị bể. Hãy chọn ảnh gốc tối thiểu 750 × 1000 px.');
+    const scale=Math.min(1,1440/w,1920/h);
+    const canvas=document.createElement('canvas');canvas.width=Math.round(w*scale);canvas.height=Math.round(h*scale);
+    const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Trình duyệt không hỗ trợ xử lý ảnh.');
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.91));
+    if(!blob||blob.type!=='image/webp')throw new Error('Trình duyệt không xuất được ảnh WebP, hãy dùng Chrome hoặc Edge.');
+    if(blob.size>4194304)throw new Error('Ảnh sau xử lý vượt 4 MB.');
+    return blob;
+  }
+  panel.querySelectorAll('[data-member-submit]').forEach(btn=>{
+    btn.onclick=async()=>{
+      const slug=btn.dataset.memberSubmit;
+      const {db,user}=getContext();
+      if(!db||!user) return status('Bạn cần đăng nhập để cập nhật.');
+      const input=panel.querySelector('[data-member-photo="'+slug+'"]');
+      const file=input?.files?.[0];
+      if(!file)return status('Hãy chọn ảnh cho '+MEMBERS.find(m=>m[0]===slug)?.[1]+'.');
+      btn.disabled=true;status('Đang xử lý ảnh gốc, vui lòng chờ...');
+      try {
+        const blob=await toWebp(file);
+        const name='team/'+slug+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.webp';
+        const r=await db.storage.from('team-portraits').upload(name,blob,{contentType:'image/webp',cacheControl:'86400',upsert:false});
+        if(r.error)throw r.error;
+        const when=new Date().toISOString();
+        const save=await db.from('site_assets').upsert({slug,image_path:name,updated_at:when},{onConflict:'slug'});
+        if(save.error)throw save.error;
+        setPortrait(slug,name,when);
+        status('✅ Đã cập nhật ảnh '+MEMBERS.find(m=>m[0]===slug)[1]+' ở độ phân giải rõ nét. Mọi người sẽ thấy ảnh mới khi tải lại trang.');
+        input.value='';
+      }catch(e){status('Chưa tải được ảnh: '+(e?.message||String(e)));}
+      finally{btn.disabled=false;}
+    };
+  });
+  const oldPage=D.page;
+  D.page=id=>{oldPage(id);if(id==='intro')refreshTeam();};
+  window.addEventListener('load',()=>{
+    const {db}=getContext();
+    if(db) {
+      db.auth.onAuthStateChange(event=>{
+        if(event==='SIGNED_IN'||event==='INITIAL_SESSION')setTimeout(refreshTeam,100);
+      });
+      setTimeout(refreshTeam,200);
+    }
+  });
+})();
