@@ -162,3 +162,77 @@
 @media(prefers-reduced-motion:reduce){
  #pixelArcade .pa-cat,#pixelArcade .pa-cat-base{animation:none!important}
 }
+
+
+
+/* TRUE WALKING: four distinct leg poses + horizontal stroll and direction changes. */
+#pixelArcade .pa-scene{position:relative;overflow:hidden}
+#pixelArcade .pa-pet-stage{
+  position:absolute!important;
+  left:0!important;
+  bottom:15px!important;
+  top:auto!important;
+  margin:0!important;
+  width:250px!important;
+  max-width:none!important;
+  height:180px!important;
+  z-index:3!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  transform-origin:50% 70%;
+  will-change:transform;
+}
+#pixelArcade .pa-cat{
+  position:relative!important;
+  width:246px!important;
+  height:174px!important;
+  max-width:none!important;
+  margin:0!important;
+  transform-origin:50% 85%;
+}
+#pixelArcade .pa-cat-base{
+  background-image:url('/kitten-walk-1.svg?v=gray-kitten-walk-2')!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  background-size:contain!important;
+  image-rendering:pixelated!important;
+}
+#pixelArcade .pa-cat.is-walking{
+  animation:grayKittenWalkBob .36s steps(2,end) infinite!important;
+}
+#pixelArcade .pa-cat.is-walking .pa-cat-base{
+  animation:none!important;
+}
+#pixelArcade .pa-gear.head{left:21%!important;top:7px!important;width:68px!important;height:50px!important}
+#pixelArcade .pa-gear.neck{left:25%!important;top:67px!important;width:53px!important;height:43px!important}
+#pixelArcade .pa-gear.body{left:59%!important;top:81px!important;width:100px!important;height:57px!important}
+#intro .hero .garden-running-cat{
+  width:145px!important;
+  height:107px!important;
+  bottom:10px!important;
+  z-index:9!important;
+  transform-origin:center center!important;
+  will-change:transform;
+}
+#intro .hero .garden-cat-sprite{
+  background-image:url('/kitten-walk-1.svg?v=gray-kitten-walk-2')!important;
+  background-size:contain!important;
+  background-position:center!important;
+  animation:none!important;
+}
+@keyframes grayKittenWalkBob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+@media(max-width:520px){
+ #pixelArcade .pa-pet-stage{width:188px!important;height:143px!important;bottom:18px!important}
+ #pixelArcade .pa-cat{width:185px!important;height:139px!important}
+ #pixelArcade .pa-gear.head{left:21%!important;top:4px!important;width:52px!important;height:41px!important}
+ #pixelArcade .pa-gear.neck{left:25%!important;top:56px!important;width:43px!important;height:34px!important}
+ #pixelArcade .pa-gear.body{left:58%!important;top:67px!important;width:76px!important;height:43px!important}
+ #intro .hero .garden-running-cat{width:117px!important;height:83px!important;bottom:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #pixelArcade .pa-cat.is-walking{animation:none!important}
+}
