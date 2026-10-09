@@ -74,6 +74,7 @@ async function call(action,item=null,count=0,runid=null){
 async function loadPet(){
  const ctx=statusAccount();if(!ctx){loadedFor=null;pet={...cachedDefault};return}
  if(loadedFor===ctx.user.id)return;
+ pet={...cachedDefault,owned_items:[],food_stock:{},equipped:{}};
  loadedFor=ctx.user.id;
  try{await call('status');if(currentView!=='play')render()}catch(e){loadedFor=null;toast('Không tải được mèo: '+e.message)}
 }
@@ -300,7 +301,8 @@ function renderPairs(){
 async function finishGame(){
  if(!run||run.done)return;
  run.done=true;clearInterval(timer);timer=null;
- currentView='play';renderResults();
+ // Only show the result when still in the play area; never pull users away from the shop or their cat.
+ if(currentView==='play')renderResults();
  if(!run.correct)return;
  await claimCoins();
 }
