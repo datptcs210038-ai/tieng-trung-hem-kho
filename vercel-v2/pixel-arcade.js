@@ -117,7 +117,7 @@ function petScene(){
  const catMood=mood();
  const over=Object.entries(pet.equipped||{}).map(([slot,id])=>
   ['head','neck','body'].includes(slot)&&ITEMS.some(x=>x.id===id)?
-  '<img class="pa-gear '+slot+'" alt="" src="'+pixelImg(id)+'">':'').join('');
+  '<span class="pa-gear '+slot+'" data-wearable="'+id+'" aria-hidden="true"></span>':'').join('');
  return '<div class="pa-scene"><span class="pa-cat-bubble">'+moodText()+'</span><div class="pa-pet-stage"><div class="pa-cat is-'+catMood+'"><span class="pa-cat-base"></span>'+over+'</div>'+
  (catMood==='sleeping'?'<span class="pa-zzz">Z z z</span>':'')+
  (catMood==='eating'?'<span class="pa-crumb">♥ + ♡</span>':'')+
@@ -186,7 +186,7 @@ function shopCard(item){
  const isFood=item.category==='food';
  const text=isFood?'Mua · '+item.cost+' xu':equipped?'✓ Đang mặc':owned?'Mặc lên mèo':'Mua · '+item.cost+' xu';
  const action=isFood?'buy':equipped?'unequip':owned?'equip':'buy';
- return '<div class="pa-shop-item"><div class="pa-shop-sprite">'+pixelSvg(item.id)+'</div><strong>'+item.name+'</strong><p>'+item.caption+'</p>'+
+ return '<div class="pa-shop-item"><div class="pa-shop-sprite">'+(isFood?pixelSvg(item.id):wardrobePreview(item.id))+'</div><strong>'+item.name+'</strong><p>'+item.caption+'</p>'+
  '<span class="pa-price">'+(isFood?'Trong kho: '+stock:owned?'Đã sở hữu ✓':item.cost+' xu')+'</span>'+
  '<button '+(equipped?'class="is-equipped" ':'')+'type="button" data-action="'+action+'" data-item="'+item.id+'">'+text+'</button></div>';
 }
@@ -410,6 +410,118 @@ function renderResults(){
  $('#paPlayAgain').onclick=()=>startGame(game.id);
  $('#paBackHome').onclick=()=>{run=null;tab('home')};
 }
+
+/* Virtual wardrobe V7: redesigned pixel outfits fitted to each native 128×100 cat pose.
+ * Existing owned_items/equipped IDs and shop prices stay unchanged. */
+const WARDROBE_COLORS={
+ outline:'#323347',white:'#fdf6e9',blue:'#6bbbd5',blueLight:'#bce5e8',
+ sage:'#70aa8e',sageDark:'#438876',rose:'#e98a9b',roseLight:'#ffd6cd',
+ amber:'#ffc976',amberDark:'#ad7b3d',navy:'#476387',purple:'#8c77a9',
+ purpleLight:'#d1b8db',red:'#b95468',redLight:'#f38fa1',gold:'#f5c45e'
+};
+const WARDROBE_POSES={
+ idle:{hx:90,hy:13,nx:75,ny:61,bx:46,by:52,sx:1,sy:1},
+ blink:{hx:90,hy:13,nx:75,ny:61,bx:46,by:52,sx:1,sy:1},
+ walk1:{hx:91,hy:13,nx:77,ny:62,bx:46,by:52,sx:1,sy:1},
+ walk2:{hx:91,hy:13,nx:78,ny:61,bx:48,by:53,sx:1,sy:1},
+ groom1:{hx:76,hy:14,nx:77,ny:74,bx:58,by:72,sx:.75,sy:.65},
+ groom2:{hx:78,hy:15,nx:79,ny:76,bx:58,by:76,sx:.75,sy:.58},
+ eat:{hx:66,hy:26,nx:80,ny:64,bx:102,by:55,sx:.67,sy:.72},
+ sleep:{hx:46,hy:52,nx:64,ny:78,bx:90,by:60,sx:.7,sy:.66}
+};
+function wearableSvg(id,pose='idle'){
+ const z=WARDROBE_POSES[pose]||WARDROBE_POSES.idle;
+ const C=WARDROBE_COLORS,parts=[];
+ const R=(x,y,w,h,fill)=>parts.push('<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+(C[fill]||fill)+'"/>');
+ const P=(d,fill,stroke='outline',sw=1.8)=>parts.push('<path d="'+d+'" fill="'+(C[fill]||fill)+'" stroke="'+(C[stroke]||stroke)+'" stroke-width="'+sw+'" stroke-linejoin="miter"/>');
+ const H=(s)=>parts.push('<g transform="translate('+z.hx+' '+z.hy+')">'+s+'</g>');
+ const N=(s)=>parts.push('<g transform="translate('+z.nx+' '+z.ny+')">'+s+'</g>');
+ const B=(s)=>parts.push('<g transform="translate('+z.bx+' '+z.by+') scale('+z.sx+' '+z.sy+')">'+s+'</g>');
+ const group=(fn)=>{const n=parts.length;fn();return parts.splice(n).join('')};
+ const sleep=pose==='sleep',eat=pose==='eat',groom=pose.startsWith('groom');
+ // Head accessories are attached to the actual skull, not to a fixed CSS rectangle.
+ if(id==='bow'){
+   const shape=group(()=>{
+    P('M -17 -5 H -12 L -5 -2 L -5 -8 L -12 -10 L -17 -8 Z','blue');
+    P('M -1 -8 L 4 -10 L 12 -8 V -3 L 4 -2 L -1 -5 Z','blue');
+    R(-6,-9,6,9,'navy');R(-14,-8,3,3,'blueLight');R(7,-8,3,3,'blueLight');
+   });
+   parts.push('<g transform="translate('+(z.hx+(sleep?-5:0))+' '+(z.hy+(sleep?5:0))+') scale('+(sleep?0.65:.98)+')">'+shape+'</g>');
+ }else if(id==='glasses'){
+   if(!eat&&!sleep&&!groom)H(group(()=>{
+    P('M -21 20 H -6 V 33 H -21 Z','none','navy',2.5);
+    P('M 4 20 H 20 V 33 H 4 Z','none','navy',2.5);
+    R(-6,22,10,2,'navy');R(-23,22,3,3,'navy');R(20,22,3,3,'navy');
+    R(-18,23,3,2,'blueLight');R(7,23,3,2,'blueLight');
+   }));
+ }else if(id==='beanie'){
+   if(!sleep&&!eat)H(group(()=>{
+    P('M -24 9 V 2 H -20 V -5 H -14 V -11 H 6 V -8 H 13 V -3 H 17 V 9 Z','sage');
+    R(-21,2,35,5,'sageDark');R(-19,-3,10,3,'blueLight');R(1,-6,9,3,'blueLight');
+    R(-5,-15,8,5,'rose');R(-3,-16,3,3,'roseLight');
+   }));
+ }else if(id==='crown'){
+   if(!sleep&&!eat)H(group(()=>{
+    P('M -21 10 V -6 L -13 0 L -6 -10 L 2 0 L 11 -7 V 10 Z','gold');
+    R(-20,5,31,6,'amberDark');R(-17,7,25,3,'gold');
+    R(-9,0,5,5,'rose');R(3,2,4,4,'blue');
+   }));
+ }else if(id==='scarf'){
+   if(!sleep)N(group(()=>{
+    P('M -13 -4 H 11 V 3 H 4 V 15 H -3 V 5 H -13 Z','rose');
+    R(-10,-2,17,3,'roseLight');R(-1,6,5,8,'red');R(-12,4,8,2,'redLight');
+   }));
+ }else if(id==='bell'){
+   N(group(()=>{
+    R(-12,-7,19,3,'navy');R(-7,-5,4,7,'sage');
+    P('M -5 1 H 1 V 4 H 4 V 10 H -8 V 4 H -5 Z','gold');
+    R(-6,5,8,3,'amber');R(-3,9,3,3,'outline');
+   }));
+ }else if(id==='student'){
+   B(group(()=>{
+    P('M -26 3 H -10 L -5 -1 H 13 L 22 5 V 26 H -26 Z','navy');
+    R(-21,9,14,17,'blue');R(7,9,12,17,'blue');
+    P('M -8 0 L 1 12 L 8 0 L 3 -1 H -3 Z','white');
+    R(0,10,3,16,'amber');R(12,12,4,4,'gold');
+    R(-22,23,10,4,'blueLight');R(11,23,8,4,'blueLight');
+   }));
+ }else if(id==='aoba'){
+   B(group(()=>{
+    P('M -25 3 H -6 L 0 -1 H 8 L 20 5 V 27 H -26 Z','purple');
+    R(-23,8,10,17,'purpleLight');R(9,9,8,17,'purpleLight');
+    P('M -7 0 L 4 10 V 27 H -2 V 11 Z','white');
+    R(6,9,3,3,'amber');R(6,16,3,3,'amber');R(6,23,3,3,'amber');
+    R(-23,25,39,4,'navy');
+   }));
+ }else if(id==='royal'){
+   B(group(()=>{
+    P('M -27 3 H -9 L 1 -1 H 12 L 23 6 V 29 H -28 Z','red');
+    R(-24,8,9,18,'redLight');R(14,9,6,18,'redLight');
+    P('M -7 0 L 3 11 L 13 0 L 8 -2 L 3 4 L -2 -2 Z','gold');
+    R(0,13,5,10,'gold');R(-6,18,6,4,'amber');R(8,18,5,4,'amber');
+    R(-26,26,46,5,'amberDark');R(-22,27,41,2,'gold');
+   }));
+ }
+ return '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="100" viewBox="0 0 128 100" shape-rendering="crispEdges" aria-hidden="true">'+parts.join('')+'</svg>';
+}
+function wardrobeUrl(id,pose){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(wearableSvg(id,pose))}
+function drawWornClothes(pose){
+ const cat=$('.pa-cat');if(!cat)return;
+ cat.querySelectorAll('.pa-gear[data-wearable]').forEach(el=>{
+  const id=el.dataset.wearable||'';
+  if(el.dataset.frame===pose)return;
+  el.dataset.frame=pose;
+  el.style.setProperty('background-image','url("'+wardrobeUrl(id,pose)+'")','important');
+  el.style.setProperty('background-size','100% 100%','important');
+  el.style.setProperty('background-position','center','important');
+  el.style.setProperty('background-repeat','no-repeat','important');
+ });
+}
+function wardrobePreview(id){
+ const url=wardrobeUrl(id,'idle');
+ return '<span class="pa-shop-preview"><span class="pa-shop-cat" aria-hidden="true"></span><span class="pa-shop-wear" aria-hidden="true" style="background-image:url(&quot;'+url+'&quot;)"></span></span>';
+}
+
 const originalPage=D.page;
 if(typeof originalPage==='function'){
  D.page=function(id){
@@ -548,6 +660,7 @@ function paintKitten(now=performance.now()){
  else pose=tickFace(elapsed,roomMoving);
  const base=$('.pa-cat-base'),scene=$('.pa-scene'),stage=$('.pa-pet-stage'),body=$('.pa-cat');
  setCatSprite(base,pose);
+ drawWornClothes(pose);
  if(scene&&stage){
   if(canMove){prevRoomFraction=roomTrip.fraction;prevRoomDirection=roomTrip.direction}
   const travel=Math.max(0,scene.clientWidth-stage.offsetWidth-20);
