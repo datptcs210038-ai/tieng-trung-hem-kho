@@ -726,7 +726,7 @@ render();
   const link=document.createElement('link');
   link.id='pixelThemeCss';
   link.rel='stylesheet';
-  link.href='/pixel-ui.css?v=pixel-20261009-v1';
+  link.href='/pixel-ui.css?v=pixel-20261009-v2';
   document.head.append(link);
   function decorate(){
     const hero=document.querySelector('#intro .hero');
@@ -742,4 +742,74 @@ render();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',decorate,{once:true});
   else decorate();
+})();
+
+
+// Pixel Vietnamese typography and raster-free navigational icons / brand identity
+
+;(()=>{
+ 'use strict';
+ const patterns={"home":["...##...","..####..",".######.","########","##....##","##.##.##","##.##.##","########"],"vocab":["###..###","#.##.#.#","#.##.#.#","#.##.#.#","#.##.#.#","###..###","..####..","...##..."],"lookup":["..####..",".##..##.","##....##","##....##",".##..##.","..####..",".....##.","......##"],"writing":["......##",".....###","....##.#","...##...","..##....",".##.....","###.....","##......"],"exams":[".######.",".#....#.",".#.##.#.",".#....#.",".#.##.#.",".#....#.",".######.","........"],"flash":["...###..","..###...",".###....","#######.","...##...","..##....",".##.....","........"],"timer":["...##...","..####..","..####..",".######.",".##..##.",".##.###.",".######.","..####.."],"notes":[".#....#.","########","#......#","########","#.#..#.#","#......#","########","........"],"rank":["........",".##.....",".##.##..",".##.##.#",".##.##.#","########","########","........"],"profile":["...##...","..####..","..####..","...##...","..####..",".######.","########","........"],"logout":["##......","##..##..","##.####.","##.#####","##.####.","##..##..","##......","........"],"facebook":["...#####","..######","..##....","######..","######..","..##....","..##....","..##...."]};
+ function pixelSvg(key){
+  const lines=patterns[key]||patterns.home;
+  let pixels='';
+  lines.forEach((row,y)=>{for(let x=0;x<row.length;x++)if(row[x]==='#')pixels+='<rect x="'+(x*2)+'" y="'+(y*2)+'" width="2" height="2"/>';});
+  return '<svg viewBox="0 0 16 16" width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="currentColor" shape-rendering="crispEdges" aria-hidden="true">'+pixels+'</svg>';
+ }
+ const brandSvg="<svg class=\"crisp-lotus\" viewBox=\"0 0 120 160\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\">\n<path d=\"M61 68C43 46 42 28 61 8c18 19 20 41 0 60Z\"/>\n<path d=\"M58 68C29 51 23 31 34 13c24 13 38 32 24 55Z\"/>\n<path d=\"M66 66C84 42 85 25 76 10C52 25 51 47 66 66Z\"/>\n<path d=\"M56 74C20 67 7 44 14 28c30 0 46 19 42 46Z\"/>\n<path d=\"M67 73c36-8 50-29 46-44-31-3-48 13-46 44Z\"/>\n<path d=\"M57 81c-24 0-43-9-50-27m60 29c24 1 38-11 47-27M61 82c10 25 12 50 9 69M67 121c-19-15-36-12-48-3 17 15 29 19 46 13M72 138c20-23 35-23 44-20-11 24-23 33-44 29\"/>\n</svg>";
+ const hasUploadedLogo=src=>Boolean(src&&src.includes('supabase.co/storage/v1/object/public/team-portraits/'));
+ function decorateLogo(){
+  const loginImg=document.querySelector('.login-logo-frame img');
+  const frame=loginImg?.closest('.login-logo-frame');
+  if(frame&&!frame.querySelector('.crisp-logo-art')){
+   const logo=document.createElement('div');
+   logo.className='crisp-logo-art';logo.setAttribute('role','img');logo.setAttribute('aria-label','中文不难 — Tiếng Trung Hem Khó');
+   logo.innerHTML=brandSvg+'<div class="crisp-center"><div class="crisp-hanzi" lang="zh">中文不难</div><div class="crisp-viet">TIẾNG TRUNG HEM KHÓ</div></div>';
+   frame.append(logo);
+  }
+  const sideImg=document.querySelector('.side-brand');
+  const sideHeader=sideImg?.closest('.side h2')||sideImg?.parentElement;
+  if(sideHeader&&!sideHeader.querySelector('.crisp-side-logo')){
+   const logo=document.createElement('span');logo.className='crisp-side-logo';
+   logo.innerHTML='<span class="side-crisp-hanzi" lang="zh">中文不难</span><span class="side-crisp-viet">TIẾNG TRUNG HEM KHÓ</span>';
+   sideHeader.append(logo);
+  }
+  function apply(){
+   if(loginImg&&frame)frame.classList.toggle('brand-has-uploaded-original',hasUploadedLogo(loginImg.getAttribute('src')||''));
+   if(sideImg&&sideHeader)sideHeader.classList.toggle('brand-has-uploaded-original',hasUploadedLogo(sideImg.getAttribute('src')||''));
+   const hero=document.querySelector('.hero-brand-watermark');
+   if(hero)hero.classList.toggle('brand-has-uploaded-original',hasUploadedLogo(hero.getAttribute('src')||''));
+   const loadingImage=document.querySelector('.page-loader-img');
+   if(loadingImage){
+    loadingImage.classList.toggle('brand-has-uploaded-original',hasUploadedLogo(loadingImage.getAttribute('src')||''));
+    const container=loadingImage.parentElement;
+    if(container&&!container.querySelector('.page-loader-crisp')){
+     const text=document.createElement('span');text.className='page-loader-crisp';text.setAttribute('lang','zh');text.textContent='中文不难';
+     loadingImage.insertAdjacentElement('afterend',text);
+    }
+   }
+  }
+  apply();
+  const observer=new MutationObserver(apply);
+  [loginImg,sideImg,document.querySelector('.hero-brand-watermark'),document.querySelector('.page-loader-img')].filter(Boolean).forEach(img=>observer.observe(img,{attributes:true,attributeFilter:['src']}));
+ }
+ function decoratePixelIcons(){
+  document.querySelectorAll('.nav button[data-page],.nav button#logout').forEach(button=>{
+   if(button.dataset.pixelIcon==='1')return;
+   const k=button.id==='logout'?'logout':button.dataset.page;
+   const label=button.textContent.trim().replace(/^[^\p{L}\p{N}]+/u,'').trim();
+   const el=document.createElement('span');el.className='pixel-nav-icon';el.innerHTML=pixelSvg(k);
+   const text=document.createElement('span');text.className='pixel-nav-label';text.textContent=label;
+   button.replaceChildren(el,text);
+   button.dataset.pixelIcon='1';
+  });
+  document.querySelectorAll('.mobile-dock button[data-quick-page]').forEach(b=>{
+   const icon=b.querySelector('.dock-icon');if(icon)icon.innerHTML=pixelSvg(b.dataset.quickPage);
+  });
+  const facebook=document.querySelector('.facebook-float');
+  if(facebook)facebook.innerHTML=pixelSvg('facebook');
+ }
+ function applyAll(){decorateLogo();decoratePixelIcons();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyAll,{once:true});
+ else applyAll();
 })();
