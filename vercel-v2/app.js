@@ -177,7 +177,7 @@ section.innerHTML=`
    <div class="profile-avatar-controls">
      <label for="profilePhoto" style="font-weight:700">Ảnh đại diện cá nhân</label>
      <input id="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp">
-     <p class="subtext">JPG, PNG hoặc WebP · tối đa 2 MB. Ảnh đại diện có thể được xem công khai.</p>
+     <p class="subtext">JPG, PNG hoặc WebP · tối đa 10 MB. Ảnh đại diện có thể được xem công khai.</p>
      <button class="btn soft" type="button" id="uploadPhoto">📷 Cập nhật ảnh</button>
      <p class="profile-status" id="photoStatus" role="status"></p>
    </div>
@@ -274,7 +274,7 @@ $('#uploadPhoto').onclick=async()=>{
  if(!f)return status('photoStatus','Hãy chọn một ảnh trước.');
  const extensions={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
  if(!extensions[f.type])return status('photoStatus','Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP.');
- if(f.size>2*1024*1024)return status('photoStatus','Ảnh lớn hơn 2 MB. Hãy chọn ảnh nhỏ hơn.');
+ if(f.size>10*1024*1024)return status('photoStatus','Ảnh vượt giới hạn 10 MB. Hãy chọn ảnh nhỏ hơn.');
  const btn=$('#uploadPhoto');btn.disabled=true;status('photoStatus','Đang tải ảnh lên…');
  try{
   const path=user.id+'/'+Date.now()+'-'+(crypto.randomUUID?crypto.randomUUID().slice(0,8):'avatar')+'.'+extensions[f.type];
