@@ -1206,7 +1206,7 @@ if(gate&&window.supabase){
  if(document.getElementById('pixelArcadeBootstrap'))return;
  const script=document.createElement('script');
  script.id='pixelArcadeBootstrap';
- script.src='/pixel-arcade.js?v=outfits-20261009-v1';
+ script.src='/pixel-arcade.js?v=gray-kitten-walk-20261009-v2';
  script.defer=true;
  script.onerror=()=>console.warn('Pixel Arcade is not available. Please refresh.');
  document.head.append(script);
