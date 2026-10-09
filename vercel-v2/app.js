@@ -1204,10 +1204,17 @@ if(gate&&window.supabase){
 ;(()=>{
  'use strict';
  if(document.getElementById('pixelArcadeBootstrap'))return;
- const script=document.createElement('script');
- script.id='pixelArcadeBootstrap';
- script.src='/pixel-arcade.js?v=cat-rebuild-room-v4';
- script.defer=true;
- script.onerror=()=>console.warn('Pixel Arcade is not available. Please refresh.');
- document.head.append(script);
+ function loadArcade(){
+  const script=document.createElement('script');
+  script.id='pixelArcadeBootstrap';
+  script.src='/pixel-arcade.js?v=cat-final-v6';
+  script.onerror=()=>console.warn('Pixel Arcade could not load.');
+  document.head.append(script);
+ }
+ const atlas=document.createElement('script');
+ atlas.id='catPixelAtlas';
+ atlas.src='/cat-atlas-data.js?v=cat-final-v6';
+ atlas.onload=loadArcade;
+ atlas.onerror=loadArcade;
+ document.head.append(atlas);
 })();
