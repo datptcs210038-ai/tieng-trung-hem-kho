@@ -446,22 +446,12 @@ function sync(){
 dock.querySelectorAll('[data-quick-page]').forEach(b=>b.addEventListener('click',()=>D.page(b.dataset.quickPage)));
 const observer=new MutationObserver(sync);if(site)observer.observe(site,{attributes:true,attributeFilter:['hidden']});
 const originalPage=D.page;
-let changing=false;
 D.page=function(target){
- const next=document.getElementById(target);
- if(!next||!next.classList.contains('page')||target===activePage()||changing){return target===activePage()?undefined:changing?undefined:originalPage(target);}
- changing=true;
- const currentLogo=document.querySelector('.side-brand')?.getAttribute('src')||document.querySelector('.login-logo-frame img')?.getAttribute('src')||'/logo-tthk.webp';
- if(currentLogo)logo.src=currentLogo;
- loader.querySelector('.page-loader-text').textContent='Đang mở '+({intro:'Giới thiệu',lookup:'Tra cứu',vocab:'Từ vựng',writing:'Luyện viết',exams:'Đề thi HSK',flash:'Flashcard',timer:'Thời gian',notes:'Lịch học',rank:'Bảng xếp hạng',profile:'Thông tin cá nhân'}[target]||'góc học tập')+'…';
- loader.setAttribute('aria-hidden','false');
- loader.classList.add('active');
- window.setTimeout(()=>{
-   try{originalPage(target);sync();}finally{
-     window.setTimeout(()=>{loader.classList.remove('active');loader.setAttribute('aria-hidden','true');changing=false;},125);
-   }
- },1250);
+  const result=originalPage(target);
+  sync();
+  return result;
 };
+
 sync();
 })();
 
@@ -608,4 +598,121 @@ window.addEventListener('focus',render);
 const authObserver=new MutationObserver(syncMini);authObserver.observe($('#site'),{attributes:true,attributeFilter:['hidden']});
 D.stopTimerOnLogout=()=>{running=false;clearInterval(ticker);ticker=0;miniVisible=false;minimized=false;elapsed=0;remaining=duration().study;$('#toast').hidden=true;syncMini()};
 render();
+})();
+
+
+// Auth-only branded loading + HSK image coverage dashboard
+
+;(()=>{
+ 'use strict';
+ const D=window.TTHK,$=s=>document.querySelector(s);
+ if(!D)return;
+ const loader=$('#pageTabLoader'),gate=$('#gate');
+ let authBusy=false;
+ function showAuthLoader(message){
+   if(!loader||authBusy)return false;
+   authBusy=true;
+   const detail=loader.querySelector('.page-loader-text');
+   if(detail)detail.textContent=message;
+   const l=loader.querySelector('.page-loader-img');
+   const current=document.querySelector('.side-brand')?.src;
+   if(l&&current)l.src=current;
+   loader.classList.add('active');
+   loader.setAttribute('aria-hidden','false');
+   return true;
+ }
+ function hideAuthLoader(){
+   if(loader){loader.classList.remove('active');loader.setAttribute('aria-hidden','true')}
+   authBusy=false;
+ }
+ async function executeWithAuthLoader(fn,message,...args){
+   const started=showAuthLoader(message);
+   const at=Date.now();
+   try{return await fn(...args);}
+   finally{
+     if(started){
+       const delay=Math.max(0,700-(Date.now()-at));
+       if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
+       hideAuthLoader();
+     }
+   }
+ }
+ const login=$('#login'),logout=$('#logout'),logoutTop=$('#quickSignOut');
+ if(login&&typeof login.onclick==='function'){
+   const original=login.onclick;
+   login.onclick=function(...args){return executeWithAuthLoader(original.bind(this),'Đang đăng nhập…',...args)};
+ }
+ const out=typeof D.signOut==='function'?D.signOut:null;
+ if(out){
+   const wrapped=function(...args){return executeWithAuthLoader(out.bind(this),'Đang đăng xuất…',...args)};
+   D.signOut=wrapped;
+   if(logout)logout.onclick=wrapped;
+   if(logoutTop)logoutTop.onclick=wrapped;
+ }
+ const section=$('#vocab'),wordGrid=$('#wordGrid');
+ if(!section||!wordGrid)return;
+ const audit=document.createElement('div');
+ audit.id='vocabImageAudit';
+ audit.className='box';
+ audit.style.cssText='margin:15px 0 19px;padding:16px 19px;background:#f9fcff;border:1px solid #d9e9f5;box-shadow:0 8px 24px #08487009;';
+ audit.innerHTML='<div style="display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap"><div><strong style="color:#084870;font-size:15px">🖼️ Kiểm tra ảnh minh họa HSK</strong><p id="vocabImageSummary" style="margin:7px 0 0;color:#527b96;font-size:13px">Đang tải dữ liệu từ vựng…</p></div><button type="button" id="checkPhotoLinks" class="btn soft">Kiểm tra link ảnh</button></div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px"><label style="color:#315e79;font-size:13px"><input type="checkbox" id="onlyMissingPhotos"> Chỉ hiện từ chưa có ảnh</label><small id="photoCheckResults" style="color:#688aa0">Ảnh đã gắn chưa đồng nghĩa đã kiểm chứng nội dung.</small></div>';
+ const row=section.querySelector('.row');
+ if(row)row.insertAdjacentElement('afterend',audit);else section.insertBefore(audit,wordGrid);
+ const missing=$('#onlyMissingPhotos'),summary=$('#vocabImageSummary'),results=$('#photoCheckResults');
+ const oldVocab=D.vocab;
+ function hasPhoto(w){return Boolean(D.photos[w.h]);}
+ function counts(){
+   const total=D.words.length,photo=D.words.filter(hasPhoto).length,missingCount=total-photo;
+   summary.textContent=total?('Đã gắn đường dẫn ảnh: '+photo+'/'+total+' từ · Chưa có ảnh: '+missingCount+' từ.'): 'Kho từ vựng đang tải…';
+   summary.style.color=missingCount?'#9b5b17':'#146548';
+ }
+ D.vocab=function(){
+   if(!missing.checked){oldVocab();counts();return;}
+   const lv=$('#level').value,topic=$('#topic').value,query=$('#vocabQuery').value.toLowerCase();
+   const filtered=D.words.filter(w=>!hasPhoto(w)
+    &&(lv==='all'||w.l==lv)&&(topic==='all'||w.topic===topic)
+    &&[w.h,w.p,w.m,w.en].some(val=>String(val).toLowerCase().includes(query)));
+   wordGrid.innerHTML=filtered.slice(0,D.shown).map(D.card).join('');
+   D.bindCards(wordGrid);
+   $('#loadMore').hidden=D.shown>=filtered.length;
+   counts();
+ };
+ missing.onchange=()=>{
+   if(missing.checked&&$('#onlyPhotos').checked)$('#onlyPhotos').checked=false;
+   D.shown=32;D.vocab();
+ };
+ $('#onlyPhotos').addEventListener('change',()=>{if($('#onlyPhotos').checked)missing.checked=false;});
+ const oldLoad=D.loadWords;
+ D.loadWords=async function(...args){const out=await oldLoad(...args);counts();return out};
+ counts();
+ function preflightImage(url){
+   return new Promise(resolve=>{
+     const img=new Image();let settled=false;
+     const timer=setTimeout(()=>finish(false),12500);
+     function finish(ok){if(settled)return;settled=true;clearTimeout(timer);img.onload=null;img.onerror=null;resolve(ok)}
+     img.onload=()=>finish(img.naturalWidth>0&&img.naturalHeight>0);
+     img.onerror=()=>finish(false);
+     img.src=url;
+     if(img.complete)finish(img.naturalWidth>0);
+   });
+ }
+ $('#checkPhotoLinks').onclick=async()=>{
+   const btn=$('#checkPhotoLinks');btn.disabled=true;btn.textContent='Đang kiểm tra…';
+   try{
+     const map=new Map();
+     for(const w of D.words){if(hasPhoto(w))map.set(D.photos[w.h],w.h);}
+     const pairs=[...map.entries()];
+     if(!pairs.length){results.textContent='Chưa tải kho từ vựng hoặc chưa có ảnh được gắn.';return;}
+     let good=0,bad=[];
+     // Batches avoid flooding the image server with 50 simultaneous requests.
+     for(let i=0;i<pairs.length;i+=5){
+       const group=pairs.slice(i,i+5);
+       const tests=await Promise.all(group.map(async([url,word])=>({word,ok:await preflightImage(url)})));
+       for(const test of tests){if(test.ok)good++;else bad.push(test.word);}
+       results.textContent='Đang kiểm tra '+Math.min(i+5,pairs.length)+'/'+pairs.length+' liên kết ảnh…';
+     }
+     results.textContent='Link tải được: '+good+'/'+pairs.length+'. Link lỗi: '+bad.length+(bad.length?' ('+bad.slice(0,16).join('、')+(bad.length>16?'…':'')+')':'')+'. Chưa kiểm chứng ảnh có đúng nghĩa hay không.';
+   }catch(e){results.textContent='Không kiểm tra được hình: '+String(e.message||e)}
+   finally{btn.disabled=false;btn.textContent='Kiểm tra link ảnh';}
+ };
 })();
