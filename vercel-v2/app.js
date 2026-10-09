@@ -506,8 +506,7 @@ async function signOut(){
   const result=await db.auth.signOut({scope:'local'});
   if(result.error)throw result.error;
   D.stopTimerOnLogout?.();
-  const screen=$('#pageTabLoader');
-  if(screen){screen.classList.remove('active');screen.setAttribute('aria-hidden','true')}
+  // The auth-only five-second loader remains visible until its wrapper completes.
   $('#site').hidden=true;$('#gate').hidden=false;
   $('#music').hidden=true;
   const p=$('#passLogin');if(p)p.value='';
@@ -664,13 +663,15 @@ render();
    try{return await fn(...args);}
    finally{
      if(started){
-       const delay=Math.max(0,700-(Date.now()-at));
+       const delay=Math.max(0,5000-(Date.now()-at));
        if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
        hideAuthLoader();
      }
    }
  }
  const login=$('#login'),logout=$('#logout'),logoutTop=$('#quickSignOut');
+ // Five seconds on account transitions only; regular page/tab navigation has no spinner.
+ loader?.classList.add('auth-five-second-loader');
  if(login&&typeof login.onclick==='function'){
    const original=login.onclick;
    login.onclick=function(...args){return executeWithAuthLoader(original.bind(this),'Đang đăng nhập…',...args)};
