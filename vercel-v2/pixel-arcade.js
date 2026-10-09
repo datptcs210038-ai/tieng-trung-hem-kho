@@ -113,7 +113,7 @@ function gameButtons(){
  ).join('')+'</div>';
 }
 function tab(which){
- if(run&&!run.done&&which!=='play'&&Date.now()>=run.deadline)finishGame();
+ if(run&&!run.done&&currentView==='play'&&which!=='play')finishGame();
  currentView=which;render();
 }
 function render(){
@@ -178,9 +178,7 @@ async function doShopAction(action,id,btn){
 }
 root.querySelectorAll('[data-pa-tab]').forEach(b=>b.onclick=()=>{
  const target=b.dataset.paTab;
- if(run&&!run.done&&currentView==='play'&&target!=='home'){
-   toast('Trò chơi vẫn đếm giờ. Bạn có thể quay lại trước khi hết giờ.');
- }
+ if(run&&!run.done&&currentView==='play')toast('Đã kết thúc ván và ghi nhận những câu đúng.');
  tab(target);
 });
 function randomize(list){return [...list].sort(()=>Math.random()-.5)}
