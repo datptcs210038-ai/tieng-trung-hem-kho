@@ -376,28 +376,28 @@ function renderPairs(){
  });
 }
 async function finishGame(){
- if(!run||run.done)return;
- run.done=true;clearInterval(timer);timer=null;
- // Only show the result when still in the play area; never pull users away from the shop or their cat.
+ const completed=run;
+ if(!completed||completed.done)return;
+ completed.done=true;clearInterval(timer);timer=null;
  if(currentView==='play')renderResults();
- if(!run.correct)return;
- await claimCoins();
+ if(completed.correct>0)await claimCoins(completed);
 }
-let claiming=false;
-async function claimCoins(){
- if(!run||!run.done||run.rewarded||claiming||run.correct<1)return;
- claiming=true;
- const note=$('#paRewardStatus');if(note)note.textContent='Đang lưu xu vào tài khoản…';
+async function claimCoins(rewardRun=run){
+ if(!rewardRun||!rewardRun.done||rewardRun.rewarded||rewardRun.claiming||rewardRun.correct<1)return;
+ rewardRun.claiming=true;
+ const currentNote=()=>run===rewardRun&&currentView==='play'?$('#paRewardStatus'):null;
+ const note=currentNote();if(note)note.textContent='Đang lưu xu vào tài khoản…';
  try{
-  await call('reward',run.game.id,run.correct,run.id);
-  run.rewarded=true;
-  if(note)note.textContent='🪙 Đã nhận '+run.correct+' xu! Xu được lưu vào tài khoản.';
-  toast('Tuyệt vời! +'+run.correct+' xu 🪙');
+  await call('reward',rewardRun.game.id,rewardRun.correct,rewardRun.id);
+  rewardRun.rewarded=true;
+  const visible=currentNote();
+  if(visible)visible.textContent='🪙 Đã nhận '+rewardRun.correct+' xu! Xu đã được lưu vào tài khoản.';
+  toast('Tuyệt vời! +'+rewardRun.correct+' xu 🪙');
  }catch(e){
-  const msg='Chưa nhận được xu: '+e.message+'. Bạn có thể bấm “Thử nhận xu”.';
-  if(note)note.textContent=msg;
-  const retry=$('#paRetryReward');if(retry)retry.hidden=false;
- }finally{claiming=false}
+  const note=currentNote();
+  if(note)note.textContent='Chưa nhận được xu: '+e.message+'. Bấm “Thử nhận xu” để thử lại.';
+  if(run===rewardRun){const retry=$('#paRetryReward');if(retry)retry.hidden=false}
+ }finally{rewardRun.claiming=false}
 }
 function renderResults(){
  if(!run)return;
@@ -406,7 +406,7 @@ function renderResults(){
  '<p>'+game.name+' · đúng '+score+(game.id==='pairs'?'/6 cặp':'/12 câu')+' · thưởng '+score+' xu.</p>'+
  '<p id="paRewardStatus">'+(score?'Đang chuyển xu vào ví…':'Hãy luyện tiếp để tích xu nuôi mèo nhé!')+'</p>'+
  '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><button type="button" class="pa-primary" id="paRetryReward" hidden>🪙 Thử nhận xu</button><button type="button" class="pa-primary" id="paPlayAgain">↺ Chơi lại</button><button type="button" class="pa-primary" id="paBackHome">🐱 Về nhà mèo</button></div></section>';
- $('#paRetryReward').onclick=claimCoins;
+ $('#paRetryReward').onclick=()=>claimCoins(run);
  $('#paPlayAgain').onclick=()=>startGame(game.id);
  $('#paBackHome').onclick=()=>{run=null;tab('home')};
 }
