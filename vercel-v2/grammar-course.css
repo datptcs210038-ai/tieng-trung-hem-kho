@@ -1,0 +1,61 @@
+
+#lookup .lookup-tab-note{font:500 12px/1.5 'Be Vietnam Pro',sans-serif;color:#5e8678;margin:9px 0 0}
+#lookup .lookup-mini-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#lookup [data-lookup]{white-space:nowrap}
+#lookup.lookup-grammar-active #result{display:block!important;width:100%;min-width:0}
+#lookup .grammar-home,#lookup .grammar-lesson{width:100%;min-width:0}
+#lookup .gr-header{background:linear-gradient(110deg,#fffbed,#e9faf2);border:2px solid #a6cdbb;box-shadow:5px 5px 0 #d0e6d5;border-radius:10px;padding:clamp(15px,2vw,25px);margin:10px 5px 22px 0}
+#lookup .gr-header-top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+#lookup .gr-heading{font:400 clamp(36px,3.3vw,48px)/1.02 'VT323','Be Vietnam Pro',sans-serif;color:#2c7869;margin:0}
+#lookup .gr-subtitle{font:500 13px/1.75 'Be Vietnam Pro',sans-serif;color:#6e8882;margin:6px 0 0}
+#lookup .gr-progress{font:700 11px/1.3 'Be Vietnam Pro',sans-serif;color:#2b876d;padding:8px 11px;background:#edfff3;border:2px solid #aed8b6;border-radius:7px}
+#lookup .gr-filters{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:19px 0 4px}
+#lookup .gr-filters select{font:650 12px 'Be Vietnam Pro',sans-serif!important;color:#365e64!important;background:white!important;padding:10px 13px!important;border:2px solid #afd7c8!important;border-radius:7px!important;min-height:45px!important;min-width:125px;max-width:100%}
+#lookup .gr-filters .gr-hint{margin-left:auto;font:500 11px/1.45 'Be Vietnam Pro',sans-serif;color:#78948b}
+#lookup .gr-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;min-width:0}
+#lookup .gr-card{min-width:0;display:flex;align-items:center;gap:12px;padding:16px;border:2px solid #b9dccc;box-shadow:4px 4px 0 #d0e5d9;background:#fffef9;border-radius:8px;cursor:pointer;text-align:left;transition:background .16s,transform .16s}
+#lookup .gr-card:hover{background:#f6fff7;border-color:#68af98;transform:translate(-2px,-2px)}
+#lookup .gr-number{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;background:#def4e5;border:2px solid #9acbae;color:#2e7c62;border-radius:7px;font:400 26px 'VT323',sans-serif}
+#lookup .gr-card-text{min-width:0;display:flex;flex-direction:column;gap:5px;flex:1}
+#lookup .gr-card-title{font:750 14px/1.46 'Be Vietnam Pro',sans-serif;color:#24576a;overflow-wrap:anywhere}
+#lookup .gr-card-desc{font:500 12px/1.4 'Be Vietnam Pro',sans-serif;color:#668d83;overflow-wrap:anywhere}
+#lookup .gr-card-meta{font:700 10px 'Be Vietnam Pro',sans-serif;color:#378a79}
+#lookup .gr-card-next{font:700 18px 'Be Vietnam Pro',sans-serif;color:#559e8d}
+#lookup .gr-card[data-done="true"]{border-color:#9ecfa6}
+#lookup .gr-card[data-done="true"] .gr-number{background:#d7f7d3}
+#lookup .gr-loadmore{display:block;margin:22px auto 10px;padding:11px 18px;background:#edfaf2;border:2px solid #92c6a8;border-radius:7px;color:#347963;font:700 12px 'Be Vietnam Pro',sans-serif;cursor:pointer}
+#lookup .gr-loadmore[hidden]{display:none}
+#lookup .gr-back{background:#f7fcf3;border:2px solid #a2cbb0;box-shadow:3px 3px 0 #cce3c5;padding:9px 14px;border-radius:7px;color:#35735f;cursor:pointer;font:700 12px 'Be Vietnam Pro',sans-serif}
+#lookup .gr-lesson-top{display:flex;justify-content:space-between;gap:9px;align-items:center;flex-wrap:wrap;margin:0 0 14px}
+#lookup .gr-pager{font:700 11px 'Be Vietnam Pro',sans-serif;color:#6a8e82}
+#lookup .gr-lesson-layout{display:grid;grid-template-columns:minmax(320px,1.1fr) minmax(300px,.9fr);align-items:start;gap:17px}
+#lookup .gr-paper{border:2px solid #b0d5c3;border-radius:9px;box-shadow:5px 5px 0 #d3e8d8;background:#fffefa;padding:clamp(17px,2.4vw,27px);min-width:0}
+#lookup .gr-level{font:700 10px 'Be Vietnam Pro',sans-serif;letter-spacing:.1em;color:#27836f;text-transform:uppercase}
+#lookup .gr-title{font:400 clamp(34px,3vw,46px)/1.03 'VT323','Be Vietnam Pro',sans-serif;color:#236e71;margin:7px 0 15px}
+#lookup .gr-formula{background:#e9f8f1;border-left:5px solid #68b197;padding:13px 17px;border-radius:5px;margin:15px 0}
+#lookup .gr-formula code{white-space:pre-wrap;overflow-wrap:anywhere;font:650 15px/1.7 'Be Vietnam Pro',sans-serif;color:#276861}
+#lookup .gr-subhead{font:750 13px 'Be Vietnam Pro',sans-serif;color:#286a62;margin:20px 0 8px}
+#lookup .gr-body{font:500 13px/1.88 'Be Vietnam Pro',sans-serif;color:#456c6c;margin:0}
+#lookup .gr-tip{padding:11px 13px;border:1px solid #edca92;background:#fff8eb;border-radius:5px;font:500 12px/1.8 'Be Vietnam Pro',sans-serif;color:#927044;margin:8px 0}
+#lookup .gr-example{border:2px solid #dbeddf;border-radius:7px;background:#f8fcf7;padding:17px;margin:17px 0 6px}
+#lookup .gr-example-cn{font:650 24px/1.65 'Noto Serif SC','Noto Sans SC',serif;color:#205a6a}
+#lookup .gr-example-py{font:550 14px/1.75 'Be Vietnam Pro',sans-serif;color:#39899a;margin:9px 0}
+#lookup .gr-example-vi{font:600 13px/1.75 'Be Vietnam Pro',sans-serif;color:#506c63}
+#lookup .gr-speak{padding:8px 11px;border:2px solid #b0dbce;border-radius:7px;background:white;color:#347e73;font:700 11px 'Be Vietnam Pro',sans-serif;cursor:pointer;margin-top:10px}
+#lookup .gr-question{font:650 clamp(17px,2vw,21px)/1.7 'Noto Serif SC','Noto Sans SC',serif;color:#24516a;margin:16px 0 14px}
+#lookup .gr-options{display:grid;gap:10px}
+#lookup .gr-option{display:flex;gap:12px;align-items:center;padding:12px 14px;min-width:0;border:2px solid #c3e2d3;background:#fff;border-radius:7px;color:#236f64;cursor:pointer;text-align:left;font:700 14px/1.45 'Noto Serif SC','Noto Sans SC',serif}
+#lookup .gr-option:hover{background:#f2fff4}
+#lookup .gr-option:disabled{cursor:default}
+#lookup .gr-option[data-status="correct"]{border-color:#57ab83;background:#e5f9ea}
+#lookup .gr-option[data-status="wrong"]{border-color:#e6a4a4;background:#fff0f0}
+#lookup .gr-option .gr-opt-index{font:400 24px 'VT323',sans-serif;display:grid;place-items:center;background:#e5f5ef;border-radius:5px;width:30px;height:30px;flex:0 0 30px}
+#lookup .gr-feedback{min-height:46px;padding:12px 13px;font:550 12px/1.8 'Be Vietnam Pro',sans-serif;color:#497c6b}
+#lookup .gr-feedback[data-result="correct"]{background:#e3f7e6;border:1px solid #a4d1a9;border-radius:6px;color:#296b40}
+#lookup .gr-feedback[data-result="wrong"]{background:#fff4ed;border:1px solid #edc9a5;border-radius:6px;color:#8c6038}
+#lookup .gr-lesson-bottom{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:15px}
+#lookup .gr-action{padding:12px 15px;background:#4d9a83;border:2px solid #328068;color:white;border-radius:7px;box-shadow:3px 3px 0 #bddbcb;font:750 12px 'Be Vietnam Pro',sans-serif;cursor:pointer}
+#lookup .gr-action.secondary{background:#f7fcee;color:#48806a;border-color:#a6c6a7}
+#lookup .gr-empty{padding:28px 15px;background:#fffef7;border:2px dashed #b5d2c4;border-radius:9px;text-align:center;color:#638778;font:600 12px/1.8 'Be Vietnam Pro',sans-serif}
+@media(max-width:900px){#lookup .gr-lesson-layout{grid-template-columns:1fr}}
+@media(max-width:680px){#lookup .gr-list{grid-template-columns:1fr}#lookup .gr-heading{font-size:39px}#lookup .gr-header{padding:17px}#lookup .gr-filters select{flex:1}#lookup .gr-filters .gr-hint{width:100%;margin-left:0}#lookup .gr-paper{padding:17px}#lookup .gr-question{font-size:17px}#lookup .gr-example-cn{font-size:21px}#lookup .gr-card{padding:13px}#lookup .gr-lesson-bottom .gr-action{flex:1}}
