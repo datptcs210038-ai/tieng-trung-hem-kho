@@ -1208,7 +1208,7 @@ if(gate&&window.supabase){
  function loadArcade(){
   const script=document.createElement('script');
   script.id='pixelArcadeBootstrap';
-  script.src='/pixel-arcade.js?v=cat-outfits-v7';
+  script.src='/pixel-arcade.js?v=wardrobe-suit-fit-v8';
   script.onerror=()=>console.warn('Pixel Arcade could not load.');
   document.head.append(script);
  }
