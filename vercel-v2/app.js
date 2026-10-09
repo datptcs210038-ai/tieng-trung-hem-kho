@@ -1,4 +1,3 @@
-(()=>{const nav=document.querySelector('.nav');if(!nav)return;const old=nav.querySelector('a[href="/images.html"]');if(old)return;const link=document.createElement('a');link.href='/images.html';link.className='media-manager-entry';link.textContent='🖼️ Quản lý hình ảnh';link.title='Cập nhật logo và ảnh thành viên, căn chỉnh trước khi lưu';nav.insertBefore(link,document.getElementById('logout'));const st=document.createElement('style');st.textContent='.nav a.media-manager-entry{display:block;text-decoration:none;width:100%;padding:13px;margin:4px 0;border:1px solid #bcdcf0;border-radius:13px;color:#084870;font-weight:800;background:#eaf5fc;box-sizing:border-box}.nav a.media-manager-entry:hover,.nav a.media-manager-entry:focus-visible{background:#d4ebfa;outline:2px solid #98c9e8}@media(max-width:740px){.nav a.media-manager-entry{white-space:nowrap;width:auto;font-size:11px;padding:11px;flex:0 0 auto}}';document.head.append(st)})();
 (()=>{
 const D=window.TTHK,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let db=null,user=null;D.profileContext=()=>({db,user});$('#team').innerHTML=D.team.map((x,i)=>'<div class="box member"><div class="memberpic" style="background-position:'+(i*25)+'% center"></div><h3>'+x[0]+'</h3><p class="muted">'+x[1]+'</p></div>').join('');
 function pane(id){$$('.authpane').forEach(x=>x.classList.toggle('on',x.id===id));$('#authStatus').textContent=''}$$('[data-auth]').forEach(b=>b.onclick=()=>pane(b.dataset.auth));
@@ -355,209 +354,55 @@ $('#uploadPhoto').onclick=async()=>{
 
 ;(()=>{const css="\n:root{--brand-900:#084870;--brand-800:#125c85;--brand-700:#2c729b;--brand-200:#c8e0f0;--brand-100:#e9f4fb;--text-main:#163950}\nbody{background:radial-gradient(ellipse at 7% 4%,#d5ebfbb8,transparent 38%),linear-gradient(180deg,#fbfdff,#f0f8ff);color:var(--text-main)}\n.side{background:#ffffffed;backdrop-filter:blur(14px);border-right:1px solid #d5e6f3;padding-top:16px}\n.side h2{display:flex;align-items:center;justify-content:center;margin:0 0 23px;padding:0;font-size:16px;color:#084870}\n.side-brand{width:100%;max-width:210px;aspect-ratio:440/267;object-fit:contain;mix-blend-mode:multiply}\n.nav button{color:#557c95;transition:background .2s ease,color .2s ease,transform .2s ease}\n.nav button.on,.nav button:hover{background:linear-gradient(100deg,#dceefa,#ecf6fc);color:#084870;transform:translateX(2px)}\nh1,h2,h3{color:#084870}.muted,footer{color:#6c8b9d}\n.hero{background:linear-gradient(115deg,#ddecf9,#f9fcff 57%,#e3f1fa);border:1px solid #cde2f1;min-height:235px;box-shadow:0 20px 56px #08487012;position:relative;isolation:isolate;overflow:hidden}\n.hero h1,.hero p,.hero button{position:relative;z-index:2}.hero em{color:#1473a6}.hero:after{content:'';background:none!important}\n.hero-brand-watermark{position:absolute;right:-50px;top:-12%;width:min(46%,385px);opacity:.17;mix-blend-mode:multiply;pointer-events:none}\n.btn{background:linear-gradient(135deg,#1670a1,#084870);box-shadow:0 7px 18px #08487015;transition:transform .2s,box-shadow .2s}.btn:hover{transform:translateY(-2px);box-shadow:0 12px 27px #08487027}.btn.soft{background:#e6f2fb;color:#0b577f}\n.box{border-color:#d8e8f5;background:#fffffff2;box-shadow:0 12px 32px #0e52700e}.word h2,#hanzi{color:#0e6087!important}.word small{color:#397997}\n.searchbar{border-color:#b2d8ef;box-shadow:0 10px 30px #0848700b}input,select,textarea{border-color:#cfe3f1;color:#184159}\ninput:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #83c4ed;outline-offset:2px}.switch{background:#e6f1fa}.switch button.on{color:#0c5e8a}.popup{border-color:#aad7ee}\n#gate.authgate{grid-template-columns:minmax(0,1.12fr) minmax(320px,460px);gap:clamp(26px,5vw,76px);padding:clamp(20px,5vw,65px);background:radial-gradient(circle at 18% 50%,#ceeaff,transparent 46%),linear-gradient(122deg,#fafdff,#eaf5fd);overflow-y:auto;align-items:center;justify-items:center}\n.login-showcase{position:relative;z-index:1;width:min(100%,655px);padding:14px 12px 24px;animation:welcomeIn .8s both}\n.login-logo-frame{position:relative;border-radius:30px;background:#ffffffee;box-shadow:0 28px 72px #0b537018;border:1px solid #c4e3f3;padding:12px;margin-bottom:23px;overflow:hidden}\n.login-logo-frame:before{content:'';position:absolute;inset:15% 5%;background:#a9dffa5f;filter:blur(38px);border-radius:50%}\n.login-logo-frame img{position:relative;z-index:1;width:100%;height:auto;display:block;border-radius:18px;mix-blend-mode:multiply;animation:logoFloat 7s ease-in-out infinite}\n.login-showcase h1{font-size:clamp(28px,3.8vw,49px);letter-spacing:-1.8px;line-height:1.24;margin:12px 0;color:#073d61}\n.login-showcase h1 span{color:#1977a7}.login-showcase p{max-width:560px;color:#5b7f95;font-size:14px;line-height:1.9}\n.login-kicker{letter-spacing:2.4px;font-size:10px;font-weight:800;color:#297aa5}.login-chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}\n.login-chips span{padding:10px 12px;background:#ffffffdd;border:1px solid #d1e7f6;box-shadow:0 8px 24px #0848700b;border-radius:999px;font-size:11px;color:#1d6387;font-weight:700}\n#gate .authcard{position:relative;z-index:2;width:100%;max-width:465px;margin:0;border:1px solid #cee3f1;background:#ffffffee;backdrop-filter:blur(22px);box-shadow:0 30px 82px #08487025;border-radius:29px;padding:clamp(22px,3vw,36px);animation:cardIn .65s ease both}\n#gate .authcard:before{content:'✦';position:absolute;right:22px;top:18px;color:#a1d6f5;font-size:21px}#gate .authcard h2{font-size:29px;color:#084870;margin:12px 0 10px}\n#gate .authcard .authpane input{background:#f9fdff;border:1px solid #c6dfed;border-radius:14px;padding:14px 15px;margin:10px 0}\n#gate .authcard .authpane input:focus{border-color:#4c9dce;box-shadow:0 0 0 4px #c6e8fc85;outline:0}\n#gate .authcard .btn{padding:13px 18px;border-radius:13px}#gate .authcard .row{gap:10px}\n#gate .authcard #paneLogin #login{min-width:150px;flex:1}\n@keyframes welcomeIn{from{opacity:0;transform:translateY(21px)}to{opacity:1;transform:none}}\n@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}\n@keyframes logoFloat{50%{transform:translateY(-7px)}}\n@media(max-width:880px){#gate.authgate{grid-template-columns:1fr;gap:16px;padding:20px 16px;align-content:center}.login-showcase{max-width:470px;padding:4px}.login-logo-frame{max-width:410px;margin:0 auto 12px;padding:7px}.login-showcase h1{font-size:25px;text-align:center;margin:8px}.login-showcase p{display:none}.login-kicker{text-align:center;display:block}.login-chips{justify-content:center;margin-top:10px;gap:6px}.login-chips span{font-size:10px;padding:7px 9px}#gate .authcard{max-width:475px;padding:22px;border-radius:22px}}\n@media(max-width:480px){.login-showcase h1{font-size:21px}.login-logo-frame{max-width:265px;margin-bottom:8px}.login-chips span:nth-child(n+3){display:none}#gate .authcard .row{gap:7px}#gate .authcard .btn{font-size:12px;padding:11px}}\n@media(prefers-reduced-motion:reduce){.login-showcase,#gate .authcard,.login-logo-frame img{animation:none!important}}";const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);const logo="/logo-tthk.webp";const siteTitle=document.querySelector('.side h2');if(siteTitle){siteTitle.textContent='';const img=document.createElement('img');img.className='side-brand';img.alt='Tiếng Trung Hem Khó';img.src=logo;img.onerror=()=>{siteTitle.textContent='中文不难 · Tiếng Trung Hem Khó'};siteTitle.append(img)}const gate=document.querySelector('#gate');if(gate&&!gate.querySelector('.login-showcase')){const story=document.createElement('div');story.className='login-showcase';story.innerHTML="<div class=\"login-logo-frame\"><img src=\"/logo-tthk.webp\" alt=\"中文不难 — Tiếng Trung Hem Khó\"></div><div class=\"login-kicker\">KHÁM PHÁ NGÔN NGỮ · 发现中文</div><h1>Mở ra một thế giới mới<br><span>qua từng chữ Hán.</span></h1><p>Góc học tập nhỏ để cùng nhau luyện từ vựng, nghe phát âm, tập viết chữ Hán và chinh phục HSK mỗi ngày.</p><div class=\"login-chips\"><span>✦ HSK 1–2</span><span>◈ Từ vựng trực quan</span><span>✍ Luyện viết</span><span>♫ Phát âm</span></div>";gate.insertBefore(story,gate.firstChild)}const intro=document.querySelector('#intro .hero');if(intro&&!intro.querySelector('.hero-brand-watermark')){const img=document.createElement('img');img.className='hero-brand-watermark';img.alt='';img.setAttribute('aria-hidden','true');img.src=logo;intro.append(img)}const fav=document.createElement('link');fav.rel='icon';fav.type='image/webp';fav.href=logo;document.head.append(fav);})();
 
-// Administrator-only original-resolution team photo manager
-(()=> {
-  'use strict';
-  const D=window.TTHK; if (!D) return;
-  const $=s=>document.querySelector(s);
-  const MEMBERS=[
-    ['thanh-dat','Thành Đạt'],
-    ['hong-diep','Hồng Diệp'],
-    ['yen-vi','Yến Vi'],
-    ['ngoc-giau','Ngọc Giàu'],
-    ['phuong-nghi','Phương Nghi']
-  ];
-  const team=$('#team');
-  if (!team) return;
-  const panel=document.createElement('section');
-  panel.className='box';
-  panel.id='teamUploadManager';
-  panel.hidden=true;
-  panel.style.cssText='max-width:880px;margin:28px auto;background:#fafffb;border:1px solid #bce0ca;';
-  panel.innerHTML='<h3 style="margin-top:0">📷 Thay ảnh thành viên (quản trị)</h3>'
-    +'<p class="muted">Chọn từng <b>ảnh gốc</b> để thay ảnh mờ. Website lưu ảnh riêng từng thành viên và giữ đúng khung 3:4, không kéo giãn. Nên chọn ảnh dọc từ 900 × 1200 px trở lên.</p>'
-    +MEMBERS.map(([slug,name])=>
-      '<div class="row" style="padding:12px 0;border-bottom:1px solid #e1efe5">'
-      +'<b style="min-width:125px">'+name+'</b>'
-      +'<input type="file" accept="image/jpeg,image/png,image/webp" data-member-photo="'+slug+'" aria-label="Chọn ảnh '+name+'">'
-      +'<button type="button" class="btn soft" data-member-submit="'+slug+'">Tải ảnh lên</button>'
-      +'</div>').join('')
-    +'<p id="teamUploadStatus" role="status" class="muted" style="font-size:13px"></p>';
-  const toggle=document.createElement('button');toggle.type='button';toggle.className='btn soft';toggle.textContent='🖼 Quản lý ảnh thành viên';toggle.hidden=true;toggle.style.cssText='display:block;margin:16px auto 0';team.insertAdjacentElement('afterend',toggle);toggle.insertAdjacentElement('afterend',panel);let isOpen=false;toggle.onclick=()=>{isOpen=!isOpen;panel.hidden=!isOpen;toggle.textContent=isOpen?'✕ Đóng quản lý ảnh':'🖼 Quản lý ảnh thành viên';};
-  const getContext=()=>D.profileContext?.()||{};
-  let loaded=false;
-  function status(message){const el=$('#teamUploadStatus');if(el)el.textContent=message;}
-  function portraitCard(i){return team.querySelectorAll('.memberpic')[i]||null;}
-  function setPortrait(slug,path,version){
-    const i=MEMBERS.findIndex(m=>m[0]===slug);
-    const node=portraitCard(i);if(!node||!path)return;
-    const {db}=getContext();if(!db)return;
-    const obj=db.storage.from('team-portraits').getPublicUrl(path);
-    const url=obj.data?.publicUrl;if(!url)return;
-    const safe=url+'?v='+encodeURIComponent(String(version||'1'));
-    node.style.setProperty('background-image','url("'+safe+'")','important');
-    node.style.setProperty('background-size','contain','important');
-    node.style.backgroundRepeat='no-repeat';
-    node.style.backgroundPosition='center';
-    node.style.aspectRatio='3 / 4';
-    node.setAttribute('role','img');
-    node.setAttribute('aria-label','Ảnh rõ nét của '+MEMBERS[i][1]);
-    node.dataset.hires='true';
-  }
-  async function refreshTeam() {
-    const {db,user}=getContext();if(!db||!user)return;
-    const [assetResult,editorResult]=await Promise.all([
-      db.from('site_assets').select('slug,image_path,updated_at'),
-      db.from('site_editors').select('user_id').eq('user_id',user.id).maybeSingle()
-    ]);
-    if(!assetResult.error) {
-      for(const asset of (assetResult.data||[])) setPortrait(asset.slug,asset.image_path,asset.updated_at);
-    }
-    const isEditor=!!editorResult.data&&!editorResult.error;
-    toggle.hidden=!isEditor;
-    panel.hidden=!isEditor||!isOpen;
-    loaded=true;
-  }
-  async function toWebp(file) {
-    if(!['image/jpeg','image/png','image/webp'].includes(file.type))
-      throw new Error('Ảnh phải là JPG, PNG hoặc WebP.');
-    const img=await new Promise((resolve,reject)=>{
-      const el=new Image();const u=URL.createObjectURL(file);
-      el.onload=()=>{URL.revokeObjectURL(u);resolve(el)};
-      el.onerror=()=>{URL.revokeObjectURL(u);reject(new Error('Không mở được file ảnh.'))};
-      el.src=u;
-    });
-    const w=img.naturalWidth,h=img.naturalHeight;
-    if(w<750||h<1000) throw new Error('Ảnh này nhỏ ('+w+' × '+h+' px), dễ bị bể. Hãy chọn ảnh gốc tối thiểu 750 × 1000 px.');
-    const scale=Math.min(1,1440/w,1920/h);
-    const canvas=document.createElement('canvas');canvas.width=Math.round(w*scale);canvas.height=Math.round(h*scale);
-    const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Trình duyệt không hỗ trợ xử lý ảnh.');
-    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-    ctx.drawImage(img,0,0,canvas.width,canvas.height);
-    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',0.91));
-    if(!blob||blob.type!=='image/webp')throw new Error('Trình duyệt không xuất được ảnh WebP, hãy dùng Chrome hoặc Edge.');
-    if(blob.size>4194304)throw new Error('Ảnh sau xử lý vượt 4 MB.');
-    return blob;
-  }
-  panel.querySelectorAll('[data-member-submit]').forEach(btn=>{
-    btn.onclick=async()=>{
-      const slug=btn.dataset.memberSubmit;
-      const {db,user}=getContext();
-      if(!db||!user) return status('Bạn cần đăng nhập để cập nhật.');
-      const input=panel.querySelector('[data-member-photo="'+slug+'"]');
-      const file=input?.files?.[0];
-      if(!file)return status('Hãy chọn ảnh cho '+MEMBERS.find(m=>m[0]===slug)?.[1]+'.');
-      btn.disabled=true;status('Đang xử lý ảnh gốc, vui lòng chờ...');
-      try {
-        const blob=await toWebp(file);
-        const name='team/'+slug+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.webp';
-        const r=await db.storage.from('team-portraits').upload(name,blob,{contentType:'image/webp',cacheControl:'86400',upsert:false});
-        if(r.error)throw r.error;
-        const when=new Date().toISOString();
-        const save=await db.from('site_assets').upsert({slug,image_path:name,updated_at:when},{onConflict:'slug'});
-        if(save.error)throw save.error;
-        setPortrait(slug,name,when);
-        status('✅ Đã cập nhật ảnh '+MEMBERS.find(m=>m[0]===slug)[1]+' ở độ phân giải rõ nét. Mọi người sẽ thấy ảnh mới khi tải lại trang.');
-        input.value='';
-      }catch(e){status('Chưa tải được ảnh: '+(e?.message||String(e)));}
-      finally{btn.disabled=false;}
-    };
-  });
-  const oldPage=D.page;
-  D.page=id=>{oldPage(id);if(id==='intro')refreshTeam();};
-  window.addEventListener('load',()=>{
-    const {db}=getContext();
-    if(db) {
-      db.auth.onAuthStateChange(event=>{
-        if(event==='SIGNED_IN'||event==='INITIAL_SESSION')setTimeout(refreshTeam,100);
-      });
-      setTimeout(refreshTeam,200);
-    }
-  });
-})();
 
-
-;(()=> {
-'use strict';
-const $=s=>document.querySelector(s);
-const D=window.TTHK;
-if(!D||!window.supabase)return;
-const sup=window.supabase.createClient('https://wcgzdbjmwhyroszvyetv.supabase.co','sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ');
-const bucket=sup.storage.from('team-portraits');
-function applyLogo(path, stamp){
- if(!path)return;
- const {data}=bucket.getPublicUrl(path);if(!data?.publicUrl)return;
- const url=data.publicUrl+'?v='+encodeURIComponent(stamp||'1');
- const selectors=['.login-logo-frame img','.side-brand','.hero-brand-watermark'];
- for(const selector of selectors){
-  const element=$(selector);
-  if(element&&element.tagName==='IMG'){element.src=url;element.style.objectFit='contain';}
+;(() => {
+ 'use strict';
+ const MEMBERS=['thanh-dat','hong-diep','yen-vi','ngoc-giau','phuong-nghi'];
+ const style=document.createElement('style');
+ style.textContent="#team .memberpic{background-image:none!important;background-color:#edf5fb!important;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;aspect-ratio:3/4!important}\n#team .memberpic:not(.has-image)::after{content:'Đang tải ảnh…';font-size:13px;font-weight:600;color:#7597ab;position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(105deg,#e9f2fa 0%,#f7fbfe 50%,#e9f2fa 100%);background-size:200% 100%;animation:portraitShimmer 1.7s infinite}\n#team .memberpic.no-image::after{content:'Chưa có ảnh';animation:none}\n#team .memberpic.has-image::after{content:none}\n#team .memberpic img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:transparent;opacity:0;transition:opacity .25s ease}\n#team .memberpic.has-image img{opacity:1}\n@keyframes portraitShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}\n@media(prefers-reduced-motion:reduce){#team .memberpic:not(.has-image)::after{animation:none}#team .memberpic img{transition:none}}";
+ document.head.append(style);
+ const publicClient=window.supabase?.createClient('https://wcgzdbjmwhyroszvyetv.supabase.co','sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ');
+ if(!publicClient)return;
+ function assetUrl(asset){
+   const res=publicClient.storage.from('team-portraits').getPublicUrl(asset.image_path);
+   if(!res.data?.publicUrl)return null;
+   return res.data.publicUrl+'?v='+encodeURIComponent(asset.updated_at||'1');
  }
- const fav=document.querySelector('link[rel="icon"]');
- if(fav){fav.href=url;fav.type='image/png';}
-}
-async function loadLogo(){
- const {data,error}=await sup.from('site_assets').select('image_path,updated_at').eq('slug','logo').maybeSingle();
- if(!error&&data?.image_path)applyLogo(data.image_path,data.updated_at);
-}
-const style=document.createElement('style');
-style.textContent='.brand-uploader{max-width:650px;margin:22px auto;border:1px solid #c8e0f0;border-radius:20px;background:#f7fbff;padding:22px;box-shadow:0 10px 30px #0848700b}.brand-uploader input{display:block;max-width:100%;width:100%;margin:12px 0;border:1px solid #c8e0f0}.brand-uploader-preview{width:160px;height:160px;object-fit:contain;display:block;border-radius:18px;background:white;border:1px solid #c8e0f0}.brand-uploader p{line-height:1.7}';
-document.head.append(style);
-function initAdmin(){
- const team=$('#team');
- if(!team||$('#brandLogoUploader'))return;
- const box=document.createElement('section');
- box.id='brandLogoUploader';box.className='brand-uploader';box.hidden=true;
- box.innerHTML='<h3>🎨 Cập nhật logo gốc</h3><p style="color:#557b93">Tải trực tiếp ảnh PNG/WebP/JPG gốc lên website. <b>Không thu nhỏ, không chuyển đổi, không nén lại.</b> Ảnh được dùng ở màn hình đăng nhập, menu và favicon.</p><img id="brandPreview" class="brand-uploader-preview" src="/logo-tthk.webp" alt="Xem trước logo"><input type="file" id="brandFile" accept="image/png,image/jpeg,image/webp"><button type="button" class="btn" id="brandUpload">⬆️ Tải logo gốc lên</button><p id="brandMessage" role="status" style="color:#084870"></p>';
- const button=document.createElement('button');
- button.type='button';button.className='btn soft';button.style.cssText='display:block;margin:24px auto';button.hidden=true;button.textContent='🎨 Quản lý logo';
- const teamManager=$('#teamUploadManager')||team;
- teamManager.insertAdjacentElement('afterend',button);
- button.insertAdjacentElement('afterend',box);
- button.onclick=()=>{box.hidden=!box.hidden;button.textContent=box.hidden?'🎨 Quản lý logo':'✕ Đóng quản lý logo'};
- $('#brandFile').onchange=()=>{
-  const file=$('#brandFile').files?.[0];if(!file)return;
-  const img=$('#brandPreview');const url=URL.createObjectURL(file);
-  img.onload=()=>URL.revokeObjectURL(url);
-  img.src=url;
- };
- $('#brandUpload').onclick=async()=>{
-  const file=$('#brandFile').files?.[0];
-  const message=$('#brandMessage');
-  if(!file){message.textContent='Hãy chọn file logo gốc.';return}
-  if(!['image/png','image/jpeg','image/webp'].includes(file.type)){message.textContent='Chỉ hỗ trợ PNG, JPG hoặc WebP.';return}
-  if(file.size>4194304){message.textContent='Dung lượng vượt 4 MB; file hiện tại không được tự ý nén, hãy chọn file khác hoặc báo tui.';return}
-  const btn=$('#brandUpload');btn.disabled=true;message.textContent='Đang tải ảnh gốc lên, không thay đổi kích thước…';
-  try{
-   const {data:session,error:authError}=await sup.auth.getUser();if(authError||!session.user)throw new Error('Bạn cần đăng nhập bằng tài khoản quản trị.');
-   const uid=session.user.id;
-   const {data:editor,error:permissionError}=await sup.from('site_editors').select('user_id').eq('user_id',uid).maybeSingle();
-   if(permissionError||!editor)throw new Error('Tài khoản này chưa có quyền quản lý logo.');
-   const img=await createImageBitmap(file);
-   if(img.width<1024||img.height<1024)throw new Error('Ảnh nhỏ hơn 1024 px, có nguy cơ bể nét. Hãy chọn bản gốc.');
-   const dimensions=img.width+' × '+img.height;img.close?.();
-   const suffix=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
-   const path='team/logo-original-'+Date.now()+'-'+Math.random().toString(36).slice(2,9)+'.'+suffix;
-   const up=await sup.storage.from('team-portraits').upload(path,file,{contentType:file.type,upsert:false,cacheControl:'31536000'});
-   if(up.error)throw up.error;
-   const time=new Date().toISOString();
-   const saved=await sup.from('site_assets').upsert({slug:'logo',image_path:path,updated_at:time},{onConflict:'slug'});
-   if(saved.error)throw saved.error;
-   applyLogo(path,time);message.textContent='✅ Đã thay logo bản gốc '+dimensions+' ('+(file.size/1048576).toFixed(2)+' MB), không nén lại. Tải lại trang để xem.';$('#brandFile').value='';
-  }catch(e){message.textContent='❌ Chưa thay logo: '+(e?.message||String(e))}
-  finally{btn.disabled=false}
- };
- async function toggleAdmin(){
-  try{
-   const {data:auth}=await sup.auth.getUser();
-   if(!auth.user){button.hidden=true;box.hidden=true;return}
-   const {data:editor}=await sup.from('site_editors').select('user_id').eq('user_id',auth.user.id).maybeSingle();
-   button.hidden=!editor;if(!editor)box.hidden=true;
-  }catch{button.hidden=true;box.hidden=true}
+ function renderMember(i,asset){
+   const slot=document.querySelectorAll('#team .memberpic')[i];
+   if(!slot)return;
+   slot.classList.remove('has-image','no-image');
+   slot.replaceChildren();
+   if(!asset){slot.classList.add('no-image');return;}
+   const url=assetUrl(asset);
+   if(!url){slot.classList.add('no-image');return;}
+   const picture=new Image();
+   picture.alt='Ảnh '+(window.TTHK?.team?.[i]?.[0]||'thành viên');
+   picture.loading='eager';
+   picture.decoding='async';
+   picture.onload=()=>{if(slot.isConnected){slot.replaceChildren(picture);slot.classList.add('has-image');}};
+   picture.onerror=()=>{slot.classList.add('no-image');};
+   picture.src=url;
  }
- sup.auth.onAuthStateChange(e=>{if(e==='SIGNED_IN'||e==='SIGNED_OUT'||e==='INITIAL_SESSION')setTimeout(toggleAdmin,100)});
- toggleAdmin();
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{loadLogo();initAdmin()},{once:true});
-else{loadLogo();initAdmin()}
+ function updateLogo(asset){
+   if(!asset)return;
+   const url=assetUrl(asset);
+   if(!url)return;
+   for(const selector of ['.side-brand','.login-logo-frame img','.hero-brand-watermark']){
+     const node=document.querySelector(selector);
+     if(node?.tagName==='IMG'){node.src=url;node.style.objectFit='contain';}
+   }
+   const fav=document.querySelector('link[rel="icon"]');
+   if(fav){fav.href=url;fav.type='image/png';}
+ }
+ async function fetchAssets(){
+   const {data,error}=await publicClient.from('site_assets').select('slug,image_path,updated_at');
+   if(error){MEMBERS.forEach((_,i)=>renderMember(i,null));console.warn('Could not retrieve team portraits',error);return;}
+   const bySlug=Object.fromEntries((data||[]).map(a=>[a.slug,a]));
+   MEMBERS.forEach((slug,i)=>renderMember(i,bySlug[slug]));
+   updateLogo(bySlug.logo);
+ }
+ fetchAssets();
+ const D=window.TTHK;
+ if(D?.page){const original=D.page;D.page=id=>{original(id);if(id==='intro')fetchAssets();};}
 })();
