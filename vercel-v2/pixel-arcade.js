@@ -3,7 +3,7 @@
 'use strict';
 const D=window.TTHK,flash=document.getElementById('flash');
 if(!D||!flash||document.getElementById('pixelArcade'))return;
-const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=cat-final-v6';document.head.append(sheet);
+const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=cat-outfits-v7';document.head.append(sheet);
 flash.classList.add('pixel-arcade-page');
 Array.from(flash.children).forEach(el=>el.classList.add('old-flash-content'));
 const root=document.createElement('div');root.id='pixelArcade';
@@ -703,5 +703,6 @@ function animateKitten(t){
 }
 window.requestAnimationFrame(animateKitten);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)paintKitten(performance.now())});
+if(window.TTHK_CAT_ATLAS)root.style.setProperty('--cat-atlas-preview','url("'+window.TTHK_CAT_ATLAS+'")');
 loadPet().then(()=>{render();paintKitten(performance.now());syncGardenVisibility()});
 })();
