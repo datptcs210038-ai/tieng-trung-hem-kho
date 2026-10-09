@@ -474,3 +474,89 @@ $('#uploadPhoto').onclick=async()=>{
     }
   });
 })();
+
+
+;(()=> {
+'use strict';
+const $=s=>document.querySelector(s);
+const D=window.TTHK;
+if(!D||!window.supabase)return;
+const sup=window.supabase.createClient('https://wcgzdbjmwhyroszvyetv.supabase.co','sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ');
+const bucket=sup.storage.from('team-portraits');
+function applyLogo(path, stamp){
+ if(!path)return;
+ const {data}=bucket.getPublicUrl(path);if(!data?.publicUrl)return;
+ const url=data.publicUrl+'?v='+encodeURIComponent(stamp||'1');
+ const selectors=['.login-logo-frame img','.side-brand','.hero-brand-watermark'];
+ for(const selector of selectors){
+  const element=$(selector);
+  if(element&&element.tagName==='IMG'){element.src=url;element.style.objectFit='contain';}
+ }
+ const fav=document.querySelector('link[rel="icon"]');
+ if(fav){fav.href=url;fav.type='image/png';}
+}
+async function loadLogo(){
+ const {data,error}=await sup.from('site_assets').select('image_path,updated_at').eq('slug','logo').maybeSingle();
+ if(!error&&data?.image_path)applyLogo(data.image_path,data.updated_at);
+}
+const style=document.createElement('style');
+style.textContent='.brand-uploader{max-width:650px;margin:22px auto;border:1px solid #c8e0f0;border-radius:20px;background:#f7fbff;padding:22px;box-shadow:0 10px 30px #0848700b}.brand-uploader input{display:block;max-width:100%;width:100%;margin:12px 0;border:1px solid #c8e0f0}.brand-uploader-preview{width:160px;height:160px;object-fit:contain;display:block;border-radius:18px;background:white;border:1px solid #c8e0f0}.brand-uploader p{line-height:1.7}';
+document.head.append(style);
+function initAdmin(){
+ const team=$('#team');
+ if(!team||$('#brandLogoUploader'))return;
+ const box=document.createElement('section');
+ box.id='brandLogoUploader';box.className='brand-uploader';box.hidden=true;
+ box.innerHTML='<h3>🎨 Cập nhật logo gốc</h3><p style="color:#557b93">Tải trực tiếp ảnh PNG/WebP/JPG gốc lên website. <b>Không thu nhỏ, không chuyển đổi, không nén lại.</b> Ảnh được dùng ở màn hình đăng nhập, menu và favicon.</p><img id="brandPreview" class="brand-uploader-preview" src="/logo-tthk.webp" alt="Xem trước logo"><input type="file" id="brandFile" accept="image/png,image/jpeg,image/webp"><button type="button" class="btn" id="brandUpload">⬆️ Tải logo gốc lên</button><p id="brandMessage" role="status" style="color:#084870"></p>';
+ const button=document.createElement('button');
+ button.type='button';button.className='btn soft';button.style.cssText='display:block;margin:24px auto';button.hidden=true;button.textContent='🎨 Quản lý logo';
+ const teamManager=$('#teamUploadManager')||team;
+ teamManager.insertAdjacentElement('afterend',button);
+ button.insertAdjacentElement('afterend',box);
+ button.onclick=()=>{box.hidden=!box.hidden;button.textContent=box.hidden?'🎨 Quản lý logo':'✕ Đóng quản lý logo'};
+ $('#brandFile').onchange=()=>{
+  const file=$('#brandFile').files?.[0];if(!file)return;
+  const img=$('#brandPreview');const url=URL.createObjectURL(file);
+  img.onload=()=>URL.revokeObjectURL(url);
+  img.src=url;
+ };
+ $('#brandUpload').onclick=async()=>{
+  const file=$('#brandFile').files?.[0];
+  const message=$('#brandMessage');
+  if(!file){message.textContent='Hãy chọn file logo gốc.';return}
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type)){message.textContent='Chỉ hỗ trợ PNG, JPG hoặc WebP.';return}
+  if(file.size>4194304){message.textContent='Dung lượng vượt 4 MB; file hiện tại không được tự ý nén, hãy chọn file khác hoặc báo tui.';return}
+  const btn=$('#brandUpload');btn.disabled=true;message.textContent='Đang tải ảnh gốc lên, không thay đổi kích thước…';
+  try{
+   const {data:session,error:authError}=await sup.auth.getUser();if(authError||!session.user)throw new Error('Bạn cần đăng nhập bằng tài khoản quản trị.');
+   const uid=session.user.id;
+   const {data:editor,error:permissionError}=await sup.from('site_editors').select('user_id').eq('user_id',uid).maybeSingle();
+   if(permissionError||!editor)throw new Error('Tài khoản này chưa có quyền quản lý logo.');
+   const img=await createImageBitmap(file);
+   if(img.width<1024||img.height<1024)throw new Error('Ảnh nhỏ hơn 1024 px, có nguy cơ bể nét. Hãy chọn bản gốc.');
+   const dimensions=img.width+' × '+img.height;img.close?.();
+   const suffix=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+   const path='team/logo-original-'+Date.now()+'-'+Math.random().toString(36).slice(2,9)+'.'+suffix;
+   const up=await sup.storage.from('team-portraits').upload(path,file,{contentType:file.type,upsert:false,cacheControl:'31536000'});
+   if(up.error)throw up.error;
+   const time=new Date().toISOString();
+   const saved=await sup.from('site_assets').upsert({slug:'logo',image_path:path,updated_at:time},{onConflict:'slug'});
+   if(saved.error)throw saved.error;
+   applyLogo(path,time);message.textContent='✅ Đã thay logo bản gốc '+dimensions+' ('+(file.size/1048576).toFixed(2)+' MB), không nén lại. Tải lại trang để xem.';$('#brandFile').value='';
+  }catch(e){message.textContent='❌ Chưa thay logo: '+(e?.message||String(e))}
+  finally{btn.disabled=false}
+ };
+ async function toggleAdmin(){
+  try{
+   const {data:auth}=await sup.auth.getUser();
+   if(!auth.user){button.hidden=true;box.hidden=true;return}
+   const {data:editor}=await sup.from('site_editors').select('user_id').eq('user_id',auth.user.id).maybeSingle();
+   button.hidden=!editor;if(!editor)box.hidden=true;
+  }catch{button.hidden=true;box.hidden=true}
+ }
+ sup.auth.onAuthStateChange(e=>{if(e==='SIGNED_IN'||e==='SIGNED_OUT'||e==='INITIAL_SESSION')setTimeout(toggleAdmin,100)});
+ toggleAdmin();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{loadLogo();initAdmin()},{once:true});
+else{loadLogo();initAdmin()}
+})();
