@@ -248,7 +248,7 @@ $('#saveName').onclick=async()=>{
   if(rpc.error)throw rpc.error;
   const current=await db.auth.getUser();const up=await db.auth.updateUser({data:{...(current.data?.user?.user_metadata||user.user_metadata),full_name:value}});
   if(up.error)throw up.error;
-  status('nameStatus','✅ Đã cập nhật tên hiển thị và tên trên bảng xếp hạng.');
+  status('nameStatus','✅ Đã cập nhật tên hiển thị và tên trên bảng xếp hạng.'); D.syncUserHeader?.();
   $('#hello').textContent='Xin chào, '+value+' 🌱';
  }catch(e){status('nameStatus','Không cập nhật được: '+e.message);}finally{btn.disabled=false;}
 };
@@ -285,7 +285,7 @@ $('#uploadPhoto').onclick=async()=>{
   const current=await db.auth.getUser();const meta=await db.auth.updateUser({data:{...(current.data?.user?.user_metadata||user.user_metadata),avatar_path:path}});
   if(meta.error)throw meta.error;
   renderAvatar(path);
-  status('photoStatus','✅ Ảnh đại diện đã được cập nhật.');
+  status('photoStatus','✅ Ảnh đại diện đã được cập nhật.'); D.syncUserHeader?.();
  }catch(e){status('photoStatus','Tải ảnh thất bại: '+e.message);}
  finally{btn.disabled=false;}
 };
