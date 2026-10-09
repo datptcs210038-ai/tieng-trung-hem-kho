@@ -938,3 +938,132 @@ if(gate&&window.supabase){
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arrange,{once:true});
  else arrange();
 })();
+
+
+// Click-to-select/search HSK Hanzi writing practice
+
+;(()=>{
+ 'use strict';
+ const D=window.TTHK;
+ const section=document.getElementById('writing');
+ const select=document.getElementById('writeSelect');
+ if(!D||!section||!select||document.getElementById('writingWordPicker'))return;
+ const style=document.createElement('style');style.id='writingWordPickerStyle';style.textContent="\n#writingWordPicker{background:linear-gradient(125deg,#fffef7,#f2fcf7)!important;border:2px solid #a7cebd!important;box-shadow:5px 5px 0 #c8e3d5!important;border-radius:10px!important;padding:clamp(16px,2.2vw,23px)!important;margin:13px 0 21px!important;min-width:0}\n#writingWordPicker .picker-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:13px}\n#writingWordPicker .picker-title{font-family:'VT323','Be Vietnam Pro',sans-serif!important;font-size:clamp(28px,3vw,39px)!important;font-weight:400!important;color:#276c65!important;line-height:1!important;margin:0!important}\n#writingWordPicker .picker-help{font-family:'Be Vietnam Pro',sans-serif!important;font-size:12px!important;color:#718d86!important;line-height:1.5!important;margin:0}\n#writingWordPicker .picker-search-line{display:flex;gap:9px;align-items:stretch;flex-wrap:wrap}\n#writingWordPicker .picker-search{flex:1 1 220px;min-width:0;background:white!important;border:2px solid #a5cdbe!important;border-radius:7px!important;padding:11px 13px!important;font:500 14px 'Be Vietnam Pro',sans-serif!important;box-shadow:inset 2px 2px 0 #ecf8f0!important}\n#writingWordPicker .picker-apply{font:750 12px 'Be Vietnam Pro',sans-serif!important;min-height:43px;flex:0 0 auto}\n#writingWordPicker .picker-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}\n#writingWordPicker .picker-tab{font:700 12px 'Be Vietnam Pro',sans-serif!important;color:#537773!important;border:2px solid #b3d6cb!important;border-radius:7px!important;background:#fffefa!important;padding:9px 13px!important;cursor:pointer;box-shadow:2px 2px 0 #d5e7dc}\n#writingWordPicker .picker-tab[aria-pressed=\"true\"]{background:#fce5a5!important;color:#79542a!important;border-color:#c6ab7d!important}\n#writingWordPicker .picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:10px;max-height:325px;overflow:auto;padding:2px 5px 7px 2px;scrollbar-color:#94c8b7 #f4faf7}\n#writingWordPicker .picker-word{width:100%;min-width:0;padding:12px 9px!important;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;background:#fff!important;border:2px solid #c4e0d3!important;border-radius:7px!important;box-shadow:3px 3px 0 #d9e9de!important;transition:transform .12s,border-color .12s!important}\n#writingWordPicker .picker-word:hover{border-color:#5dad93!important;background:#f5fff8!important;transform:translate(-1px,-1px)!important}\n#writingWordPicker .picker-word.is-picked{background:#fff5d7!important;border-color:#e6bf79!important;box-shadow:3px 3px 0 #ebd1a2!important}\n#writingWordPicker .picker-hanzi{font:600 29px/1.12 'Noto Serif SC','Noto Sans SC','Microsoft YaHei',serif!important;color:#16655c!important;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}\n#writingWordPicker .picker-pinyin{font:600 11px/1.35 'Be Vietnam Pro',sans-serif!important;color:#3b8387!important;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}\n#writingWordPicker .picker-meaning{font:450 11px/1.4 'Be Vietnam Pro',sans-serif!important;color:#617b76!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;max-width:100%;min-height:14px}\n#writingWordPicker .picker-foot{display:flex;gap:11px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:12px;color:#5e8078;font:500 12px/1.5 'Be Vietnam Pro',sans-serif}\n#writingWordPicker .picker-foot .btn{font:700 12px 'Be Vietnam Pro',sans-serif!important;padding:9px 12px!important}\n#writingWordPicker .picker-empty{background:#f5fbf5;border:1px dashed #aacabb;border-radius:7px;padding:16px;font:500 12px 'Be Vietnam Pro',sans-serif;color:#648679;grid-column:1/-1}\n#writing label[for=\"writeSelect\"],#writing #writeSelect{display:none!important}\n#writingWordPicker .picker-selected{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;font:500 12px 'Be Vietnam Pro',sans-serif;color:#64877c}\n#writingWordPicker .picker-selected strong{color:#216e66;font-size:14px}\n@media(max-width:820px){#writingWordPicker .picker-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:300px}#writingWordPicker .picker-search-line{gap:8px}#writingWordPicker .picker-search{flex-basis:100%}#writingWordPicker .picker-apply{width:100%}#writingWordPicker .picker-hanzi{font-size:26px}}\n@media(max-width:400px){#writingWordPicker .picker-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#writingWordPicker .picker-tab{font-size:11px!important;padding:8px 11px!important}}\n";
+ document.head.append(style);
+ const panel=document.createElement('section');
+ panel.id='writingWordPicker';panel.setAttribute('aria-label','Chọn chữ để luyện viết');
+ panel.innerHTML="<div class=\"picker-top\"><h2 class=\"picker-title\">✦ Chọn chữ để luyện viết</h2><p class=\"picker-help\">Bấm một từ hoặc tìm chữ muốn tập</p></div>\n<div class=\"picker-search-line\"><input id=\"writingCharacterSearch\" class=\"picker-search\" type=\"search\" autocomplete=\"off\" spellcheck=\"false\" enterkeyhint=\"search\" placeholder=\"Nhập chữ Hán, Pinyin hoặc nghĩa tiếng Việt…\" aria-label=\"Tìm chữ Hán, Pinyin hoặc nghĩa tiếng Việt\"><button type=\"button\" class=\"btn picker-apply\" id=\"writeCustomWord\">✍ Tập viết chữ đã nhập</button></div>\n<div class=\"picker-tabs\" role=\"group\" aria-label=\"Lọc cấp độ HSK\"><button type=\"button\" class=\"picker-tab\" data-writing-level=\"all\" aria-pressed=\"true\">Tất cả</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"1\" aria-pressed=\"false\">HSK 1</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"2\" aria-pressed=\"false\">HSK 2</button></div>\n<div class=\"picker-grid\" id=\"writingCharacterGrid\" aria-label=\"Danh sách từ để chọn luyện viết\"></div><div class=\"picker-foot\"><span id=\"writingPickerCount\" role=\"status\" aria-live=\"polite\"></span><button class=\"btn soft\" type=\"button\" id=\"writingMoreWords\" hidden>Xem thêm chữ ↓</button></div><div class=\"picker-selected\">Đang luyện: <strong id=\"writingSelectedWord\">Chưa chọn chữ</strong></div>";
+ const intro=Array.from(section.children).find(el=>el.matches?.('p.muted'))||section.querySelector('h1');
+ if(intro)intro.insertAdjacentElement('afterend',panel);else section.prepend(panel);
+ const search=panel.querySelector('#writingCharacterSearch');
+ const grid=panel.querySelector('#writingCharacterGrid');
+ const count=panel.querySelector('#writingPickerCount');
+ const more=panel.querySelector('#writingMoreWords');
+ const current=panel.querySelector('#writingSelectedWord');
+ let level='all',limit=36;
+ const normalize=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+ const CJK=/^[\p{Script=Han}]{1,4}$/u;
+ const showCurrent=()=>{
+  const word=D.words[D.writeIndex];
+  current.textContent=word?word.h+' · '+(word.m||'Chữ Hán'):'Chưa chọn chữ';
+ };
+ function choose(index,scroll){
+  if(!Number.isInteger(index)||!D.words[index])return;
+  D.writeIndex=index;D.isHidden=false;D.charIndex=0;
+  if(!select.querySelector('option[value="'+index+'"]')){
+   const w=D.words[index];select.add(new Option(w.h+' — '+(w.m||'Chữ tự chọn'),String(index)));
+  }
+  select.value=String(index);
+  select.dispatchEvent(new Event('change',{bubbles:true}));
+  showCurrent();
+  grid.querySelectorAll('[data-word-index]').forEach(el=>el.classList.toggle('is-picked',Number(el.dataset.wordIndex)===index));
+  if(scroll)document.getElementById('writeCanvas')?.scrollIntoView({behavior:'smooth',block:'center'});
+ }
+ function render(){
+  const q=normalize(search.value),all=Array.isArray(D.words)?D.words:[];
+  if(!all.length){
+   count.textContent='Đang tải danh sách HSK…';
+   grid.innerHTML='<div class="picker-empty">Đang tải từ vựng, vui lòng đợi vài giây.</div>';
+   more.hidden=true;showCurrent();return;
+  }
+  const matches=[];
+  all.forEach((w,i)=>{
+    if(w.l!==1&&w.l!==2&&w.topic!=='✍ Tự chọn')return;
+    if(level!=='all'&&String(w.l)!==level)return;
+    if(q&&![w.h,w.p,w.m,w.en].some(x=>normalize(x).includes(q)))return;
+    matches.push(i);
+  });
+  grid.replaceChildren();
+  const view=matches.slice(0,limit);
+  for(const idx of view){
+   const w=all[idx],b=document.createElement('button');
+   b.type='button';b.className='picker-word';b.dataset.wordIndex=String(idx);
+   b.setAttribute('aria-label','Luyện viết '+w.h+', '+(w.m||''));
+   if(idx===D.writeIndex)b.classList.add('is-picked');
+   for(const [name,text] of [['picker-hanzi',w.h],['picker-pinyin',w.p||' '],['picker-meaning',w.m||w.en||'']]){
+    const span=document.createElement('span');span.className=name;span.textContent=text;b.append(span);
+   }
+   b.onclick=()=>choose(idx,true);
+   grid.append(b);
+  }
+  if(!matches.length){
+   const empty=document.createElement('div');empty.className='picker-empty';
+   empty.textContent=q?'Không có từ phù hợp trong HSK. Nếu đã nhập chữ Hán, bấm “Tập viết chữ đã nhập”.':'Không có từ phù hợp.';
+   grid.append(empty);
+  }
+  count.textContent=matches.length?'Đang xem '+view.length+' / '+matches.length+' từ':'Không tìm thấy từ phù hợp';
+  more.hidden=matches.length<=limit;
+  showCurrent();
+ }
+ panel.querySelectorAll('[data-writing-level]').forEach(b=>b.onclick=()=>{
+  level=b.dataset.writingLevel;limit=36;
+  panel.querySelectorAll('[data-writing-level]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  render();
+ });
+ more.onclick=()=>{limit+=36;render()};
+ search.oninput=()=>{limit=36;render()};
+ function submit(){
+  const value=search.value.trim();
+  if(!value){
+   count.textContent='Hãy nhập từ muốn tìm hoặc bấm một chữ ở danh sách.';
+   search.focus();return;
+  }
+  if(CJK.test(value)){
+   let index=D.words.findIndex(w=>w.h===value);
+   if(index<0){
+    const custom={h:value,p:'',m:'Chữ tự chọn',en:'',l:0,topic:'✍ Tự chọn'};
+    D.words.push(custom);index=D.words.length-1;
+   }
+   choose(index,true);return;
+  }
+  const q=normalize(value);
+  const found=D.words.findIndex(w=>
+   [w.h,w.p,w.m,w.en].some(x=>normalize(x).includes(q))&&
+   (level==='all'||String(w.l)===level));
+  if(found>=0)choose(found,true);
+  else{count.textContent='Không tìm thấy. Bạn có thể nhập trực tiếp chữ Hán (tối đa 4 chữ).';search.focus();}
+ }
+ panel.querySelector('#writeCustomWord').onclick=submit;
+ search.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();submit()}});
+ select.addEventListener('change',()=>{showCurrent();render()});
+ const originalLoad=D.loadWords;
+ if(typeof originalLoad==='function'){
+  D.loadWords=async function(...args){
+   const result=await originalLoad.apply(this,args);
+   render();
+   if(section.classList.contains('on')&&D.words.length&&!document.querySelector('#writeCanvas svg')){
+    select.value='0';select.dispatchEvent(new Event('change'));
+   }
+   return result;
+  };
+ }
+ const originalPage=D.page;
+ if(typeof originalPage==='function'){
+  D.page=function(id){
+   const result=originalPage.apply(this,arguments);
+   if(id==='writing')render();
+   return result;
+  };
+ }
+ render();
+})();
