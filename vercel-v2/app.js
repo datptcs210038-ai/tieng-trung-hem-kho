@@ -813,3 +813,16 @@ render();
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyAll,{once:true});
  else applyAll();
 })();
+
+
+// Compact Chinese lesson navigation + audio controls
+
+;(()=>{
+ 'use strict';
+ if(!document.querySelector('link[href*="/compact-ui.css"]')){
+  const l=document.createElement('link');l.rel='stylesheet';l.href='/compact-ui.css?v=compact-20261009-v1';document.head.append(l);
+ }
+ if(!document.querySelector('script[src*="/compact-ui.js"]')){
+  const script=document.createElement('script');script.src='/compact-ui.js?v=compact-20261009-v1';script.async=true;document.head.append(script);
+ }
+})();
