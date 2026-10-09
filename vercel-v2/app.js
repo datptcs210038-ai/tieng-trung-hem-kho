@@ -145,7 +145,7 @@ $('#saveName').onclick=async()=>{
  try{
   const rpc=await db.rpc('update_my_display_name',{new_full_name:value});
   if(rpc.error)throw rpc.error;
-  const up=await db.auth.updateUser({data:{...user.user_metadata,full_name:value}});
+  const current=await db.auth.getUser();const up=await db.auth.updateUser({data:{...(current.data?.user?.user_metadata||user.user_metadata),full_name:value}});
   if(up.error)throw up.error;
   status('nameStatus','✅ Đã cập nhật tên hiển thị và tên trên bảng xếp hạng.');
   $('#hello').textContent='Xin chào, '+value+' 🌱';
@@ -181,7 +181,7 @@ $('#uploadPhoto').onclick=async()=>{
   if(sent.error)throw sent.error;
   const update=await db.from('student_profiles').update({avatar_path:path}).eq('user_id',user.id);
   if(update.error)throw update.error;
-  const meta=await db.auth.updateUser({data:{...user.user_metadata,avatar_path:path}});
+  const current=await db.auth.getUser();const meta=await db.auth.updateUser({data:{...(current.data?.user?.user_metadata||user.user_metadata),avatar_path:path}});
   if(meta.error)throw meta.error;
   renderAvatar(path);
   status('photoStatus','✅ Ảnh đại diện đã được cập nhật.');
