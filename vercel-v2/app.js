@@ -913,3 +913,28 @@ if(gate&&window.supabase){
  }).catch(err=>console.warn('Login background unavailable',err));
 }
 })();
+
+
+// Pastel sky-garden pixel art theme inspired by the user's illustration.
+
+;(()=>{
+ 'use strict';
+ if(document.getElementById('gardenUiSheet'))return;
+ const style=document.createElement('link');
+ style.id='gardenUiSheet';
+ style.rel='stylesheet';
+ style.href='/garden-ui.css?v=sky-garden-20261009-v1';
+ document.head.append(style);
+ function arrange(){
+  const hero=document.querySelector('#intro .hero');
+  if(hero&&!hero.querySelector('.garden-sign')){
+    const plaque=document.createElement('span');
+    plaque.className='garden-sign';
+    plaque.setAttribute('aria-hidden','true');
+    plaque.textContent='✦ 你好 · SKY GARDEN';
+    hero.append(plaque);
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arrange,{once:true});
+ else arrange();
+})();
