@@ -236,3 +236,117 @@
 @media(prefers-reduced-motion:reduce){
  #pixelArcade .pa-cat.is-walking{animation:none!important}
 }
+
+
+
+/* PET REBUILD v4 · Indoor room, one character model across all poses, cleaner game composition */
+#pixelArcade .pa-home{grid-template-columns:minmax(0,1fr) minmax(0,1.04fr)!important;gap:22px!important}
+#pixelArcade .pa-home>.pa-panel{min-width:0}
+#pixelArcade .pa-scene{
+ background:#eddfc9 url('/pixel-cat-room-v2.svg?v=catroom-20261009-v4') center center/cover no-repeat!important;
+ border:3px solid #bc9b78!important;
+ box-shadow:inset 0 0 0 2px #fff1d6!important;
+ border-radius:12px!important;
+ min-height:350px!important;
+ position:relative!important;
+ overflow:hidden!important;
+}
+#pixelArcade .pa-scene:before{display:none!important}
+#pixelArcade .pa-pet-stage{
+ position:absolute!important;
+ top:auto!important;
+ bottom:22px!important;
+ left:0!important;
+ width:218px!important;
+ height:166px!important;
+ max-width:none!important;
+ margin:0!important;
+ transform-origin:center center!important;
+ pointer-events:none!important;
+ z-index:3!important;
+}
+#pixelArcade .pa-cat{
+ position:relative!important;
+ width:218px!important;
+ height:166px!important;
+ max-width:none!important;
+ border:0!important;
+ filter:drop-shadow(0 7px 0 #7f5b4766)!important;
+ animation:none!important;
+ transform:none!important;
+ image-rendering:pixelated!important;
+}
+#pixelArcade .pa-cat-base{
+ position:absolute!important;
+ inset:0!important;
+ background-image:url('/kitten-v2-idle.svg?v=catroom-20261009-v4')!important;
+ background-position:center!important;
+ background-size:contain!important;
+ background-repeat:no-repeat!important;
+ animation:none!important;
+ image-rendering:pixelated!important;
+}
+#pixelArcade .pa-cat.is-walking,
+#pixelArcade .pa-cat.is-sleeping,
+#pixelArcade .pa-cat.is-eating,
+#pixelArcade .pa-cat.is-hungry,
+#pixelArcade .pa-cat.is-grooming{animation:none!important;transform:none!important}
+#pixelArcade .pa-zzz{top:2%!important;left:55%!important;z-index:4!important;animation:pa-zzz 2.2s ease-out infinite}
+#pixelArcade .pa-gear.head{top:18px!important;left:48%!important;width:63px!important;height:45px!important}
+#pixelArcade .pa-gear.neck{top:75px!important;left:54%!important;width:48px!important;height:37px!important}
+#pixelArcade .pa-gear.body{top:91px!important;left:28%!important;width:92px!important;height:50px!important}
+#pixelArcade .pa-cat-bubble{top:11px!important;right:12px!important;font-size:12px!important;background:#fff8e8f2!important;border:2px solid #ac9172!important;color:#74543e!important;box-shadow:3px 3px 0 #d6b69b!important;z-index:5!important}
+#pixelArcade .pa-cat-tools{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:15px 0 4px}
+#pixelArcade .pa-cat-tools .pa-primary{flex:1 1 135px}
+#pixelArcade .pa-primary{white-space:normal;min-height:44px}
+#pixelArcade .pa-home-cards{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+#pixelArcade .pa-game-card{min-height:154px!important;padding:16px!important;gap:6px!important;border-radius:11px!important;background:#fffefa!important}
+#pixelArcade .pa-game-icon{font-size:26px!important}
+#pixelArcade .pa-game-card strong{font-size:clamp(24px,2.1vw,30px)!important;line-height:1.05!important}
+#pixelArcade .pa-game-card small{font-size:11px!important;line-height:1.45!important}
+#pixelArcade .pa-game-card .pa-price{font-size:11px!important;padding:5px 8px!important}
+#pixelArcade .pa-tabs{margin:13px 0 18px!important;align-items:center!important}
+#pixelArcade .pa-panel{border-radius:12px!important;box-shadow:5px 5px 0 #cde2d4!important}
+#pixelArcade .pa-title{font-size:clamp(40px,4.2vw,51px)!important}
+#pixelArcade .pa-subtitle{max-width:620px;font-size:12px!important}
+#pixelArcade .pa-hint{font-size:11px!important}
+#intro .hero .garden-running-cat{
+ display:none!important;
+ width:119px!important;
+ height:93px!important;
+ bottom:11px!important;
+ z-index:8!important;
+ pointer-events:none!important;
+ animation:none!important;
+ transform-origin:center!important;
+}
+#intro .hero .garden-cat-sprite{
+ background-image:url('/kitten-v2-idle.svg?v=catroom-20261009-v4')!important;
+ background-size:contain!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+ animation:none!important;
+ image-rendering:pixelated!important;
+}
+#intro .hero .garden-cat-name{
+ position:absolute;top:-21px;left:50%;transform:translateX(-50%);
+ background:#fff7df;border:2px solid #a8a074;border-radius:4px;
+ padding:2px 7px;color:#39685c;font:700 10px/1.3 'Be Vietnam Pro',sans-serif;
+ white-space:nowrap;pointer-events:none;
+}
+@media(max-width:1000px){#pixelArcade .pa-home{grid-template-columns:1fr!important}}
+@media(max-width:640px){
+ #pixelArcade .pa-scene{min-height:265px!important}
+ #pixelArcade .pa-pet-stage{width:162px!important;height:124px!important;bottom:17px!important}
+ #pixelArcade .pa-cat{width:162px!important;height:124px!important}
+ #pixelArcade .pa-gear.head{width:45px!important;height:35px!important;top:12px!important}
+ #pixelArcade .pa-gear.neck{width:34px!important;height:30px!important;top:56px!important}
+ #pixelArcade .pa-gear.body{width:68px!important;height:39px!important;top:70px!important}
+ #pixelArcade .pa-home-cards{gap:9px!important}
+ #pixelArcade .pa-game-card{min-height:141px!important;padding:12px!important}
+ #pixelArcade .pa-game-card strong{font-size:23px!important}
+ #pixelArcade .pa-game-card small{font-size:10px!important}
+ #pixelArcade .pa-tabs button{padding:10px!important}
+ #intro .hero .garden-running-cat{width:93px!important;height:71px!important;bottom:7px!important}
+}
+@media(prefers-reduced-motion:reduce){#pixelArcade .pa-zzz{animation:none!important}}
