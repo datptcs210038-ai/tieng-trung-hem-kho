@@ -664,3 +664,88 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)paintKitte
 if(window.TTHK_CAT_ATLAS)root.style.setProperty('--cat-atlas-preview','url("'+window.TTHK_CAT_ATLAS+'")');
 loadPet().then(()=>{render();paintKitten(performance.now());syncGardenVisibility()});
 })();
+
+
+/* Modern chrome for pixel arcade: preserve cat illustrations / controls / rewards.
+   Icons are stroked SVG; only presentation DOM is modified (not event listeners). */
+;(()=>{
+ 'use strict';
+ const root=document.getElementById('pixelArcade');
+ if(!root||root.dataset.modernChrome==='1')return;
+ root.dataset.modernChrome='1';
+ const shapes={
+  game:'<rect x="3" y="8" width="18" height="11" rx="5"/><path d="M8 11v5m-2.5-2.5h5M16 12h.01M18 15h.01"/>',
+  cat:'<path d="m4 9 .4-5 4 2 3.6-.3 3.6.3 4-2 .4 5a9 9 0 0 1 .8 4c0 4.4-4 7.5-8.8 7.5S3.2 17.4 3.2 13A9 9 0 0 1 4 9Z"/><path d="M8.2 13h.01m7.6 0h.01m-5.2 3 1.4 1 1.4-1M6.2 16l-3 1m14.6-1 3 1"/>',
+  pick:'<rect x="3.5" y="3" width="17" height="18" rx="2"/><path d="M9 7h6M12 5v8m-5 5h10"/>',
+  pinyin:'<path d="M4 9V4h16v5M8 4v16m8-16v16M4 20h16"/><path d="m10 13 2-2 2 2"/>',
+  listen:'<path d="M4 9h4l5-4v14l-5-4H4zM17 8a5 5 0 0 1 0 8M20 5a9 9 0 0 1 0 14"/>',
+  pairs:'<rect x="3" y="3" width="9" height="13" rx="2"/><rect x="12" y="8" width="9" height="13" rx="2"/><path d="m6 9 2 2 2-2m5 5 2 2 2-2"/>',
+  order:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  shop:'<path d="M4 8h16l-1.2 13H5.2L4 8ZM8 9V7a4 4 0 0 1 8 0v2"/>',
+  bag:'<rect x="4" y="7" width="16" height="14" rx="2"/><path d="M8 8V6a4 4 0 0 1 8 0v2M4 12h16"/>',
+  home:'<path d="m2 11 10-8 10 8M5 10v11h14V10M10 21v-7h4v7"/>',
+  heart:'<path d="M20.3 4.6a5 5 0 0 0-7.1 0L12 5.8l-1.2-1.2a5 5 0 0 0-7.1 7.1L12 20l8.3-8.3a5 5 0 0 0 0-7.1Z"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M12 6v12m3-9a3 3 0 0 0-5 1c0 2 5 2 5 5a3 3 0 0 1-6 0"/>',
+  timer:'<circle cx="12" cy="13" r="8"/><path d="M12 13V8M12 13l4 2M9 2h6M12 3V1"/>',
+  star:'<path d="m12 2 2.5 6.8 7.2.4-5.6 4.6 1.9 7-6-4-6 4 1.9-7L2.3 9.2l7.2-.4z"/>',
+  dress:'<path d="M8 4 4 7l2 4 3-1v11h6V10l3 1 2-4-4-3-2 2h-4Z"/>',
+  eat:'<path d="M3 13h18a9 9 0 0 1-18 0ZM7 4v5M12 2v7M17 4v5"/>',
+  name:'<path d="m3 21 5-.8L21 7.2a3 3 0 0 0-4.2-4.2L4 15.7 3 21Z"/>',
+  walk:'<path d="M4 18c2 2 5 2 6 0 1-3-2-5-1-8 2-5 6-7 11-5"/><circle cx="19" cy="5" r="2"/><path d="M6 8 3 11m13 3 4 2"/>',
+  sleep:'<path d="M19 15A8 8 0 0 1 9 5a8 8 0 1 0 10 10Z"/>'
+ };
+ const labelMap=[
+  ['🎮','game'],['🐱','cat'],['🐾','cat'],['🀄','pick'],['🔡','pinyin'],
+  ['🔊','listen'],['🧠','pairs'],['🧩','order'],['🪙','coin'],
+  ['⏱','timer'],['🛍️','shop'],['🛒','shop'],['🎒','bag'],
+  ['🏠','home'],['💚','heart'],['🍓','heart'],['🍽️','eat'],
+  ['🍽','eat'],['🥣','eat'],['🎀','star'],['✎','name'],['🌿','walk'],
+  ['💤','sleep'],['👕','dress'],['🧣','dress'],['🍣','eat']
+ ];
+ function svg(name){
+  const el=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  el.setAttribute('viewBox','0 0 24 24');
+  el.setAttribute('width','20');el.setAttribute('height','20');
+  el.setAttribute('fill','none');el.setAttribute('stroke','currentColor');
+  el.setAttribute('stroke-width','1.7');el.setAttribute('stroke-linecap','round');
+  el.setAttribute('stroke-linejoin','round');el.setAttribute('aria-hidden','true');
+  el.classList.add('pa-line-icon');
+  el.innerHTML=shapes[name]||shapes.star;
+  return el;
+ }
+ function replaceLeading(node,fallback=null){
+  if(!node||node.dataset.iconRestyled==='1')return;
+  let first=[...node.childNodes].find(x=>x.nodeType===Node.TEXT_NODE&&x.textContent.trim());
+  if(!first)return;
+  const text=first.textContent.trimStart();
+  const pair=labelMap.find(([glyph])=>text.startsWith(glyph));
+  if(!pair&&!fallback)return;
+  const chosen=pair?.[1]||fallback;
+  if(pair){
+   const start=first.textContent.indexOf(pair[0]);
+   first.textContent=first.textContent.slice(0,start)+first.textContent.slice(start+pair[0].length).trimStart();
+  }
+  const el=svg(chosen);
+  el.classList.add('pa-leading-icon');
+  node.prepend(el);
+  node.dataset.iconRestyled='1';
+ }
+ function polish(){
+  const title=root.querySelector('.pa-title');
+  if(title&&!title.dataset.titleModern){
+   title.textContent='Học với Hành';
+   title.dataset.titleModern='1';
+  }
+  root.querySelectorAll('.pa-game-icon').forEach(icon=>{
+   if(icon.dataset.iconRestyled)return;
+   const id=icon.closest('[data-game]')?.dataset.game||'game';
+   icon.replaceChildren(svg(id));
+   icon.dataset.iconRestyled='1';
+  });
+  root.querySelectorAll('.pa-panel-top h2,.pa-play-title,.pa-status-pill,.pa-wallet,.pa-price,.pa-tabs button,.pa-stat span:first-child,.pa-actions button,.pa-small,.pa-store-groups button').forEach(el=>replaceLeading(el));
+  root.querySelectorAll('.pa-game-card .pa-price').forEach(el=>replaceLeading(el,'timer'));
+ }
+ const content=root.querySelector('#paContent');
+ if(content)new MutationObserver(polish).observe(content,{childList:true});
+ polish();
+})();
