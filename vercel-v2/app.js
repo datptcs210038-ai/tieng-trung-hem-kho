@@ -1102,24 +1102,39 @@ if(gate&&window.supabase){
  render();
 })();
 
-// Interactive individual vocabulary lesson, saved hearts and Hanzi writer
+// HSK 1–2 vocabulary: curated everyday examples, usage notes, and dictionary links.
 
 ;(()=>{
  'use strict';
  if(document.getElementById('wordDetailBootstrap'))return;
  const deps=document.createElement('script');
  deps.id='wordDetailBootstrap';
- deps.src='/word-examples.js?v=hsksentence-20261009-v1';
+ deps.dataset.version='hanzii-context-20261013-v2';
+ document.head.append(deps);
+ const resources=[
+  '/word-examples.js?v=hsksentence-20261009-v1',
+  '/word-examples-extra.js?v=hanzii-context-20261013-v2',
+  '/word-examples-polished.js?v=hanzii-context-20261013-v2',
+  '/word-usage-core.js?v=hanzii-context-20261013-v2',
+  '/word-usage-extra.js?v=hanzii-context-20261013-v2'
+ ];
  function loadDetail(){
   if(document.getElementById('wordDetailLoader'))return;
   const script=document.createElement('script');
   script.id='wordDetailLoader';
-  script.src='/word-detail.js?v=learning-word-20261009-v1';
+  script.src='/word-detail.js?v=hanzii-context-20261013-v2';
+  script.onerror=()=>console.warn('HSK detail display could not load');
   document.head.append(script);
  }
- deps.onload=loadDetail;
- deps.onerror=loadDetail;
- document.head.append(deps);
+ function loadNext(index){
+  if(index>=resources.length){loadDetail();return}
+  const script=document.createElement('script');
+  script.src=resources[index];script.async=false;
+  script.onload=()=>loadNext(index+1);
+  script.onerror=()=>{console.warn('Vocabulary enrichment unavailable: '+resources[index]);loadNext(index+1)};
+  document.head.append(script);
+ }
+ loadNext(0);
 })();
 
 
