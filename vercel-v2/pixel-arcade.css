@@ -656,3 +656,33 @@
  background-repeat:no-repeat!important;
  image-rendering:pixelated!important;
 }
+
+
+/* v13 — complete baked-in cat sprites (no additional gear layers). */
+#pixelArcade .pa-shop-sprite:has(.pa-complete-look){
+ width:112px!important;height:88px!important;
+}
+#pixelArcade .pa-complete-look .pa-shop-cat{
+ display:block!important;position:absolute!important;
+ inset:0!important;width:100%!important;height:100%!important;
+ background-size:400% 200%!important;
+ background-position:0% 0%!important;
+ image-rendering:pixelated!important;
+ transform:none!important;filter:none!important;
+}
+#pixelArcade .pa-complete-look .pa-shop-wear,
+#pixelArcade .pa-complete-look .pa-set-layer,
+#pixelArcade .pa-complete-look .pa-shop-gear{display:none!important}
+#pixelArcade .pa-set-preview.pa-complete-look{
+ isolation:isolate;image-rendering:pixelated!important;
+}
+#pixelArcade .pa-cat-base,
+#intro .hero .garden-cat-sprite,
+#pixelArcade .pa-complete-look .pa-shop-cat{
+ image-rendering:pixelated!important;
+}
+@media(max-width:520px){
+ #pixelArcade .pa-shop-sprite:has(.pa-complete-look){
+  width:99px!important;height:78px!important;
+ }
+}
