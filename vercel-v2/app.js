@@ -1270,29 +1270,24 @@ if(gate&&window.supabase){
  'use strict';
  if(document.getElementById('tthkWordImageLibraryLoader'))return;
  const style=document.createElement('link');style.rel='stylesheet';
- style.href='/word-image-library.css?v=word-library-blue-20261013-v2';document.head.appendChild(style);
+ style.href='/word-image-library.css?v=word-library-20261013-v1';document.head.appendChild(style);
  const script=document.createElement('script');script.id='tthkWordImageLibraryLoader';
- script.src='/word-image-library.js?v=word-library-blue-20261013-v2';
+ script.src='/word-image-library.js?v=word-library-20261013-v1';
  script.onerror=()=>console.warn('Không tải được trình quản lý ảnh từ vựng.');
  document.head.appendChild(script);
 })();
 
 
-// Baby-blue site upgrade: loaded after existing platform features.
-// Keeps original authentication, database, HSK exams, mascot and progress systems intact.
+// Motion design for the original production website.
+// New files can fail independently without affecting authentication or study tools.
 ;(()=>{
  'use strict';
- if(document.getElementById('tthk2026Upgrade'))return;
- const css=document.createElement('link');
- css.rel='stylesheet';
- css.href='/site-upgrade-2026.css?v=baby-blue-pixel-20261013-v1';
+ if(document.getElementById('tthkCinematicHomeLoader'))return;
+ const css=document.createElement('link');css.rel='stylesheet';
+ css.href='/cinematic-home.css?v=cinematic-original-20261013-v1';
  document.head.appendChild(css);
- const script=document.createElement('script');
- script.id='tthk2026Upgrade';
- script.src='/site-upgrade-2026.js?v=baby-blue-pixel-20261013-v1';
- script.onerror=()=>console.warn('Có lỗi tải giao diện mới; các chức năng cũ vẫn hoạt động.');
- document.head.appendChild(script);
+ const js=document.createElement('script');js.id='tthkCinematicHomeLoader';
+ js.src='/cinematic-home.js?v=cinematic-original-20261013-v1';
+ js.onerror=()=>console.warn('Motion design unavailable; classic website remains functional.');
+ document.head.appendChild(js);
 })();
-
-// Authorized contact details editor and authentic Fanpage link, without changing legacy auth.
-;(()=>{if(document.getElementById('tthkContactSettingsLoader'))return;const n=document.createElement('script');n.id='tthkContactSettingsLoader';n.src='/site-contact-editor.js?v=secure-contacts-20261013-v1';document.head.appendChild(n)})();
