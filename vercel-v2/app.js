@@ -437,8 +437,46 @@ document.head.append(fav);})();
    picture.onerror=()=>{slot.classList.add('no-image');};
    picture.src=url;
  }
- // Old uploaded logos are intentionally not rendered anywhere in the app.
- function updateLogo(_asset){return;}
+ // Only restore the user's uploaded brand image in the COMPACT site header
+ // and contact footer. The oversized legacy login logo stays disabled.
+ function updateLogo(asset){
+   if(!asset?.image_path)return;
+   const url=assetUrl(asset);
+   if(!url||!url.startsWith('https://'))return;
+   window.TTHK_CURRENT_BRAND_LOGO=url;
+   const header=document.querySelector('#site .side h2');
+   if(header){
+     let photo=header.querySelector('.tthk-brand-logo');
+     if(!photo){
+       photo=document.createElement('img');
+       photo.className='tthk-brand-logo';
+       photo.alt='Logo Tiếng Trung Hem Khó';
+       photo.loading='eager';
+       photo.decoding='async';
+       photo.onerror=()=>photo.hidden=true;
+       header.prepend(photo);
+     }
+     photo.hidden=false;
+     if(photo.src!==url)photo.src=url;
+   }
+   const container=document.querySelector('#tthkContactFooter .tthk-footer-brand');
+   if(container){
+     let photo=container.querySelector('.tthk-footer-logo');
+     if(!photo){
+       photo=document.createElement('img');
+       photo.className='tthk-footer-logo';
+       photo.alt='Logo Tiếng Trung Hem Khó';
+       photo.loading='lazy';
+       photo.decoding='async';
+       photo.onerror=()=>{photo.hidden=true};
+       container.prepend(photo);
+     }
+     photo.hidden=false;
+     if(photo.src!==url)photo.src=url;
+     const fallback=container.querySelector('.tthk-footer-pixelmark');
+     if(fallback)fallback.hidden=true;
+   }
+ }
  async function fetchAssets(){
    const {data,error}=await publicClient.from('site_assets').select('slug,image_path,updated_at');
    if(error){MEMBERS.forEach((_,i)=>renderMember(i,null));console.warn('Could not retrieve team portraits',error);return;}
