@@ -216,6 +216,7 @@
     '<small class="hsk20-note">Xanh: đã trả lời · Sao: cần xem lại · Phần Nghe khóa khi chuyển sang Đọc.</small>'+
    '</aside></div></div>';
   const root=examOverlay||body;root.innerHTML=ui;
+  if(examOverlay&&typeof examOverlay.scrollTo==='function')examOverlay.scrollTo(0,0);
   root.querySelectorAll('[data-hsk-answer]').forEach(b=>b.onclick=()=>{state.answers[q.number]=Number(b.dataset.hskAnswer);render()});
   root.querySelectorAll('[data-hsk-jump]').forEach(b=>b.onclick=()=>jumpTo(Number(b.dataset.hskJump)));
   root.querySelector('#hsk20Prev').onclick=()=>advance(-1);
@@ -275,6 +276,7 @@
   body.querySelector('#hsk20Review').onclick=review;
   body.querySelector('#hsk20Try').onclick=()=>{state=null;body.innerHTML='';renderPaperShelf(selectedLevel);papersPanel?.scrollIntoView?.({block:'nearest',behavior:'smooth'})};
   save(result);
+  try{body.scrollIntoView?.({block:'start',behavior:'smooth'})}catch(e){}
  }
  function review(){
   if(!state||!state.completed)return;
