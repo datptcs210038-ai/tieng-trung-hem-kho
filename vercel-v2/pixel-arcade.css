@@ -686,3 +686,291 @@
   width:99px!important;height:78px!important;
  }
 }
+
+
+/* ============================================================
+   ARCADE × LEARNING — EDITORIAL COHESION
+   Keep original pixel CAT SPRITES, furniture and pose animation.
+   Replace pixel TYPOGRAPHY, thick mint borders, squared shadows,
+   inconsistent yellow/mint cards with the site's blue-ivory system.
+   ============================================================ */
+html body #site #flash #pixelArcade{
+ --qa-ink:#28475e;--qa-leaf:#3d7797;--qa-edge:#cbdce7;
+ --qa-warm:#fffdfb;--qa-yellow:#f3e4cd;
+ color:#2c4b60!important;
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ width:100%;max-width:1440px;
+}
+html body #site #flash #pixelArcade :is(
+ h1,h2,h3,h4,p,span,div,small,strong,b,label,button,input,select,textarea,summary,a
+){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+html body #site #flash #pixelArcade :is(.pa-title,.pa-play-title,.pa-inventory-label,.pa-results strong){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ font-size:clamp(25px,2.8vw,37px)!important;
+ line-height:1.28!important;letter-spacing:-.06em!important;
+ font-weight:800!important;color:#234c67!important;
+ text-shadow:none!important;
+}
+html body #site #flash #pixelArcade :is(.pa-panel-top h2,.pa-cat-care h2,.pa-inventory h2){
+ display:flex;align-items:center;gap:11px;
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ font-weight:800!important;font-size:clamp(20px,2.1vw,27px)!important;
+ letter-spacing:-.05em!important;line-height:1.26!important;
+ color:#244d67!important;margin:0 0 7px!important;
+ text-shadow:none!important;
+}
+html body #site #flash #pixelArcade :is(.pa-subtitle,.pa-panel-top p,.pa-hint,.pa-game-card small,.pa-shop-item p){
+ color:#748b9b!important;
+ font-size:clamp(11px,1vw,13px)!important;
+ font-weight:500!important;line-height:1.7!important;
+}
+html body #site #flash #pixelArcade .pa-panel{
+ min-width:0!important;padding:clamp(17px,2vw,26px)!important;
+ border:1px solid #dbe6ed!important;border-radius:22px!important;
+ background:linear-gradient(145deg,#fffefd,#fcfcfc 69%,#f6f9fa)!important;
+ box-shadow:0 21px 54px rgba(37,79,109,.09),0 4px 16px rgba(37,79,109,.035)!important;
+}
+html body #site #flash #pixelArcade .pa-home-refined{
+ grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr)!important;
+ gap:18px!important;align-items:stretch!important;
+}
+html body #site #flash #pixelArcade .pa-home-refined>.pa-panel{
+ background:linear-gradient(155deg,#fffefd 10%,#f8fbfc)!important;
+ padding:clamp(16px,2vw,25px)!important;
+}
+html body #site #flash #pixelArcade .pa-panel-top{
+ margin-bottom:20px!important;gap:11px!important;
+}
+html body #site #flash #pixelArcade .pa-home-cards{
+ gap:12px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+html body #site #flash #pixelArcade .pa-home-cards .pa-game-card,
+html body #site #flash #pixelArcade .pa-game-card{
+ display:flex!important;align-items:flex-start!important;
+ border:1px solid #dbe5ed!important;border-radius:17px!important;
+ background:linear-gradient(148deg,#fffefa,#f7fafc)!important;
+ box-shadow:0 9px 28px rgba(34,78,109,.075),0 2px 7px rgba(34,78,109,.035)!important;
+ padding:clamp(13px,1.55vw,20px)!important;
+ min-height:153px!important;gap:9px!important;
+ transition:transform .26s cubic-bezier(.2,.75,.2,1),box-shadow .26s ease,border-color .26s ease!important;
+}
+html body #site #flash #pixelArcade .pa-game-card:hover{
+ transform:translateY(-4px)!important;
+ border-color:#b7cfde!important;
+ box-shadow:0 19px 38px rgba(34,78,109,.14),0 5px 13px rgba(34,78,109,.06)!important;
+}
+html body #site #flash #pixelArcade .pa-game-card:focus-visible{
+ outline:3px solid #6aa6c9!important;outline-offset:3px!important;
+}
+html body #site #flash #pixelArcade .pa-home-cards .pa-game-icon,
+html body #site #flash #pixelArcade .pa-game-icon{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:43px!important;height:43px!important;flex:0 0 43px!important;
+ background:linear-gradient(135deg,#e9f3f9,#fffdfb)!important;
+ color:#3a7194!important;
+ border:1px solid #cfdfeb!important;border-radius:13px!important;
+ box-shadow:0 5px 14px rgba(39,91,124,.075)!important;
+ font-size:0!important;
+}
+html body #site #flash #pixelArcade .pa-game-icon svg{
+ display:block!important;width:23px!important;height:23px!important;
+ stroke:currentColor!important;fill:none!important;
+ shape-rendering:geometricPrecision!important;image-rendering:auto!important;
+}
+html body #site #flash #pixelArcade .pa-game-card strong{
+ font-family:'Manrope','Noto Sans SC',sans-serif!important;
+ font-size:clamp(15px,1.4vw,19px)!important;font-weight:800!important;
+ color:#29516c!important;line-height:1.4!important;
+ letter-spacing:-.035em!important;text-shadow:none!important;
+}
+html body #site #flash #pixelArcade .pa-game-card .pa-price,
+html body #site #flash #pixelArcade .pa-price{
+ display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;
+ font-family:'Manrope','Noto Sans SC',sans-serif!important;
+ font-size:10px!important;font-weight:750!important;line-height:1.45!important;
+ color:#866d59!important;background:#f8f0e5!important;
+ border:1px solid #ead9c7!important;border-radius:999px!important;
+ padding:7px 10px!important;white-space:normal;
+ box-shadow:none!important;
+}
+html body #site #flash #pixelArcade .pa-game-card .pa-price svg{width:13px;height:13px;flex:0 0 13px}
+html body #site #flash #pixelArcade .pa-status-pill,
+html body #site #flash #pixelArcade .pa-wallet{
+ display:inline-flex!important;align-items:center!important;gap:6px!important;
+ border:1px solid #e7d5bc!important;
+ border-radius:999px!important;background:linear-gradient(135deg,#faf1e4,#fff8ed)!important;
+ color:#8e735a!important;
+ box-shadow:0 6px 16px rgba(116,86,55,.06)!important;
+ padding:9px 12px!important;
+ font-family:'Manrope',sans-serif!important;font-weight:750!important;font-size:11px!important;
+ letter-spacing:-.015em!important;white-space:nowrap!important;
+}
+html body #site #flash #pixelArcade :is(.pa-tabs button,.pa-store-groups button,.pa-small,.pa-secondary){
+ border:1px solid #d5e4eb!important;
+ border-radius:12px!important;
+ background:#f3f8fb!important;color:#52758c!important;
+ box-shadow:none!important;
+ padding:11px 14px!important;
+ font-family:'Manrope',sans-serif!important;font-weight:750!important;font-size:12px!important;
+ transition:transform .23s ease,background .23s ease,box-shadow .23s ease!important;
+}
+html body #site #flash #pixelArcade :is(.pa-tabs button,.pa-store-groups button,.pa-small,.pa-secondary):hover{
+ transform:translateY(-2px)!important;background:#e7f2f8!important;
+ box-shadow:0 7px 15px rgba(34,84,118,.08)!important;
+}
+html body #site #flash #pixelArcade :is(.pa-tabs button[aria-selected="true"],.pa-store-groups button[aria-pressed="true"]){
+ background:#e2f0f8!important;border-color:#a8c9dc!important;
+ color:#275779!important;
+ box-shadow:0 7px 16px rgba(34,84,118,.095)!important;
+}
+html body #site #flash #pixelArcade :is(.pa-primary,.pa-shop-item button){
+ background:linear-gradient(140deg,#3a88b1,#2c668d)!important;
+ color:#fff!important;border:1px solid #3c7c9f!important;
+ border-radius:12px!important;
+ box-shadow:0 9px 21px rgba(38,105,148,.15)!important;
+ font-family:'Manrope',sans-serif!important;font-weight:800!important;
+ font-size:12px!important;
+ transition:transform .23s ease,filter .23s ease,box-shadow .23s ease!important;
+}
+html body #site #flash #pixelArcade :is(.pa-primary,.pa-shop-item button):hover:not(:disabled){
+ transform:translateY(-2px)!important;
+ filter:brightness(1.06)!important;
+ box-shadow:0 13px 25px rgba(38,105,148,.21)!important;
+}
+html body #site #flash #pixelArcade :is(button,select,input):focus-visible{
+ outline:3px solid #8bb7d0!important;outline-offset:2px!important;
+}
+html body #site #flash #pixelArcade :is(.pa-stat,.pa-progress,.pa-feedback,.pa-cat-bubble){
+ font-family:'Manrope',sans-serif!important;font-weight:750!important;
+ color:#536e80!important;font-size:12px!important;
+}
+html body #site #flash #pixelArcade .pa-stat{margin:19px 0 11px!important}
+html body #site #flash #pixelArcade .pa-meter{
+ border:1px solid #b9d0dc!important;
+ border-radius:999px!important;height:12px!important;
+ overflow:hidden!important;background:#ecf3f6!important;
+}
+html body #site #flash #pixelArcade .pa-meter-fill{
+ height:100%!important;border-radius:999px!important;
+ background:linear-gradient(90deg,#78b5d0,#4b8caf)!important;
+ transition:width .32s ease!important;
+}
+html body #site #flash #pixelArcade .pa-cat-bubble{
+ background:rgba(255,254,250,.96)!important;
+ color:#6e5d51!important;
+ border:1px solid #dfd1c3!important;border-radius:11px!important;
+ box-shadow:0 8px 19px rgba(96,69,49,.11)!important;
+ font-size:11px!important;
+}
+html body #site #flash #pixelArcade .pa-scene{
+ border:1px solid #d1bda7!important;border-radius:17px!important;
+ box-shadow:0 7px 25px rgba(86,61,41,.14),inset 0 0 0 3px rgba(255,255,255,.55)!important;
+ /* Do not change background-image, pixel art, cat atlas, pose or image-rendering. */
+}
+html body #site #flash #pixelArcade .pa-shop-item{
+ border:1px solid #dce6eb!important;
+ border-radius:16px!important;
+ background:linear-gradient(150deg,#fffefa,#f7fbfd)!important;
+ box-shadow:0 9px 22px rgba(39,80,103,.08)!important;
+}
+html body #site #flash #pixelArcade .pa-shop-item strong{
+ font-family:'Manrope','Noto Sans SC',sans-serif!important;
+ color:#2c5670!important;font-size:15px!important;
+ font-weight:800!important;line-height:1.45!important;
+}
+html body #site #flash #pixelArcade .pa-shop-sprite{
+ background:#f2f7fa!important;
+ border:1px solid #d1e0e8!important;border-radius:13px!important;
+}
+html body #site #flash #pixelArcade .pa-shop-sprite svg{
+ image-rendering:pixelated!important;shape-rendering:crispEdges!important;
+}
+html body #site #flash #pixelArcade .pa-play-title{
+ font-family:'Manrope','Noto Sans SC',sans-serif!important;
+ font-size:clamp(21px,2vw,29px)!important;
+ font-weight:800!important;
+}
+html body #site #flash #pixelArcade .pa-timer{
+ border:1px solid #ecd7b5!important;
+ border-radius:12px!important;background:#fcf3e4!important;
+ color:#8c6b47!important;
+ font-family:'Manrope',sans-serif!important;
+ font-size:22px!important;font-weight:800!important;
+ box-shadow:0 4px 12px rgba(108,72,47,.06)!important;
+}
+html body #site #flash #pixelArcade .pa-question{
+ font-family:'Noto Sans SC','Manrope',sans-serif!important;
+ color:#2c6589!important;
+}
+html body #site #flash #pixelArcade .pa-answers button,
+html body #site #flash #pixelArcade .pa-pair-grid button{
+ border:1px solid #d5e4ec!important;
+ border-radius:13px!important;
+ background:#fff!important;color:#2d566d!important;
+ box-shadow:0 5px 16px rgba(36,79,109,.065)!important;
+ font-family:'Manrope','Noto Sans SC',sans-serif!important;
+ font-weight:750!important;
+}
+html body #site #flash #pixelArcade .pa-answers button:hover:not(:disabled){
+ background:#f0f8fc!important;border-color:#9dc5dd!important;
+ transform:translateY(-2px);
+}
+html body #site #flash #pixelArcade .pa-answers button.correct{
+ background:#e6f4ec!important;border-color:#8ac8ab!important;color:#276f52!important;
+}
+html body #site #flash #pixelArcade .pa-answers button.wrong{
+ background:#fff0f0!important;border-color:#dfacb3!important;color:#a85361!important;
+}
+html body #site #flash #pixelArcade .pa-pair-grid button:not(.open):not(.matched){
+ background:#e7f2f9!important;color:#3c7597!important;
+ font-size:24px!important;font-weight:800!important;
+}
+html body #site #flash #pixelArcade .pa-results strong{
+ color:#315e7c!important;
+}
+html body #site #flash #pixelArcade .pa-toast{
+ background:#fffdf9!important;border:1px solid #e7d9c5!important;
+ color:#7a644d!important;border-radius:14px!important;
+ box-shadow:0 15px 36px rgba(75,63,48,.15)!important;
+}
+html body #site #flash #pixelArcade .pa-small,
+html body #site #flash #pixelArcade .pa-actions button{
+ min-height:40px!important;
+}
+@media(max-width:1050px){
+ html body #site #flash #pixelArcade .pa-home-refined{
+  grid-template-columns:1fr!important;
+ }
+}
+@media(max-width:570px){
+ html body #site #flash #pixelArcade .pa-panel{
+  padding:14px!important;border-radius:17px!important;
+ }
+ html body #site #flash #pixelArcade .pa-home-cards{gap:9px!important}
+ html body #site #flash #pixelArcade .pa-game-card{
+  min-height:143px!important;padding:12px!important;gap:8px!important;border-radius:13px!important;
+ }
+ html body #site #flash #pixelArcade .pa-game-card strong{
+  font-size:14px!important;
+ }
+ html body #site #flash #pixelArcade .pa-game-card small{
+  font-size:10px!important;
+ }
+ html body #site #flash #pixelArcade .pa-game-card .pa-price{
+  font-size:9px!important;padding:6px 8px!important;
+ }
+ html body #site #flash #pixelArcade .pa-game-icon{
+  width:37px!important;height:37px!important;flex-basis:37px!important;
+ }
+ html body #site #flash #pixelArcade .pa-game-icon svg{width:20px!important;height:20px!important}
+ html body #site #flash #pixelArcade .pa-panel-top h2{
+  font-size:21px!important;
+ }
+ html body #site #flash #pixelArcade .pa-status-pill{font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body #site #flash #pixelArcade .pa-game-card,
+ html body #site #flash #pixelArcade button{transition:none!important}
+}
