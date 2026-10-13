@@ -1208,14 +1208,14 @@ if(gate&&window.supabase){
  function loadArcade(){
   const script=document.createElement('script');
   script.id='pixelArcadeBootstrap';
-  script.src='/pixel-arcade.js?v=native-pixel-wardrobe-v11';
+  script.src='/pixel-arcade.js?v=native-pixel-wardrobe-v12';
   script.onerror=()=>console.warn('Pixel Arcade could not load.');
   document.head.append(script);
  }
  function loadWardrobe(){
   const sprite=document.createElement('script');
   sprite.id='catNativePixelWardrobe';
-  sprite.src='/cat-wardrobe-pixel.js?v=native-pixel-wardrobe-v11';
+  sprite.src='/cat-wardrobe-pixel.js?v=native-pixel-wardrobe-v12';
   sprite.onload=loadArcade;
   sprite.onerror=()=>{console.warn('Pixel clothing sprites unavailable.');loadArcade()};
   document.head.append(sprite);
