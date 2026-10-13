@@ -164,3 +164,16 @@ input,select,textarea{font-size:16px!important;max-width:100%;border-color:#D6E8
  #site main>.page.on{animation:none!important}
  #tthkNavHeader button,#site .btn{transition:none!important}
 }
+
+/* Replace dropdowns with accessible horizontal choices (native select kept as backing state). */
+#site main select.tthk-native-select{position:absolute!important;width:1px!important;height:1px!important;min-width:1px!important;opacity:0!important;clip-path:inset(100%)!important;pointer-events:none!important;padding:0!important;margin:0!important}
+#site .tthk-select-panel{display:flex;flex-direction:column;gap:7px;min-width:0;max-width:100%;width:100%;margin:4px 0 12px}
+#site .tthk-choice-search{width:100%;min-height:43px;padding:10px 12px;border:1px solid #C2E2F4;border-radius:11px;background:#fff;color:#335B79;font-size:16px!important}
+#site .tthk-choice-rail{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:7px;max-width:100%;padding:5px 2px 8px;scrollbar-width:thin;scrollbar-color:#B7D8EE transparent;scroll-snap-type:x proximity}
+#site .tthk-choice-pill{flex:0 0 auto;min-height:39px;max-width:220px;white-space:normal;padding:8px 12px;border:1px solid #D6E8F5;border-radius:10px;background:#F7FBFF;color:#5B839D;font-size:12px;font-weight:800;scroll-snap-align:start}
+#site .tthk-choice-pill[aria-pressed="true"]{background:#CDEAFF;color:#335B79;border-color:#9ECBE7;box-shadow:0 5px 13px #3B7D9A19}
+#site .tthk-more-options{white-space:nowrap;align-self:center;font-size:12px;color:#819BAF}
+#site .tthk-word-example{margin:9px 0;padding:10px;border:1px solid #E1EEF6;background:#F5FBFF;border-radius:10px}
+#site .tthk-word-example strong{display:block;font-size:14px;line-height:1.5;color:#335B79}
+#site .tthk-word-example small{display:block;margin-top:5px;font-size:11px;color:#64849A;line-height:1.7}
+#site button svg{image-rendering:pixelated}
