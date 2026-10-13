@@ -1,0 +1,202 @@
+/* TTHK FINAL VISUAL CONSISTENCY · 2026-10-14
+   Single blue/ivory visual language across SPA, authentication, arcade and cat.
+   Artwork and pixel sprites remain unmodified. */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,600;1,700&display=swap');
+:root{
+ --tthk-ink:#294c65;--tthk-strong:#20425b;--tthk-muted:#69869a;
+ --tthk-soft:#eaf3f8;--tthk-paper:#fffcf9;--tthk-surface:#fcfefe;
+ --tthk-edge:#d5e3eb;--tthk-deep:#337fa9;
+ --tthk-shadow:0 18px 52px rgba(37,77,110,.095),0 4px 15px rgba(37,77,110,.045);
+ --px-font:'Manrope','Noto Sans SC',system-ui,sans-serif;
+ --qa-ink:#294c65;--qa-leaf:#478eac;--qa-edge:#d5e3eb;
+ --qa-warm:#fffcf9;--qa-yellow:#eaf3f8;
+}
+html,body{max-width:100%;overflow-x:clip}
+html body{
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ color:var(--tthk-ink)!important;
+ background-color:#f4f8fb!important;
+ background-image:radial-gradient(ellipse 70% 55% at 97% -10%,#cde4f078,transparent 77%),radial-gradient(ellipse 62% 60% at -10% 100%,#f8e9d563,transparent 78%),linear-gradient(137deg,#f9fbfd,#eef5f9 51%,#faf9f6)!important;
+}
+html body :is(#site,#gate,#wordDetail,#timerFloatingWindow,#timerFloatingChip,#tthkWordImageLibrary,.page-loader)
+ :is(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,em,a,button,input,label,select,textarea,summary,li,div),
+html body #pixelArcade,html body #pixelArcade *{
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+html body :is(#site,#gate,#wordDetail) :is(h1,h2,h3,h4,h5,h6){
+ color:var(--tthk-strong)!important;font-weight:800!important;letter-spacing:-.045em!important;
+}
+html body #site .word h2,html body #wordDetail .wd-hanzi,
+html body #pixelArcade .pa-question{
+ font-family:'Noto Sans SC','Manrope',system-ui,sans-serif!important;letter-spacing:0!important;
+}
+html body #gate .login-showcase h1 span,
+html body #site #intro .hero h1 em{
+ font-family:'Playfair Display',Georgia,serif!important;font-style:italic!important;
+}
+html body #site :is(.clock,.timer-float-time,.picker-title,.detail-icon,.detail-caret),
+html body #pixelArcade :is(.pa-title,.pa-game-card strong,.pa-play-title,.pa-shop-item strong,.pa-zzz,.pa-crumb){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ font-weight:800!important;letter-spacing:-.035em!important;
+}
+html body #pixelArcade{color:var(--tthk-ink)!important;max-width:1400px!important}
+html body #flash.pixel-arcade-page{
+ --qa-leaf:#478eac;--qa-edge:#d5e3eb;--qa-warm:#fffcf9;--qa-yellow:#eaf3f8;
+}
+html body #pixelArcade .pa-title{
+ font-size:clamp(23px,2.4vw,34px)!important;line-height:1.3!important;
+ color:#285777!important;margin:0 0 7px!important;
+}
+html body #pixelArcade .pa-subtitle{color:#7790a1!important;font-size:12px!important}
+html body #pixelArcade :is(.pa-panel,.pa-game-card,.pa-shop-item,.pa-results,.pa-inventory,.pa-cat-home,.pa-cat-care,.pa-pet-summary){
+ background:linear-gradient(150deg,#fffefe,#fcfcfa 75%,#f7fafb)!important;
+ border:1px solid var(--tthk-edge)!important;border-radius:20px!important;
+ box-shadow:var(--tthk-shadow)!important;
+ color:var(--tthk-ink)!important;
+}
+html body #pixelArcade .pa-panel-top h2,
+html body #pixelArcade :is(.pa-cat-care h2,.pa-inventory h2){
+ font-size:clamp(19px,2vw,26px)!important;line-height:1.3!important;
+ color:#285777!important;font-weight:800!important;
+}
+html body #pixelArcade :is(.pa-game-card strong,.pa-shop-item strong){
+ color:#2b6080!important;font-size:clamp(17px,1.8vw,23px)!important;
+ line-height:1.4!important;letter-spacing:-.04em!important;
+}
+html body #pixelArcade .pa-game-card small,
+html body #pixelArcade .pa-shop-item p,
+html body #pixelArcade .pa-panel-top p,
+html body #pixelArcade :is(.pa-hint,.pa-small,.pa-question-sub,.pa-subtitle){
+ color:#718b9a!important;line-height:1.75!important;
+}
+html body #pixelArcade .pa-game-card{
+ min-height:150px!important;padding:20px!important;
+ transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease!important;
+}
+html body #pixelArcade .pa-game-card:hover{
+ border-color:#b6d2e2!important;transform:translateY(-3px)!important;
+ box-shadow:0 23px 55px #315d801e!important;
+}
+html body #pixelArcade :is(.pa-game-icon,.pa-status-pill,.pa-wallet,.pa-price,.pa-timer){
+ background:#edf5fa!important;border:1px solid #d4e5ef!important;
+ border-radius:11px!important;color:#346a8b!important;box-shadow:none!important;
+}
+html body #pixelArcade .pa-game-icon{border-radius:13px!important}
+html body #pixelArcade :is(.pa-price,.pa-status-pill,.pa-wallet){
+ font-size:11px!important;font-weight:750!important;
+}
+html body #pixelArcade .pa-timer{
+ font-size:23px!important;font-weight:800!important;letter-spacing:-.045em!important;
+}
+html body #pixelArcade :is(.pa-primary,.pa-secondary,.pa-shop-item button,.pa-tabs button,.pa-answers button,.pa-pair-grid button,.pa-sentence-token,.pa-store-groups button){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ font-size:12px!important;font-weight:750!important;letter-spacing:0!important;
+ border-radius:12px!important;box-shadow:none!important;
+ transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease!important;
+}
+html body #pixelArcade .pa-primary{
+ background:linear-gradient(126deg,#428caf,#307198)!important;
+ color:#fff!important;border:1px solid #3e83a7!important;
+ box-shadow:0 7px 17px #2c668b25!important;
+}
+html body #pixelArcade .pa-secondary{
+ background:#f4f8fb!important;color:#376987!important;
+ border:1px solid #ccdfeb!important;
+}
+html body #pixelArcade :is(.pa-primary,.pa-secondary):hover:not(:disabled){transform:translateY(-2px)!important}
+html body #pixelArcade .pa-primary:disabled{opacity:.6!important;filter:none!important}
+html body #pixelArcade :is(.pa-answers button,.pa-pair-grid button,.pa-sentence-token){
+ border:1px solid #d1e2ec!important;background:#f9fcfd!important;
+ color:#2d5875!important;
+}
+html body #pixelArcade .pa-answers button.correct{
+ background:#e2f3e7!important;border-color:#a8d5b6!important;color:#28634e!important;
+}
+html body #pixelArcade .pa-answers button.wrong{
+ background:#fff0ef!important;border-color:#e9bec0!important;color:#9a4d56!important;
+}
+html body #pixelArcade .pa-meter,
+html body #pixelArcade .pa-progress{
+ border:1px solid #b8d7e5!important;border-radius:999px!important;
+ background:#edf6fa!important;overflow:hidden!important;box-shadow:none!important;
+}
+html body #pixelArcade .pa-meter-fill{
+ border-radius:999px!important;background:linear-gradient(90deg,#78b4cf,#3b8eb5)!important;
+}
+html body #pixelArcade .pa-stat{color:#41738f!important}
+html body #pixelArcade .pa-scene{
+ border:1px solid #c8dce8!important;border-radius:18px!important;
+ box-shadow:0 8px 26px #294d7110!important;
+ background-color:#f0f6f7!important;overflow:hidden!important;
+}
+/* The pixel sprite remains pixel-perfect: the surrounding controls change, the cat does not. */
+html body #pixelArcade :is(.pa-cat,.pa-cat-base,.pa-cat img,.pa-gear,.pa-shop-sprite,.pa-shop-sprite svg){
+ image-rendering:pixelated!important;
+}
+html body #pixelArcade :is(.pa-cat-bubble,.pa-toast){
+ border-radius:13px!important;border-color:#d1e2eb!important;
+ color:#386682!important;background:#fffdfaf5!important;
+ box-shadow:0 8px 18px #325b7416!important;
+}
+html body #pixelArcade .pa-cat-tools,
+html body #pixelArcade .pa-actions{gap:12px!important}
+html body #pixelArcade .pa-play-title{font-size:25px!important;color:#295e7b!important}
+html body #pixelArcade .pa-results strong{font-size:26px!important;color:#2c668a!important}
+html body #pixelArcade .pa-tabs{border-color:#d5e5ed!important}
+html body #pixelArcade .pa-tabs button.on,
+html body #pixelArcade .pa-tabs button.active{
+ background:#eaf4f9!important;color:#2d6486!important;border-color:#d0e4ee!important;
+}
+html body #site #flash .pa-home-cards{gap:15px!important}
+html body #site #flash .pa-home-cards .pa-game-card:last-child{background:#fffdfb!important}
+/* Authentication: same atmospheric background as the main site and game. */
+html body #gate.authgate,
+html body #gate.authgate.custom-login-bg{
+ background-color:#f4f8fb!important;
+ background-image:radial-gradient(ellipse 70% 55% at 97% -10%,#cde4f078,transparent 77%),
+ radial-gradient(ellipse 62% 60% at -10% 100%,#f8e9d563,transparent 78%),
+ linear-gradient(137deg,#f9fbfd,#eef5f9 51%,#faf9f6)!important;
+ background-position:center!important;background-size:cover!important;
+}
+html body #gate.authgate :is(.login-showcase,.authcard){
+ background:linear-gradient(148deg,rgba(255,255,255,.96),rgba(255,253,250,.94))!important;
+ border:1px solid #d8e5ec!important;border-radius:22px!important;
+ box-shadow:0 24px 64px #264d7019,0 6px 20px #264d700a!important;
+}
+html body #gate .login-showcase h1,
+html body #gate .authcard h2{font-weight:800!important;color:#254c68!important;letter-spacing:-.055em!important}
+html body #gate .login-kicker{background:#e8f3f9!important;border-color:#d1e3ed!important;color:#52778e!important}
+html body #gate .login-chips span{background:#eff6fa!important;color:#547990!important;border-color:#d7e6ec!important}
+html body #gate .authcard :is(button,input,select,textarea){border-radius:12px!important;font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important}
+html body #gate .authcard input{background:#fff!important;border:1px solid #d7e4ec!important;box-shadow:0 3px 12px #2b58730b!important}
+html body #gate .authcard .btn{box-shadow:0 8px 24px #2f6d9430!important}
+html body #gate .login-logo-frame{display:none!important}
+/* Other remaining UI surfaces are aligned without changing underlying actions. */
+html body #site :is(.box,.word,.member,.card,.profile-section,.study-filter-toolbar){
+ background:linear-gradient(152deg,#fffefe,#fbfdfa 82%,#f7fafb)!important;
+ border:1px solid #dce7ed!important;border-radius:19px!important;
+ box-shadow:var(--tthk-shadow)!important;
+}
+html body #site :is(.gr-card,.gr-panel,.wd-content,.wd-panel){
+ background:#fffefd!important;border-color:#d8e7ee!important;
+ box-shadow:0 12px 35px #30577512!important;border-radius:17px!important;
+}
+html body :is(#timerFloatingWindow,#timerFloatingChip,.popup,.page-loader-inner){
+ border-color:#d8e6ef!important;background:#fffdfaf5!important;
+ border-radius:18px!important;box-shadow:0 20px 55px #31587821!important;
+}
+@media(max-width:780px){
+ html body #pixelArcade .pa-home-cards{gap:11px!important}
+ html body #pixelArcade .pa-game-card{padding:14px!important;min-height:126px!important}
+ html body #pixelArcade .pa-title{font-size:24px!important}
+ html body #pixelArcade .pa-game-card strong{font-size:18px!important}
+}
+@media(max-width:440px){
+ html body #pixelArcade .pa-home-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html body #pixelArcade .pa-game-card{padding:10px!important;min-height:120px!important}
+ html body #pixelArcade .pa-game-card strong{font-size:16px!important}
+ html body #gate.authgate :is(.authcard,.login-showcase){border-radius:18px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body #pixelArcade .pa-game-card,html body #pixelArcade :is(.pa-primary,.pa-secondary){transition:none!important}
+}
