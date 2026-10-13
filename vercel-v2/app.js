@@ -385,27 +385,7 @@ $('#uploadPhoto').onclick=async()=>{
  document.querySelector('#uploadPhoto')?.addEventListener('click',()=>setTimeout(()=>D.syncUserHeader?.(),1600));
 })();
 
-;(()=>{const css="\n:root{--brand-900:#084870;--brand-800:#125c85;--brand-700:#2c729b;--brand-200:#c8e0f0;--brand-100:#e9f4fb;--text-main:#163950}\nbody{background:radial-gradient(ellipse at 7% 4%,#d5ebfbb8,transparent 38%),linear-gradient(180deg,#fbfdff,#f0f8ff);color:var(--text-main)}\n.side{background:#ffffffed;backdrop-filter:blur(14px);border-right:1px solid #d5e6f3;padding-top:16px}\n.side h2{display:flex;align-items:center;justify-content:center;margin:0 0 23px;padding:0;font-size:16px;color:#084870}\n.side-brand{width:100%;max-width:210px;aspect-ratio:440/267;object-fit:contain;mix-blend-mode:multiply}\n.nav button{color:#557c95;transition:background .2s ease,color .2s ease,transform .2s ease}\n.nav button.on,.nav button:hover{background:linear-gradient(100deg,#dceefa,#ecf6fc);color:#084870;transform:translateX(2px)}\nh1,h2,h3{color:#084870}.muted,footer{color:#6c8b9d}\n.hero{background:linear-gradient(115deg,#ddecf9,#f9fcff 57%,#e3f1fa);border:1px solid #cde2f1;min-height:235px;box-shadow:0 20px 56px #08487012;position:relative;isolation:isolate;overflow:hidden}\n.hero h1,.hero p,.hero button{position:relative;z-index:2}.hero em{color:#1473a6}.hero:after{content:'';background:none!important}\n.hero-brand-watermark{position:absolute;right:-50px;top:-12%;width:min(46%,385px);opacity:.17;mix-blend-mode:multiply;pointer-events:none}\n.btn{background:linear-gradient(135deg,#1670a1,#084870);box-shadow:0 7px 18px #08487015;transition:transform .2s,box-shadow .2s}.btn:hover{transform:translateY(-2px);box-shadow:0 12px 27px #08487027}.btn.soft{background:#e6f2fb;color:#0b577f}\n.box{border-color:#d8e8f5;background:#fffffff2;box-shadow:0 12px 32px #0e52700e}.word h2,#hanzi{color:#0e6087!important}.word small{color:#397997}\n.searchbar{border-color:#b2d8ef;box-shadow:0 10px 30px #0848700b}input,select,textarea{border-color:#cfe3f1;color:#184159}\ninput:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #83c4ed;outline-offset:2px}.switch{background:#e6f1fa}.switch button.on{color:#0c5e8a}.popup{border-color:#aad7ee}\n#gate.authgate{grid-template-columns:minmax(0,1.12fr) minmax(320px,460px);gap:clamp(26px,5vw,76px);padding:clamp(20px,5vw,65px);background:radial-gradient(circle at 18% 50%,#ceeaff,transparent 46%),linear-gradient(122deg,#fafdff,#eaf5fd);overflow-y:auto;align-items:center;justify-items:center}\n.login-showcase{position:relative;z-index:1;width:min(100%,655px);padding:14px 12px 24px;animation:welcomeIn .8s both}\n.login-logo-frame{position:relative;border-radius:30px;background:#ffffffee;box-shadow:0 28px 72px #0b537018;border:1px solid #c4e3f3;padding:12px;margin-bottom:23px;overflow:hidden}\n.login-logo-frame:before{content:'';position:absolute;inset:15% 5%;background:#a9dffa5f;filter:blur(38px);border-radius:50%}\n.login-logo-frame img{position:relative;z-index:1;width:100%;height:auto;display:block;border-radius:18px;mix-blend-mode:multiply;animation:logoFloat 7s ease-in-out infinite}\n.login-showcase h1{font-size:clamp(28px,3.8vw,49px);letter-spacing:-1.8px;line-height:1.24;margin:12px 0;color:#073d61}\n.login-showcase h1 span{color:#1977a7}.login-showcase p{max-width:560px;color:#5b7f95;font-size:14px;line-height:1.9}\n.login-kicker{letter-spacing:2.4px;font-size:10px;font-weight:800;color:#297aa5}.login-chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}\n.login-chips span{padding:10px 12px;background:#ffffffdd;border:1px solid #d1e7f6;box-shadow:0 8px 24px #0848700b;border-radius:999px;font-size:11px;color:#1d6387;font-weight:700}\n#gate .authcard{position:relative;z-index:2;width:100%;max-width:465px;margin:0;border:1px solid #cee3f1;background:#ffffffee;backdrop-filter:blur(22px);box-shadow:0 30px 82px #08487025;border-radius:29px;padding:clamp(22px,3vw,36px);animation:cardIn .65s ease both}\n#gate .authcard:before{content:'✦';position:absolute;right:22px;top:18px;color:#a1d6f5;font-size:21px}#gate .authcard h2{font-size:29px;color:#084870;margin:12px 0 10px}\n#gate .authcard .authpane input{background:#f9fdff;border:1px solid #c6dfed;border-radius:14px;padding:14px 15px;margin:10px 0}\n#gate .authcard .authpane input:focus{border-color:#4c9dce;box-shadow:0 0 0 4px #c6e8fc85;outline:0}\n#gate .authcard .btn{padding:13px 18px;border-radius:13px}#gate .authcard .row{gap:10px}\n#gate .authcard #paneLogin #login{min-width:150px;flex:1}\n@keyframes welcomeIn{from{opacity:0;transform:translateY(21px)}to{opacity:1;transform:none}}\n@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}\n@keyframes logoFloat{50%{transform:translateY(-7px)}}\n@media(max-width:880px){#gate.authgate{grid-template-columns:1fr;gap:16px;padding:20px 16px;align-content:center}.login-showcase{max-width:470px;padding:4px}.login-logo-frame{max-width:410px;margin:0 auto 12px;padding:7px}.login-showcase h1{font-size:25px;text-align:center;margin:8px}.login-showcase p{display:none}.login-kicker{text-align:center;display:block}.login-chips{justify-content:center;margin-top:10px;gap:6px}.login-chips span{font-size:10px;padding:7px 9px}#gate .authcard{max-width:475px;padding:22px;border-radius:22px}}\n@media(max-width:480px){.login-showcase h1{font-size:21px}.login-logo-frame{max-width:265px;margin-bottom:8px}.login-chips span:nth-child(n+3){display:none}#gate .authcard .row{gap:7px}#gate .authcard .btn{font-size:12px;padding:11px}}\n@media(prefers-reduced-motion:reduce){.login-showcase,#gate .authcard,.login-logo-frame img{animation:none!important}}";const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);const siteTitle=document.querySelector('.side h2');
-if(siteTitle){
- siteTitle.textContent='中文不难';
- siteTitle.classList.add('tthk-pixel-wordmark-small');
- siteTitle.setAttribute('aria-label','TIẾNG TRUNG HEM KHÓ');
-}
-const gate=document.querySelector('#gate');
-if(gate&&!gate.querySelector('.login-showcase')){
- const story=document.createElement('div');
- story.className='login-showcase';
- story.innerHTML='<div class="login-pixel-wordmark" lang="zh">中文不难<span>TIẾNG TRUNG HEM KHÓ</span></div>'+
- '<div class="login-kicker">KHÁM PHÁ NGÔN NGỮ · 发现中文</div>'+
- '<h1>Mở ra một thế giới mới<br><span>qua từng chữ Hán.</span></h1>'+
- '<p>Góc học tập nhỏ để cùng nhau luyện từ vựng, nghe phát âm, tập viết chữ Hán và chinh phục HSK mỗi ngày.</p>'+
- '<div class="login-chips"><span>HSK 1–2</span><span>Từ vựng trực quan</span><span>Luyện viết</span><span>Phát âm</span></div>';
- gate.insertBefore(story,gate.firstChild);
-}
-const fav=document.createElement('link');
-fav.rel='icon';fav.type='image/svg+xml';
-fav.href='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="#e6f4ed"/><rect x="4" y="4" width="24" height="24" fill="#367e69"/><path fill="#ffffff" d="M9 11h14v3H9zm6-4h3v19h-3zM8 18h16v3H8z"/></svg>');
-document.head.append(fav);})();
+;(()=>{const css="\n:root{--brand-900:#084870;--brand-800:#125c85;--brand-700:#2c729b;--brand-200:#c8e0f0;--brand-100:#e9f4fb;--text-main:#163950}\nbody{background:radial-gradient(ellipse at 7% 4%,#d5ebfbb8,transparent 38%),linear-gradient(180deg,#fbfdff,#f0f8ff);color:var(--text-main)}\n.side{background:#ffffffed;backdrop-filter:blur(14px);border-right:1px solid #d5e6f3;padding-top:16px}\n.side h2{display:flex;align-items:center;justify-content:center;margin:0 0 23px;padding:0;font-size:16px;color:#084870}\n.side-brand{width:100%;max-width:210px;aspect-ratio:440/267;object-fit:contain;mix-blend-mode:multiply}\n.nav button{color:#557c95;transition:background .2s ease,color .2s ease,transform .2s ease}\n.nav button.on,.nav button:hover{background:linear-gradient(100deg,#dceefa,#ecf6fc);color:#084870;transform:translateX(2px)}\nh1,h2,h3{color:#084870}.muted,footer{color:#6c8b9d}\n.hero{background:linear-gradient(115deg,#ddecf9,#f9fcff 57%,#e3f1fa);border:1px solid #cde2f1;min-height:235px;box-shadow:0 20px 56px #08487012;position:relative;isolation:isolate;overflow:hidden}\n.hero h1,.hero p,.hero button{position:relative;z-index:2}.hero em{color:#1473a6}.hero:after{content:'';background:none!important}\n.hero-brand-watermark{position:absolute;right:-50px;top:-12%;width:min(46%,385px);opacity:.17;mix-blend-mode:multiply;pointer-events:none}\n.btn{background:linear-gradient(135deg,#1670a1,#084870);box-shadow:0 7px 18px #08487015;transition:transform .2s,box-shadow .2s}.btn:hover{transform:translateY(-2px);box-shadow:0 12px 27px #08487027}.btn.soft{background:#e6f2fb;color:#0b577f}\n.box{border-color:#d8e8f5;background:#fffffff2;box-shadow:0 12px 32px #0e52700e}.word h2,#hanzi{color:#0e6087!important}.word small{color:#397997}\n.searchbar{border-color:#b2d8ef;box-shadow:0 10px 30px #0848700b}input,select,textarea{border-color:#cfe3f1;color:#184159}\ninput:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #83c4ed;outline-offset:2px}.switch{background:#e6f1fa}.switch button.on{color:#0c5e8a}.popup{border-color:#aad7ee}\n#gate.authgate{grid-template-columns:minmax(0,1.12fr) minmax(320px,460px);gap:clamp(26px,5vw,76px);padding:clamp(20px,5vw,65px);background:radial-gradient(circle at 18% 50%,#ceeaff,transparent 46%),linear-gradient(122deg,#fafdff,#eaf5fd);overflow-y:auto;align-items:center;justify-items:center}\n.login-showcase{position:relative;z-index:1;width:min(100%,655px);padding:14px 12px 24px;animation:welcomeIn .8s both}\n.login-logo-frame{position:relative;border-radius:30px;background:#ffffffee;box-shadow:0 28px 72px #0b537018;border:1px solid #c4e3f3;padding:12px;margin-bottom:23px;overflow:hidden}\n.login-logo-frame:before{content:'';position:absolute;inset:15% 5%;background:#a9dffa5f;filter:blur(38px);border-radius:50%}\n.login-logo-frame img{position:relative;z-index:1;width:100%;height:auto;display:block;border-radius:18px;mix-blend-mode:multiply;animation:logoFloat 7s ease-in-out infinite}\n.login-showcase h1{font-size:clamp(28px,3.8vw,49px);letter-spacing:-1.8px;line-height:1.24;margin:12px 0;color:#073d61}\n.login-showcase h1 span{color:#1977a7}.login-showcase p{max-width:560px;color:#5b7f95;font-size:14px;line-height:1.9}\n.login-kicker{letter-spacing:2.4px;font-size:10px;font-weight:800;color:#297aa5}.login-chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}\n.login-chips span{padding:10px 12px;background:#ffffffdd;border:1px solid #d1e7f6;box-shadow:0 8px 24px #0848700b;border-radius:999px;font-size:11px;color:#1d6387;font-weight:700}\n#gate .authcard{position:relative;z-index:2;width:100%;max-width:465px;margin:0;border:1px solid #cee3f1;background:#ffffffee;backdrop-filter:blur(22px);box-shadow:0 30px 82px #08487025;border-radius:29px;padding:clamp(22px,3vw,36px);animation:cardIn .65s ease both}\n#gate .authcard:before{content:'✦';position:absolute;right:22px;top:18px;color:#a1d6f5;font-size:21px}#gate .authcard h2{font-size:29px;color:#084870;margin:12px 0 10px}\n#gate .authcard .authpane input{background:#f9fdff;border:1px solid #c6dfed;border-radius:14px;padding:14px 15px;margin:10px 0}\n#gate .authcard .authpane input:focus{border-color:#4c9dce;box-shadow:0 0 0 4px #c6e8fc85;outline:0}\n#gate .authcard .btn{padding:13px 18px;border-radius:13px}#gate .authcard .row{gap:10px}\n#gate .authcard #paneLogin #login{min-width:150px;flex:1}\n@keyframes welcomeIn{from{opacity:0;transform:translateY(21px)}to{opacity:1;transform:none}}\n@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}\n@keyframes logoFloat{50%{transform:translateY(-7px)}}\n@media(max-width:880px){#gate.authgate{grid-template-columns:1fr;gap:16px;padding:20px 16px;align-content:center}.login-showcase{max-width:470px;padding:4px}.login-logo-frame{max-width:410px;margin:0 auto 12px;padding:7px}.login-showcase h1{font-size:25px;text-align:center;margin:8px}.login-showcase p{display:none}.login-kicker{text-align:center;display:block}.login-chips{justify-content:center;margin-top:10px;gap:6px}.login-chips span{font-size:10px;padding:7px 9px}#gate .authcard{max-width:475px;padding:22px;border-radius:22px}}\n@media(max-width:480px){.login-showcase h1{font-size:21px}.login-logo-frame{max-width:265px;margin-bottom:8px}.login-chips span:nth-child(n+3){display:none}#gate .authcard .row{gap:7px}#gate .authcard .btn{font-size:12px;padding:11px}}\n@media(prefers-reduced-motion:reduce){.login-showcase,#gate .authcard,.login-logo-frame img{animation:none!important}}";const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);const logo="/logo-tthk.webp";const siteTitle=document.querySelector('.side h2');if(siteTitle){siteTitle.textContent='';const img=document.createElement('img');img.className='side-brand';img.alt='TIẾNG TRUNG HEM KHÓ';img.src=logo;img.onerror=()=>{siteTitle.textContent='中文不难 · TIẾNG TRUNG HEM KHÓ'};siteTitle.append(img)}const gate=document.querySelector('#gate');if(gate&&!gate.querySelector('.login-showcase')){const story=document.createElement('div');story.className='login-showcase';story.innerHTML="<div class=\"login-logo-frame\"><img src=\"/logo-tthk.webp\" alt=\"中文不难 — TIẾNG TRUNG HEM KHÓ\"></div><div class=\"login-kicker\">KHÁM PHÁ NGÔN NGỮ · 发现中文</div><h1>Mở ra một thế giới mới<br><span>qua từng chữ Hán.</span></h1><p>Góc học tập nhỏ để cùng nhau luyện từ vựng, nghe phát âm, tập viết chữ Hán và chinh phục HSK mỗi ngày.</p><div class=\"login-chips\"><span>✦ HSK 1–2</span><span>◈ Từ vựng trực quan</span><span>✍ Luyện viết</span><span>♫ Phát âm</span></div>";gate.insertBefore(story,gate.firstChild)}const intro=document.querySelector('#intro .hero');if(intro&&!intro.querySelector('.hero-brand-watermark')){const img=document.createElement('img');img.className='hero-brand-watermark';img.alt='';img.setAttribute('aria-hidden','true');img.src=logo;intro.append(img)}const fav=document.createElement('link');fav.rel='icon';fav.type='image/webp';fav.href=logo;document.head.append(fav);})();
 
 
 ;(() => {
@@ -437,45 +417,16 @@ document.head.append(fav);})();
    picture.onerror=()=>{slot.classList.add('no-image');};
    picture.src=url;
  }
- // Only restore the user's uploaded brand image in the COMPACT site header
- // and contact footer. The oversized legacy login logo stays disabled.
  function updateLogo(asset){
-   if(!asset?.image_path)return;
+   if(!asset)return;
    const url=assetUrl(asset);
-   if(!url||!url.startsWith('https://'))return;
-   window.TTHK_CURRENT_BRAND_LOGO=url;
-   const header=document.querySelector('#site .side h2');
-   if(header){
-     let photo=header.querySelector('.tthk-brand-logo');
-     if(!photo){
-       photo=document.createElement('img');
-       photo.className='tthk-brand-logo';
-       photo.alt='Logo Tiếng Trung Hem Khó';
-       photo.loading='eager';
-       photo.decoding='async';
-       photo.onerror=()=>photo.hidden=true;
-       header.prepend(photo);
-     }
-     photo.hidden=false;
-     if(photo.src!==url)photo.src=url;
+   if(!url)return;
+   for(const selector of ['.side-brand','.login-logo-frame img','.hero-brand-watermark']){
+     const node=document.querySelector(selector);
+     if(node?.tagName==='IMG'){node.src=url;node.style.objectFit='contain';}
    }
-   const container=document.querySelector('#tthkContactFooter .tthk-footer-brand');
-   if(container){
-     let photo=container.querySelector('.tthk-footer-logo');
-     if(!photo){
-       photo=document.createElement('img');
-       photo.className='tthk-footer-logo';
-       photo.alt='Logo Tiếng Trung Hem Khó';
-       photo.loading='lazy';
-       photo.decoding='async';
-       photo.onerror=()=>{photo.hidden=true};
-       container.prepend(photo);
-     }
-     photo.hidden=false;
-     if(photo.src!==url)photo.src=url;
-     const fallback=container.querySelector('.tthk-footer-pixelmark');
-     if(fallback)fallback.hidden=true;
-   }
+   const fav=document.querySelector('link[rel="icon"]');
+   if(fav){fav.href=url;fav.type='image/png';}
  }
  async function fetchAssets(){
    const {data,error}=await publicClient.from('site_assets').select('slug,image_path,updated_at');
@@ -505,7 +456,7 @@ loader.id='pageTabLoader';
 loader.setAttribute('role','status');
 loader.setAttribute('aria-live','polite');
 loader.setAttribute('aria-hidden','true');
-loader.innerHTML='<div class="page-loader-inner"><span class="page-loader-pixel" lang="zh" aria-hidden="true">中</span><strong class="page-loader-title">TIẾNG TRUNG HEM KHÓ</strong><p class="page-loader-text">Đang mở góc học tập của bạn…</p><div class="page-loader-progress"><span></span></div></div>';
+loader.innerHTML='<div class="page-loader-inner"><img class="page-loader-img" src="/logo-tthk.webp" alt="Logo TIẾNG TRUNG HEM KHÓ"><strong class="page-loader-title">TIẾNG TRUNG HEM KHÓ</strong><p class="page-loader-text">Đang mở góc học tập của bạn…</p><div class="page-loader-progress"><span></span></div></div>';
 document.body.append(loader);
 const logo=loader.querySelector('.page-loader-img');
 const fb=document.createElement('a');
@@ -622,7 +573,7 @@ function completed(){
  $('#toastTitle').textContent=title;$('#toast').hidden=false;
  beep();
  if('Notification'in window&&Notification.permission==='granted'){
-  try{new Notification('TIẾNG TRUNG HEM KHÓ',{body:title,tag:'study-reminder'})}catch(e){console.warn('Native notification unavailable',e)}
+  try{new Notification('TIẾNG TRUNG HEM KHÓ',{body:title,icon:'/logo-tthk.webp',tag:'study-reminder'})}catch(e){console.warn('Native notification unavailable',e)}
  }
 }
 function render(){
@@ -709,21 +660,17 @@ render();
  async function executeWithAuthLoader(fn,message,...args){
    const started=showAuthLoader(message);
    const at=Date.now();
-   // Do not freeze login/logout behind a mandatory five-second animation.
-   // A failsafe also closes the visual overlay when a network request stalls.
-   const failsafe=started?setTimeout(hideAuthLoader,8000):null;
    try{return await fn(...args);}
    finally{
-     if(failsafe)clearTimeout(failsafe);
      if(started){
-       const delay=Math.max(0,320-(Date.now()-at));
+       const delay=Math.max(0,5000-(Date.now()-at));
        if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
        hideAuthLoader();
      }
    }
  }
  const login=$('#login'),logout=$('#logout'),logoutTop=$('#quickSignOut');
- // Brief account transition feedback; never block navigation for five seconds.
+ // Five seconds on account transitions only; regular page/tab navigation has no spinner.
  loader?.classList.add('auth-five-second-loader');
  if(login&&typeof login.onclick==='function'){
    const original=login.onclick;
@@ -758,7 +705,7 @@ render();
    const lv=$('#level').value,topic=$('#topic').value,query=$('#vocabQuery').value.toLowerCase();
    const filtered=D.words.filter(w=>!hasPhoto(w)
     &&(lv==='all'||w.l==lv)&&(topic==='all'||w.topic===topic)
-    &&[w.h,w.m].some(val=>String(val).toLowerCase().includes(query)));
+    &&[w.h,w.p,w.m].some(val=>String(val).toLowerCase().includes(query)));
    wordGrid.innerHTML=filtered.slice(0,D.shown).map(D.card).join('');
    D.bindCards(wordGrid);
    $('#loadMore').hidden=D.shown>=filtered.length;
@@ -1039,7 +986,7 @@ if(gate&&window.supabase){
  document.head.append(style);
  const panel=document.createElement('section');
  panel.id='writingWordPicker';panel.setAttribute('aria-label','Chọn chữ để luyện viết');
- panel.innerHTML="<div class=\"picker-top\"><h2 class=\"picker-title\">✦ Chọn chữ để luyện viết</h2><p class=\"picker-help\">Bấm một từ hoặc tìm chữ muốn tập</p></div>\n<div class=\"picker-search-line\"><input id=\"writingCharacterSearch\" class=\"picker-search\" type=\"search\" autocomplete=\"off\" spellcheck=\"false\" enterkeyhint=\"search\" placeholder=\"Nhập chữ Hán hoặc nghĩa tiếng Việt…\" aria-label=\"Tìm chữ Hán hoặc nghĩa tiếng Việt\"><button type=\"button\" class=\"btn picker-apply\" id=\"writeCustomWord\">✍ Tập viết chữ đã nhập</button></div>\n<div class=\"picker-tabs\" role=\"group\" aria-label=\"Lọc cấp độ HSK\"><button type=\"button\" class=\"picker-tab\" data-writing-level=\"all\" aria-pressed=\"true\">Tất cả</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"1\" aria-pressed=\"false\">HSK 1</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"2\" aria-pressed=\"false\">HSK 2</button></div>\n<div class=\"picker-grid\" id=\"writingCharacterGrid\" aria-label=\"Danh sách từ để chọn luyện viết\"></div><div class=\"picker-foot\"><span id=\"writingPickerCount\" role=\"status\" aria-live=\"polite\"></span><button class=\"btn soft\" type=\"button\" id=\"writingMoreWords\" hidden>Xem thêm chữ ↓</button></div><div class=\"picker-selected\">Đang luyện: <strong id=\"writingSelectedWord\">Chưa chọn chữ</strong></div>";
+ panel.innerHTML="<div class=\"picker-top\"><h2 class=\"picker-title\">✦ Chọn chữ để luyện viết</h2><p class=\"picker-help\">Bấm một từ hoặc tìm chữ muốn tập</p></div>\n<div class=\"picker-search-line\"><input id=\"writingCharacterSearch\" class=\"picker-search\" type=\"search\" autocomplete=\"off\" spellcheck=\"false\" enterkeyhint=\"search\" placeholder=\"Nhập chữ Hán, Pinyin hoặc nghĩa tiếng Việt…\" aria-label=\"Tìm chữ Hán, Pinyin hoặc nghĩa tiếng Việt\"><button type=\"button\" class=\"btn picker-apply\" id=\"writeCustomWord\">✍ Tập viết chữ đã nhập</button></div>\n<div class=\"picker-tabs\" role=\"group\" aria-label=\"Lọc cấp độ HSK\"><button type=\"button\" class=\"picker-tab\" data-writing-level=\"all\" aria-pressed=\"true\">Tất cả</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"1\" aria-pressed=\"false\">HSK 1</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"2\" aria-pressed=\"false\">HSK 2</button></div>\n<div class=\"picker-grid\" id=\"writingCharacterGrid\" aria-label=\"Danh sách từ để chọn luyện viết\"></div><div class=\"picker-foot\"><span id=\"writingPickerCount\" role=\"status\" aria-live=\"polite\"></span><button class=\"btn soft\" type=\"button\" id=\"writingMoreWords\" hidden>Xem thêm chữ ↓</button></div><div class=\"picker-selected\">Đang luyện: <strong id=\"writingSelectedWord\">Chưa chọn chữ</strong></div>";
  const intro=Array.from(section.children).find(el=>el.matches?.('p.muted'))||section.querySelector('h1');
  if(intro)intro.insertAdjacentElement('afterend',panel);else section.prepend(panel);
  const search=panel.querySelector('#writingCharacterSearch');
@@ -1077,7 +1024,7 @@ if(gate&&window.supabase){
   all.forEach((w,i)=>{
     if(w.l!==1&&w.l!==2&&w.topic!=='✍ Tự chọn')return;
     if(level!=='all'&&String(w.l)!==level)return;
-    if(q&&![w.h,w.m].some(x=>normalize(x).includes(q)))return;
+    if(q&&![w.h,w.p,w.m].some(x=>normalize(x).includes(q)))return;
     matches.push(i);
   });
   grid.replaceChildren();
@@ -1125,7 +1072,7 @@ if(gate&&window.supabase){
   }
   const q=normalize(value);
   const found=D.words.findIndex(w=>
-   [w.h,w.m].some(x=>normalize(x).includes(q))&&
+   [w.h,w.p,w.m].some(x=>normalize(x).includes(q))&&
    (level==='all'||String(w.l)===level));
   if(found>=0)choose(found,true);
   else{count.textContent='Không tìm thấy. Bạn có thể nhập trực tiếp chữ Hán (tối đa 4 chữ).';search.focus();}
@@ -1315,21 +1262,4 @@ if(gate&&window.supabase){
   document.head.append(n);
  }
  load(0);
-})();
-
-
-// Mint study UI, 300 word pixel illustrations, secure editorial profiles, contact footer.
-;(()=>{
- 'use strict';
- if(document.getElementById('tthk2026RefreshLoader'))return;
- const style=document.createElement('link');
- style.id='tthk2026RefreshStyle';
- style.rel='stylesheet';
- style.href='/site-refresh.css?v=brand-pictures-restored-v4';
- document.head.append(style);
- const script=document.createElement('script');
- script.id='tthk2026RefreshLoader';
- script.src='/site-refresh.js?v=brand-pictures-restored-v4';
- script.onerror=()=>console.warn('The new study layout did not load.');
- document.head.append(script);
 })();
