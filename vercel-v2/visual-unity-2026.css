@@ -1,0 +1,253 @@
+/* TIẾNG TRUNG HEM KHÓ — CONSISTENT TYPOGRAPHY & SURFACES / 2026
+   Unified throughout the app, authentication, study tools, profile, and word detail.
+   The opening video is removed by removing its JavaScript bootstrap (not hidden).
+*/
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600;1,700;1,800&display=swap');
+:root{
+ --px-font:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ --brand-900:#203e55;--brand-800:#2d5068;--brand-700:#397295;
+ --brand-200:#c3d8e5;--brand-100:#eaf3f8;--text-main:#2b485d;
+ --unify-sky:#e8f2f8;--unify-cream:#fbf9f5;--unify-navy:#264a65;
+ --unify-line:#dce6ec;--unify-soft-shadow:0 18px 50px rgba(31,73,105,.10),0 4px 16px rgba(31,73,105,.045);
+ --px-shadow:0 15px 42px rgba(31,73,105,.10)!important;
+}
+html{
+ background:#f2f7fa!important;
+ -webkit-text-size-adjust:100%;
+}
+body{
+ background:#f2f7fa!important;
+ background-image:
+  radial-gradient(ellipse 76% 58% at 94% -5%,rgba(180,211,230,.36) 0%,transparent 76%),
+  radial-gradient(ellipse 80% 65% at -12% 92%,rgba(247,232,218,.49) 0%,transparent 79%),
+  linear-gradient(135deg,#f8fbfd 0%,#f0f7fa 48%,#fbfaf6 100%)!important;
+ background-size:cover!important;background-position:center!important;
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ color:var(--unify-navy)!important;
+}
+/* Stronger selectors override the old app's pixel-font styles and shorthand font rules. */
+html body :is(h1,h2,h3,h4,h5,h6,p,span,a,label,button,input,select,textarea,small,strong,b,summary,li,nav,header,footer,section,article,aside,div){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+body #site :is(h1,h2,h3,h4,h5,h6,p,span,a,label,button,input,select,textarea,small,strong,b,summary,li,div),
+body #gate :is(h1,h2,h3,h4,h5,h6,p,span,a,label,button,input,select,textarea,small,strong,b,summary,li,div),
+body #wordDetail :is(h1,h2,h3,h4,h5,h6,p,span,a,label,button,input,select,textarea,small,strong,b,div),
+body #tthkWordImageLibrary :is(h1,h2,h3,h4,h5,h6,p,span,a,label,button,input,select,textarea,small,strong,b,div),
+body #timerFloatingWindow :is(h1,h2,h3,h4,span,button,strong,b,div),
+body #timerFloatingChip :is(span,button,strong,b,div){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+body #site #lookup :is(.gr-heading,.gr-title,.gr-number,.gr-progress,.gr-subhead,.gr-card-title,.gr-level,.gr-hint,.gr-pager),
+body #site #wordDetail :is(.wd-stroke-title,.wd-hanzi,.wd-pinyin,.wd-vn,.wd-label,.wd-char),
+body #site #writingWordPicker :is(.picker-title,.picker-help),
+body #site #vocab :is(.detail-icon,.detail-caret,.compact-detail-summary),
+body #site :is(.clock,.timer-float-time,.mini-icon,.pixel-hero-tag),
+body #gate :is(.login-kicker,.authcard h2,.login-showcase h1,.login-chips span),
+body .page-loader :is(.page-loader-title,.page-loader-text),
+body .mobile-dock :is(span,button),
+body #timerFloatingWindow :is(.timer-float-time,.timer-mini-head){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums;
+}
+body #site #lookup :is(.gr-heading,.gr-title),body #site #writingWordPicker .picker-title{
+ font-size:clamp(23px,2.9vw,34px)!important;
+ font-weight:800!important;line-height:1.28!important;
+ color:#24546f!important;letter-spacing:-.05em!important;
+}
+body #site #lookup .gr-number{
+ font-size:16px!important;font-weight:800!important;
+ border-radius:12px!important;background:#e8f3f9!important;border-color:#d0e3ee!important;box-shadow:none!important;
+}
+body #site :is(.clock,.timer-float-time),body #timerFloatingWindow .timer-float-time{
+ font-weight:800!important;letter-spacing:-.045em!important;
+}
+body #site .word h2,body #site #wordDetail .wd-hanzi,body #site #lookup .gr-example .zh{
+ font-family:'Noto Sans SC','Manrope',system-ui,sans-serif!important;
+ letter-spacing:0!important;
+}
+body #site #intro .hero h1 em,
+body #gate .login-showcase h1 span{
+ font-family:'Playfair Display',Georgia,serif!important;font-weight:700!important;
+ font-style:italic!important;letter-spacing:-.055em!important;
+}
+#site.site:not([hidden]){background:transparent!important}
+#site.site:not([hidden])>main{
+ background:transparent!important;background-image:none!important;
+ color:#2c4b60!important;
+}
+#site.site:not([hidden]) .page{
+ background:transparent!important;background-image:none!important;
+ color:#2d485e!important;
+}
+#site.site:not([hidden])>.side{
+ background:linear-gradient(115deg,rgba(251,253,253,.94),rgba(250,249,246,.91) 50%,rgba(236,246,251,.94))!important;
+ border-bottom:1px solid #dce7ed!important;
+ box-shadow:0 12px 36px #2b557312!important;
+}
+#site.site:not([hidden])>.side.tg-scrolled{
+ background:linear-gradient(115deg,rgba(251,253,255,.97),rgba(251,250,247,.96),rgba(233,244,250,.97))!important;
+ box-shadow:0 17px 42px #2b557321!important;
+}
+#site .side .nav.nav-organized button{
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+#site .side .nav.nav-organized button.on{
+ color:#285a78!important;
+}
+/* Login uses exactly the same blue + warm ivory atmospheric gradient as the app.
+   Keep the uploaded wallpaper untouched in storage, but don't render it as a clashing background. */
+html body #gate.authgate,
+html body #gate.authgate.custom-login-bg{
+ background-color:#f2f7fa!important;
+ background-image:
+  radial-gradient(ellipse 68% 70% at 94% -10%,rgba(180,211,230,.48) 0%,transparent 78%),
+  radial-gradient(ellipse 72% 76% at -8% 96%,rgba(249,232,218,.62) 0%,transparent 76%),
+  linear-gradient(135deg,#f8fbfd 0%,#edf6fa 52%,#fbfaf6 100%)!important;
+ background-size:cover!important;
+ background-position:center!important;
+ background-attachment:scroll!important;
+ border:0!important;
+ color:#28475e!important;
+}
+html body #gate.authgate::before,
+html body #gate.authgate.custom-login-bg::before{
+ display:none!important;
+}
+html body #gate .authcard,
+html body #gate .login-showcase,
+html body #gate.custom-login-bg .authcard,
+html body #gate.custom-login-bg .login-showcase{
+ border:1px solid rgba(211,225,235,.85)!important;
+ background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(254,252,249,.92))!important;
+ border-radius:24px!important;
+ box-shadow:0 28px 75px #2d5e7b1b,0 5px 23px #2d5e7b0a!important;
+ color:#294b63!important;backdrop-filter:blur(16px)!important;
+}
+html body #gate .login-showcase h1,html body #gate .authcard h2{
+ font-weight:800!important;color:#234964!important;letter-spacing:-.065em!important;
+ text-shadow:none!important;
+}
+html body #gate .login-kicker{
+ font-size:11px!important;
+ color:#5e8297!important;
+ background:#e7f2f8!important;
+ border:1px solid #d0e4ee!important;
+ border-radius:999px!important;
+ padding:7px 12px!important;
+ box-shadow:none!important;
+ letter-spacing:.075em!important;
+}
+html body #gate .login-chips span{
+ background:#eef6f9!important;border:1px solid #d7e6ec!important;
+ border-radius:999px!important;color:#54758c!important;box-shadow:none!important;
+}
+html body #gate .authcard :is(input,select,textarea){
+ border:1px solid #d2e1e8!important;border-radius:12px!important;
+ background:#fcfefe!important;color:#29495c!important;
+ box-shadow:0 3px 13px #365e7308!important;
+}
+html body #gate .authcard :is(.btn,button){
+ border-radius:12px!important;
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+html body #gate .authcard p,html body #gate .login-showcase p{
+ color:#627e90!important;line-height:1.8!important;
+}
+html body #gate .login-logo-frame{display:none!important}
+html body #gate .login-showcase{box-shadow:0 28px 75px #2d5e7b10!important}
+/* Original nonvideo homepage now takes the leading position and receives the same palette. */
+html body #site #intro .hero{
+ margin-top:0!important;min-height:clamp(270px,30vw,385px)!important;
+ border:1px solid #d8e5ec!important;
+ border-radius:25px!important;
+ background-color:#f1f7fa!important;
+ background-image:
+  radial-gradient(circle at 91% 18%,rgba(183,215,232,.65),transparent 37%),
+  radial-gradient(circle at 11% 98%,rgba(247,230,217,.54),transparent 45%),
+  linear-gradient(125deg,#fdfdfb 0%,#ecf5f9 58%,#f6f6f2 100%)!important;
+ box-shadow:0 23px 62px #2c567b14,0 4px 15px #2c567b09!important;
+}
+html body #site #intro .hero::before,
+html body #site #intro .hero::after{display:none!important}
+html body #site #intro .hero h1{
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ color:#214f70!important;
+ font-size:clamp(29px,3.7vw,51px)!important;
+ font-weight:800!important;letter-spacing:-.06em!important;
+}
+html body #site #intro .hero h1 em{
+ font-family:'Playfair Display',Georgia,serif!important;
+ font-style:italic!important;color:#6791a8!important;
+}
+html body #site #intro .hero .garden-study-description,
+html body #site #intro .hero p{
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ color:#557a93!important;
+}
+html body #site #intro .hero .pixel-hero-tag{
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ font-size:10px!important;font-weight:800!important;
+ letter-spacing:.09em!important;
+ color:#406d86!important;
+ background:rgba(235,244,249,.92)!important;
+ border:1px solid #cee2ec!important;border-radius:999px!important;
+ box-shadow:none!important;
+}
+html body #site :is(.box,.card,.word,.member,.student-card,.profile-section){
+ background:linear-gradient(150deg,#fffefe 0%,#fbfcfc 70%,#f8faf9 100%)!important;
+ border-color:#dce6ed!important;
+ box-shadow:0 17px 44px #264f7012,0 4px 15px #264f7007!important;
+}
+html body #site :is(.box,.card,.word,.member):hover{
+ box-shadow:0 25px 51px #264f7022,0 5px 19px #264f700d!important;
+}
+html body #site .writepad{
+ background:#f8fbfb!important;
+ border:1px dashed #c2d7e1!important;
+ border-radius:17px!important;
+ box-shadow:inset 0 1px 16px #315a7606!important;
+}
+html body #site .study-filter-toolbar{
+ background:rgba(255,254,252,.97)!important;border-color:#dce8ed!important;
+ box-shadow:0 10px 28px #2952710e!important;
+}
+html body #site :is(.word,.member) img{
+ background-color:#f5f8f8!important;
+}
+html body :is(#timerFloatingWindow,#timerFloatingChip,.popup,#wordDetail,#tthkWordImageLibrary){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+html body :is(#timerFloatingWindow,#timerFloatingChip,.popup) {
+ background:#fffdfbf5!important;
+ border-color:#d5e5ec!important;
+ box-shadow:0 18px 50px #315b7b21!important;
+ border-radius:17px!important;
+}
+html body .page-loader{
+ background:#f1f7faf3!important;
+ background-image:linear-gradient(138deg,#f6fafbed,#f3f6f2f5)!important;
+}
+html body .page-loader-inner{
+ background:linear-gradient(145deg,#ffffff,#fbfaf7)!important;
+ border-color:#d7e5ec!important;
+ box-shadow:0 23px 70px #335f7e24!important;
+}
+html body #site .choice,html body #site .btn,html body #site .switch button{
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+html body #site #wordDetail .wd-stroke-title{
+ font-size:26px!important;font-weight:800!important;
+}
+html body #site #lookup .gr-card,
+html body #site #lookup .gr-panel{
+ background:#fffdfc!important;border-color:#dce8ee!important;
+ border-radius:16px!important;box-shadow:0 9px 28px #315b7b0e!important;
+}
+@media(max-width:850px){
+ html body #gate .login-showcase,
+ html body #gate .authcard{border-radius:20px!important}
+ html body #site #intro .hero{min-height:280px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body #site .page.on{animation:none!important}
+}
