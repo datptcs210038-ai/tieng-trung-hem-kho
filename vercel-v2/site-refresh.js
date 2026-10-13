@@ -154,22 +154,36 @@ function navigation(){
 }
 function convertSelects(){
  for(const el of $$('select')){
-  if(el.dataset.tthkTabs||el.hidden||!el.options?.length||el.options.length>50)continue;
+  if(el.dataset.tthkTabs||el.hidden||!el.options?.length)continue;
   if(el.closest('.hsk20-dialog-layer,#hsk20ExamOverlay'))continue;
   el.dataset.tthkTabs='1';
-  const wrap=document.createElement('div');wrap.className='tthk-choice-strip';wrap.setAttribute('aria-label',el.getAttribute('aria-label')||'Chọn tùy chọn');
+  const wrap=document.createElement('div');wrap.className='tthk-choice-strip';
+  wrap.setAttribute('aria-label',el.getAttribute('aria-label')||'Chọn tùy chọn');
+  const many=el.options.length>50;
+  let search=null,picks=wrap;
+  if(many){
+   wrap.classList.add('tthk-many-choices');
+   const outer=document.createElement('div');outer.className='tthk-choice-search';
+   search=document.createElement('input');search.type='search';search.placeholder='Tìm chữ Hán hoặc nghĩa tiếng Việt';search.setAttribute('aria-label','Tìm từ tiếng Trung hoặc nghĩa tiếng Việt');
+   picks=document.createElement('div');picks.className='tthk-choice-strip';
+   outer.append(search,picks);el.insertAdjacentElement('afterend',outer);
+  }else{el.insertAdjacentElement('afterend',wrap)}
   const render=()=>{
-   wrap.replaceChildren();
-   [...el.options].forEach((o,i)=>{
-    if(o.disabled)return;
+   const q=search?.value?.trim().toLocaleLowerCase('vi')||'';
+   picks.replaceChildren();
+   [...el.options].filter(o=>!o.disabled&&(!q||o.textContent.toLocaleLowerCase('vi').includes(q))).slice(0,many?14:50).forEach(o=>{
     const b=document.createElement('button');b.type='button';b.textContent=o.textContent;
-    b.className='tthk-choice-option';b.setAttribute('aria-pressed',String(el.selectedIndex===i));
-    b.onclick=()=>{el.selectedIndex=i;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));render();};
-    wrap.append(b);
+    b.className='tthk-choice-option';b.setAttribute('aria-pressed',String(el.value===o.value));
+    b.onclick=()=>{
+     el.value=o.value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+     render();
+    };
+    picks.append(b);
    });
   };
-  el.insertAdjacentElement('afterend',wrap);el.classList.add('tthk-original-select');render();
+  el.classList.add('tthk-original-select');render();
   el.addEventListener('change',render);
+  if(search)search.oninput=render;
   const observer=new MutationObserver(render);observer.observe(el,{childList:true,subtree:true});
  }
 }
@@ -290,6 +304,7 @@ async function saveWord(event){
  status.textContent='Đã cập nhật ảnh và ví dụ.';D.vocab();
 }
 function hideCollocations(){
+ for(const el of $('[data-lookup]')){if(/kết hợp từ/i.test(el.textContent||''))el.hidden=true}
  for(const el of $$('button,a,span,h2,h3,h4')){
   if(el.children.length||!el.textContent)continue;
   if(/^\s*(Kết hợp từ|Cụm từ kết hợp)\s*$/i.test(el.textContent)){el.hidden=true}
