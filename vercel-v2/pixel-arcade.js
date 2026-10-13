@@ -119,9 +119,49 @@ function mood(){
  return 'happy';
 }
 function moodText(){const m=mood();return m==='eating'?'Nhăm nhăm! ♡':m==='grooming'?catName+' đang lau mặt! 🐾':m==='hungry'?'Meo… đói rồi!':m==='sleeping'?'No quá… Zzz':'Meo! Chơi cùng tui!'}
+
+/* SKY GARDEN 2D — shared illustration system for pet, wardrobe and food.
+   Existing inventory, purchase, feeding, account and animation logic stays intact. */
+function vectorCat(pose='idle',equipped={}){
+ const sleep=pose==='sleep',blink=pose==='blink'||sleep,groom=pose.startsWith('groom');
+ const body=equipped.body,neck=equipped.neck,head=equipped.head;
+ const costume=body?'<path d="M58 144Q93 127 128 144L134 185Q93 198 52 185Z" fill="'+(body==='aoba'?'#c5b1e8':body==='royal'?'#eeb19e':body==='pajamas'?'#b5d9ee':'#8bbbdc')+'" stroke="#668ca2" stroke-width="3"/><path d="M93 139v45" stroke="#f9fcff" stroke-width="3" stroke-dasharray="5 6"/>':'';
+ const scarf=neck?'<path d="M59 136Q92 148 127 135L124 146Q93 162 61 146Z" fill="'+(neck==='bell'?'#ecd797':'#d5aac4')+'" stroke="#a7859b" stroke-width="2"/>'+ (neck==='bell'?'<circle cx="93" cy="151" r="7" fill="#e9c572"/>':'<path d="M102 151l13 20-10 5-14-23" fill="#d5aac4"/>'):'';
+ const hat=head==='beanie'?'<path d="M48 82Q52 22 95 24Q137 30 140 83Z" fill="#9ec7e4" stroke="#648fae" stroke-width="3"/><rect x="45" y="73" width="98" height="15" rx="7" fill="#d9eaf7"/>':head==='crown'?'<path d="M57 72V39L77 54 94 30 110 54 130 39V72Z" fill="#e8cf8c" stroke="#bca161" stroke-width="3"/>':'';
+ const glasses=head==='glasses'?'<g stroke="#526e86" stroke-width="4" fill="none"><circle cx="70" cy="106" r="17"/><circle cx="114" cy="106" r="17"/><path d="M87 105Q93 101 97 105"/></g>':'';
+ const eyes=blink?'<g stroke="#4c596c" stroke-width="3.5" fill="none" stroke-linecap="round"><path d="M60 108q11 9 21 0M103 108q11 9 21 0"/></g>':'<g fill="#405366"><ellipse cx="71" cy="108" rx="5" ry="8"/><ellipse cx="115" cy="108" rx="5" ry="8"/><circle cx="73" cy="105" r="2" fill="white"/><circle cx="117" cy="105" r="2" fill="white"/></g>';
+ const paw=groom?'<path d="M120 149Q131 132 121 108" fill="none" stroke="#fff5e8" stroke-width="17" stroke-linecap="round"/>':'<path d="M62 162q-7 16 8 20M120 162q7 16-8 20" fill="none" stroke="#fff5e8" stroke-width="14" stroke-linecap="round"/>';
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 215" role="img" aria-label="Mèo minh họa 2D" shape-rendering="geometricPrecision">'+
+ '<ellipse cx="94" cy="200" rx="59" ry="9" fill="#547995" opacity=".13"/>'+
+ '<path d="M129 170Q175 174 163 134" fill="none" stroke="#e5b9a4" stroke-width="18" stroke-linecap="round"/>'+
+ '<ellipse cx="94" cy="160" rx="52" ry="42" fill="#fff1df" stroke="#be9c91" stroke-width="3"/>'+
+ costume+
+ '<path d="M43 86L47 35Q49 25 61 35L76 52Q94 44 111 52L130 35Q143 25 143 41L147 87Q151 151 94 157Q36 150 43 86Z" fill="#fff1df" stroke="#be9c91" stroke-width="3"/>'+
+ '<path d="M50 74L54 46L74 63M137 73L136 46L116 63" fill="#f0b5b3" opacity=".77"/>'+
+ '<path d="M93 115l-6 6 7 3 7-3-7-6" fill="#c68c92"/>'+
+ '<path d="M94 124q-4 8-11 4M94 124q4 8 11 4" fill="none" stroke="#9c7c86" stroke-width="2.5" stroke-linecap="round"/>'+
+ eyes+
+ '<g fill="#f1b7b7" opacity=".6"><ellipse cx="53" cy="122" rx="11" ry="6"/><ellipse cx="133" cy="122" rx="11" ry="6"/></g>'+
+ '<g stroke="#ab9695" stroke-width="1.7" stroke-linecap="round"><path d="M56 128l-23-5M57 135l-23 2M130 128l23-5M130 135l23 2"/></g>'+
+ paw+scarf+hat+glasses+'</svg>';
+}
+function vectorFood(id){
+ const art={
+ fish:'<path d="M29 54Q58 17 91 51Q60 90 29 54Z" fill="#8abdda"/><path d="M32 54l-19-18v36Z" fill="#a8cee7"/><circle cx="77" cy="47" r="4" fill="#365e75"/>',
+ milk:'<path d="M31 31h44l8 16-6 45H29l-5-45Z" fill="#c7e2f2" stroke="#679ebc" stroke-width="3"/><path d="M31 31l11-13h26l7 13" fill="#f8fbff"/><path d="M39 55q12-12 27 0v21H39Z" fill="#fff"/>',
+ cookie:'<circle cx="53" cy="54" r="35" fill="#e4bb8b" stroke="#bc956d" stroke-width="3"/><g fill="#ae805d"><circle cx="44" cy="42" r="5"/><circle cx="66" cy="51" r="5"/><circle cx="46" cy="68" r="4"/></g>',
+ salmon:'<ellipse cx="55" cy="80" rx="40" ry="12" fill="#d9e7ec"/><path d="M25 60Q47 38 78 60Q57 79 25 60Z" fill="#efa993"/><path d="M30 59q20 9 43 0" stroke="#ffe0cf" stroke-width="4" fill="none"/>'
+ };
+ return '<svg class="tthk-food-2d" viewBox="0 0 110 110" aria-hidden="true"><rect x="3" y="3" width="104" height="104" rx="26" fill="#eef7fc"/>'+ (art[id]||art.fish)+'</svg>';
+}
+function skySceneDecor(){
+ return '<div class="sky-scene-decor" aria-hidden="true"><div class="sky-cloud"></div><div class="sky-tree"><i></i></div><div class="sky-bench"><i></i></div><div class="sky-grass"></div>'+
+ Array.from({length:7},(_,n)=>'<span class="sky-leaf" style="--n:'+n+'"></span>').join('')+'</div>';
+}
+
 function petScene(){
  const m=mood();
- return '<div class="pa-scene"><span class="pa-cat-bubble">'+moodText()+'</span><div class="pa-pet-stage"><div class="pa-cat is-'+m+'"><span class="pa-cat-base"></span></div>'+
+ return '<div class="pa-scene">'+skySceneDecor()+'<span class="pa-cat-bubble">'+moodText()+'</span><div class="pa-pet-stage"><div class="pa-cat is-'+m+'"><span class="pa-cat-base"></span></div>'+
  (m==='sleeping'?'<span class="pa-zzz">Z z z</span>':'')+
  (m==='eating'?'<span class="pa-crumb">♥ + ♡</span>':'')+
  '</div></div>';
@@ -194,7 +234,7 @@ function shopCard(item){
  const isFood=item.category==='food';
  const text=isFood?'Mua · '+item.cost+' xu':equipped?'✓ Đang mặc':owned?'Mặc lên mèo':'Mua · '+item.cost+' xu';
  const action=isFood?'buy':equipped?'unequip':owned?'equip':'buy';
- return '<div class="pa-shop-item"><div class="pa-shop-sprite">'+(isFood?pixelSvg(item.id):wardrobePreview(item.id))+'</div><strong>'+item.name+'</strong><p>'+item.caption+'</p>'+
+ return '<div class="pa-shop-item"><div class="pa-shop-sprite">'+(isFood?vectorFood(item.id):vectorCat('idle',{[item.category]:item.id}))+'</div><strong>'+item.name+'</strong><p>'+item.caption+'</p>'+
  '<span class="pa-price">'+(isFood?'Trong kho: '+stock:owned?'Đã sở hữu ✓':item.cost+' xu')+'</span>'+
  '<button '+(equipped?'class="is-equipped" ':'')+'type="button" data-action="'+action+'" data-item="'+item.id+'">'+text+'</button></div>';
 }
@@ -522,27 +562,18 @@ function catTravel(timeMs,walkMs=8000,restMs=1900){
 }
 function setCatSprite(node,state){
  if(!node)return;
- const [col,row]=POSES[state]||POSES.idle;
- const looks=window.TTHK_CAT_LOOKS;
- const lookKey=looks?.key(pet.equipped||{})||'base';
- const v=String(looks?.version||0);
- if(node.dataset.catPose===state&&node.dataset.catLook===lookKey&&node.dataset.catVersion===v)return;
- node.dataset.catPose=state;node.dataset.catLook=lookKey;node.dataset.catVersion=v;
- const atlas=looks?.url(pet.equipped||{})||window.TTHK_CAT_ATLAS;
- if(atlas){
-  node.style.setProperty('background-image','url("'+atlas+'")','important');
-  node.style.setProperty('background-size','400% 200%','important');
-  node.style.setProperty('background-position',(col*100/3)+'% '+(row*100)+'%','important');
- }else{
-  const p=state==='groom1'?'groom1':state==='groom2'?'groom2':state;
-  node.style.setProperty('background-image','url("/kitten-v2-'+p+'.svg")','important');
-  node.style.setProperty('background-size','contain','important');
-  node.style.setProperty('background-position','center','important');
- }
+ const lookKey=JSON.stringify(pet.equipped||{});
+ if(node.dataset.catPose===state&&node.dataset.catLook===lookKey&&node.dataset.catVersion==='sky2d')return;
+ node.dataset.catPose=state;node.dataset.catLook=lookKey;node.dataset.catVersion='sky2d';
+ const svg=vectorCat(state,pet.equipped||{});
+ node.style.setProperty('background-image','url("data:image/svg+xml,'+encodeURIComponent(svg)+'")','important');
+ node.style.setProperty('background-size','contain','important');
+ node.style.setProperty('background-position','center','important');
  node.style.setProperty('background-repeat','no-repeat','important');
- node.style.setProperty('image-rendering','pixelated','important');
+ node.style.setProperty('image-rendering','auto','important');
  node.style.setProperty('animation','none','important');
 }
+
 function ensureHomeTrack(){
  const hero=document.querySelector('#intro .hero');
  if(!hero)return null;
