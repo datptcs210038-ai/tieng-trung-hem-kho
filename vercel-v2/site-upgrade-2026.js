@@ -214,7 +214,7 @@ function footer(){
  root.append(el);brand();
 }
 function replaceDropdowns(){
- const selects=$('#site main select');
+ const selects=$$('#site main select');
  for(const el of selects){
   if(el.dataset.tthkConverted||el.closest('#hsk20ExamOverlay')||el.hidden||!el.options?.length)continue;
   const choices=[...el.options];el.dataset.tthkConverted='true';
