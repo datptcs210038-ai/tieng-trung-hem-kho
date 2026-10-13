@@ -612,3 +612,47 @@
 @media(max-width:1020px){#pixelArcade .pa-set-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}}
 @media(max-width:530px){#pixelArcade .pa-set-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#pixelArcade .pa-set-card{padding:10px 8px}#pixelArcade .pa-set-preview{height:118px!important}#pixelArcade .pa-set-top{font-size:9px}#pixelArcade .pa-set-card h3{font-size:23px}#pixelArcade .pa-set-card p{font-size:10px}#pixelArcade .pa-set-detail{font-size:9px}#pixelArcade .pa-set-card button{font-size:10px;padding:8px 5px}}
 @media(max-width:375px){#pixelArcade .pa-set-grid{grid-template-columns:1fr}#pixelArcade .pa-set-preview{height:160px!important}}
+
+
+/* v11 — native-resolution 64x50 layered sprites.
+   Every pixel uses nearest-neighbour scaling on mobile and desktop. */
+#pixelArcade .pa-cat .pa-gear{
+ shape-rendering:crispEdges!important;
+ image-rendering:pixelated!important;
+ background-origin:border-box!important;
+ background-clip:border-box!important;
+}
+#intro .hero .garden-running-cat .garden-cat-gear{
+ position:absolute!important;
+ inset:0!important;
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+ background-size:100% 100%!important;
+ image-rendering:pixelated!important;
+ transform-origin:center center!important;
+ z-index:3!important;
+ pointer-events:none!important;
+ will-change:transform!important;
+}
+#intro .hero .garden-running-cat .garden-cat-gear.body{z-index:3!important}
+#intro .hero .garden-running-cat .garden-cat-gear.neck{z-index:4!important}
+#intro .hero .garden-running-cat .garden-cat-gear.head{z-index:5!important}
+#intro .hero .garden-running-cat .garden-cat-name{z-index:8!important}
+#pixelArcade .pa-shop-preview .pa-wear-body{
+ -webkit-mask-image:var(--cat-atlas-preview,url('/kitten-v2-idle.svg'))!important;
+ mask-image:var(--cat-atlas-preview,url('/kitten-v2-idle.svg'))!important;
+ -webkit-mask-size:400% 200%!important;
+ mask-size:400% 200%!important;
+ -webkit-mask-position:0% 0%!important;
+ mask-position:0% 0%!important;
+ -webkit-mask-repeat:no-repeat!important;
+ mask-repeat:no-repeat!important;
+}
+#pixelArcade .pa-shop-preview .pa-shop-wear,
+#pixelArcade .pa-set-preview .pa-shop-wear{
+ background-repeat:no-repeat!important;
+ image-rendering:pixelated!important;
+}
