@@ -1293,3 +1293,6 @@ if(gate&&window.supabase){
  script.onerror=()=>console.warn('Có lỗi tải giao diện mới; các chức năng cũ vẫn hoạt động.');
  document.head.appendChild(script);
 })();
+
+// Authorized contact details editor and authentic Fanpage link, without changing legacy auth.
+;(()=>{if(document.getElementById('tthkContactSettingsLoader'))return;const n=document.createElement('script');n.id='tthkContactSettingsLoader';n.src='/site-contact-editor.js?v=secure-contacts-20261013-v1';document.head.appendChild(n)})();
