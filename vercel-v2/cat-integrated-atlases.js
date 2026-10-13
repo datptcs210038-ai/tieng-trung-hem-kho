@@ -52,7 +52,7 @@
     const ox=(i%4)*64,oy=Math.floor(i/4)*50,poseData=P[pose];
     ctx.save();ctx.translate(ox,oy);
     // The color mask is sampled BEFORE adding glasses, collar or stitched fabric.
-    const original=ctx.getImageData(0,0,64,50).data;
+    const original=ctx.getImageData(ox,oy,64,50).data;
     const dot=(x,y,c,w=1,h=1)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h)};
     const safe=(x,y)=>{
      if(x<0||x>=64||y<0||y>=50)return false;
