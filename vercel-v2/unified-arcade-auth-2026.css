@@ -455,3 +455,52 @@ html body #site #intro .garden-cat-sprite{image-rendering:auto!important}
  html body #site :is(.box,.card,.word,.member),html body #pixelArcade :is(.pa-panel,.pa-game-card,.pa-shop-item){border-radius:18px!important}
  html body #gate :is(.authcard,.login-showcase){border-radius:22px!important}
 }
+
+/* October 2026: consolidated light ocean-blue color tokens, including login and pet UI. */
+:root,html body,html body #site,html body #gate,html body #pixelArcade{
+  --bg:#f3f9fd;--surface:#fff;--surface2:#eaf5fb;
+  --primary:#77b8dc;--primary2:#317da5;--jade:#77b8dc;--jade2:#317da5;
+  --ink:#294b62;--muted:#68879b;--line:#d5e7f1;
+  --tthk-ink:#294b62;--tthk-strong:#26485f;--tthk-muted:#68879b;
+  --tthk-soft:#eaf5fb;--tthk-surface:#fff;--tthk-edge:#d5e7f1;
+  --tthk-deep:#317da5;--qa-leaf:#77b8dc;--qa-edge:#d5e7f1;
+  --qa-warm:#fff;--qa-yellow:#eaf5fb;
+  color-scheme:light;
+}
+html body :is(#site,#gate,#pixelArcade,#timerFloatingWindow,#timerFloatingChip,#wordDetail) :is(.btn,button,[role="button"]){
+  transition:background-color .2s ease,border-color .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+html body #gate :is(.authcard,.login-showcase,.authpane),
+html body #site :is(.box,.card,.word,.member,.profile-section),
+html body #pixelArcade :is(.pa-panel,.pa-game-card,.pa-shop-item,.pa-cat-room,.pa-cat-home,.pa-inventory,.pa-results,.pa-set-card){
+  border-color:var(--tthk-edge)!important;
+}
+html body #pixelArcade .pa-shop-cat,
+html body #pixelArcade .pa-shop-preview,
+html body #pixelArcade .pa-shop-sprite{
+  image-rendering:auto!important;
+  background-repeat:no-repeat!important;
+}
+html body #pixelArcade .pa-shop-cat{
+  background-size:contain!important;
+  background-position:center!important;
+  image-rendering:auto!important;
+}
+html body #pixelArcade .pa-shop-preview{
+  overflow:hidden;
+  background-color:#edf7fc!important;
+  border:1px solid #d5e7f1!important;
+}
+html body #pixelArcade .pa-shop-sprite svg{
+  image-rendering:auto!important;
+  width:100%!important;
+  max-height:100%!important;
+}
+html body #pixelArcade .pa-cat-base,
+html body #site .garden-cat-sprite{
+  image-rendering:auto!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html body #site :is(.btn,button,[role="button"]),
+  html body #pixelArcade :is(.btn,button,[role="button"]){transition:none!important}
+}
