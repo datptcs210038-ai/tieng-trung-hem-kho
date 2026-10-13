@@ -1150,7 +1150,7 @@ if(gate&&window.supabase){
   if(document.getElementById('hskGrammarCourseLoader'))return;
   const ui=document.createElement('script');
   ui.id='hskGrammarCourseLoader';
-  ui.src='/grammar-course.js?v=hsk-grammar-ui-20261009-v1';
+  ui.src='/grammar-course.js?v=no-word-combinations-20261014-v2';
   document.head.append(ui);
  };
  script.onload=load;
@@ -1306,4 +1306,17 @@ if(gate&&window.supabase){
  script.src='/top-glass-refinement.js?v=topbar-glass-harmony-v1';
  script.onerror=()=>console.warn('Top navigation enhancement unavailable; core learning remains available.');
  document.head.appendChild(script);
+})();
+
+
+// Final consistent visual layer: Manrope fonts, calm blue/ivory backgrounds,
+// and login/home/cards unified. No new video is bootstrapped.
+;(()=>{
+ 'use strict';
+ if(document.getElementById('tthkVisualUnityStyles'))return;
+ const stylesheet=document.createElement('link');
+ stylesheet.id='tthkVisualUnityStyles';
+ stylesheet.rel='stylesheet';
+ stylesheet.href='/visual-unity-2026.css?v=unified-font-bg-no-video-v1';
+ document.head.appendChild(stylesheet);
 })();
