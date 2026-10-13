@@ -10,15 +10,16 @@ const css=document.createElement('link');css.rel='stylesheet';css.href='/grammar
 const originalLookup=D.lookup;
 const lookupBtns=[...root.querySelectorAll('[data-lookup]')];
 for(const button of lookupBtns){
- if(['examples','hanzi'].includes(button.dataset.lookup)){button.remove();continue}
+ // Only keep the searchable HSK dictionary and grammar views.
+ // Retired 'Kết hợp từ' and other legacy lookup modes must not reappear.
+ if(!['words','grammar'].includes(button.dataset.lookup)){button.remove();continue}
  if(button.dataset.lookup==='words')button.textContent='Từ vựng & Hán tự';
- else if(button.dataset.lookup==='grammar')button.textContent='Ngữ pháp HSK 1–2';
- else button.textContent='Kết hợp từ';
+ else button.textContent='Ngữ pháp HSK 1–2';
 }
 const existingBtns=[...root.querySelectorAll('[data-lookup]')];
 const tabs=root.querySelector('.switch')||existingBtns[0]?.parentElement;
 if(tabs)tabs.setAttribute('aria-label','Chọn nội dung tra cứu');
-D.lookupType=['words','grammar'].includes(D.lookupType)?D.lookupType:(existingBtns.some(b=>b.dataset.lookup===D.lookupType)?D.lookupType:'words');
+D.lookupType=['words','grammar'].includes(D.lookupType)?D.lookupType:'words';
 const state={level:'all',group:'all',limit:12,active:null,answered:[],done:new Set(),ready:false};
 const allGroups=[...new Set(lessons.map(item=>item.group))];
 const key=()=>{const user=D.profileContext?.().user;return 'tthk-grammar-progress-v1-'+(user?.id||'guest')};
