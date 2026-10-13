@@ -5,23 +5,36 @@
  'use strict';
  const BASE=win.TTHK_CAT_ATLAS;
  const poses=['idle','blink','walk1','walk2','groom1','groom2','eat','sleep'];
- const P={
-  // Landmarks calibrated against the original cat: head at x28–58, body at x12–36.
-  idle:  {eye:[38,50,24],neck:[34,33],coat:[23,33]},
-  blink: {eye:[38,50,24],neck:[34,33],coat:[23,33]},
-  walk1: {eye:[39,51,23],neck:[34,33],coat:[22,33]},
-  walk2: {eye:[39,51,24],neck:[35,34],coat:[23,34]},
-  groom1:{eye:[36,48,23],neck:[32,34],coat:[23,34]},
-  groom2:{eye:[35,47,24],neck:[32,34],coat:[23,34]},
-  eat:   {eye:[40,51,25],neck:[37,33],coat:[23,33]},
-  sleep: {eye:[36,47,27],neck:[35,36],coat:[26,36]}
- };
+ const areas=[
+ [[12,31],[14,26],[20,24],[31,24],[34,28],[37,32],[37,40],[31,41],[12,40]],
+ [[12,31],[14,26],[20,24],[31,24],[34,28],[37,32],[37,40],[31,41],[12,40]],
+ [[13,31],[14,27],[20,24],[31,24],[35,29],[37,33],[36,40],[13,40]],
+ [[13,31],[15,27],[21,24],[32,24],[36,29],[38,33],[37,40],[13,40]],
+ [[15,36],[19,31],[26,29],[39,31],[43,39],[39,44],[17,44]],
+ [[16,36],[20,31],[27,29],[40,31],[43,40],[40,44],[18,44]],
+ [[30,20],[36,18],[45,19],[51,24],[51,37],[45,38],[32,34]],
+ [[32,19],[39,16],[49,16],[56,23],[60,30],[58,38],[37,39],[32,34]]
+ ];
  const paints={
-  student:{cloth:'#45698a',highlight:'#81adbd',dark:'#2e506e',trim:'#f4ecdc'},
-  aoba:{cloth:'#8e739a',highlight:'#b7a0bb',dark:'#6c537b',trim:'#f2e1c9'},
-  royal:{cloth:'#b25d68',highlight:'#d88787',dark:'#864753',trim:'#f0ca78'},
-  pajamas:{cloth:'#83aa9b',highlight:'#b5ccc0',dark:'#598575',trim:'#f5e8cf'}
+ student:['#425e83','#668ca9','#314765','#e6e9e8','#d9b967'],
+ aoba:['#9a7da6','#c3a8c8','#745e87','#f0e3cf','#edb08b'],
+ royal:['#b85d68','#d48a86','#8b404f','#edc87a','#f7df9e'],
+ pajamas:['#70a18d','#a5c9b4','#487763','#fff3dc','#e8b6bd']
  };
+ const necks=[[35,31],[35,31],[35,31],[36,31],[35,30],[34,31],[36,30],[34,33]];
+ const eyeCenters=[[[40,53],21],[[40,53],21],[[41,53],21],[[41,53],21],[[33,46],24],[[32,43],23]];
+ function inside(x,y,points){
+  let hit=false;
+  for(let i=0,j=points.length-1;i<points.length;j=i++){
+   const p=points[i],q=points[j];
+   if((p[1]>y)!==(q[1]>y) && x<(q[0]-p[0])*(y-p[1])/(q[1]-p[1])+p[0])hit=!hit;
+  }
+  return hit;
+ }
+ function rgb(color){
+  const n=parseInt(color.slice(1),16);
+  return [(n>>16)&255,(n>>8)&255,n&255];
+ }
  const loaded=new Map(),pending=new Set(),subscribers=new Set();
  let image=null,loadPromise=null,version=0;
  function normalize(eq){
@@ -49,98 +62,80 @@
    ctx.imageSmoothingEnabled=false;
    // Preserve the existing gray tabby verbatim before drawing any clothing.
    ctx.drawImage(img,0,0,256,100);
-   poses.forEach((pose,i)=>{
-    const ox=(i%4)*64,oy=Math.floor(i/4)*50,poseData=P[pose];
-    ctx.save();ctx.translate(ox,oy);
-    // The color mask is sampled BEFORE adding glasses, collar or stitched fabric.
-    const original=ctx.getImageData(ox,oy,64,50).data;
-    const dot=(x,y,c,w=1,h=1)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),w,h)};
-    const safe=(x,y)=>{
-     if(x<0||x>=64||y<0||y>=50)return false;
-     const t=(y*64+x)*4,red=original[t],green=original[t+1],blue=original[t+2];
-     // Only repaint opaque fur, never transparent room, black outlines, eyes or pink ears.
-     if(original[t+3]<150)return false;
-     // The face and eyes must remain pixel-for-pixel identical beneath its glasses.
-     if(x>=35&&y<38)return false;
-     if(Math.max(red,green,blue)<76)return false;
-     if(red>green*1.2&&red>blue*1.12&&red>115)return false;
-     return true;
-    };
+   // Each of 8 drawings is a completely finished cat; nothing is layered on the DOM.
+   poses.forEach((pose,f)=>{
+    const ox=(f%4)*64,oy=Math.floor(f/4)*50;
     if(e.body){
-     const colors=paints[e.body];
-     const [cx,cy,w,h]=poseData.coat;
-     const widths=[8,12,16,19,21,22,22,21,19,17,13];
-     const center=cx+2;
-     const top=cy-7;
-     // Garment follows the organic torso, not a rectangle or a separate CSS overlay.
-     for(let yy=0;yy<11;yy++){
-      const half=Math.round(widths[yy]/2),left=center-half;
-      for(let x=left;x<left+widths[yy];x++){
-       const y=top+yy;
-       if(!safe(x,y))continue;
-       let shade=colors.cloth;
-       if(x<left+3||yy<2)shade=colors.highlight;
-       else if(x>left+widths[yy]-4||yy>8)shade=colors.dark;
-       dot(x,y,shade);
+     // Paint the existing fur on the ORIGINAL torso contour rather than a costume patch.
+     const palette=paints[e.body].map(rgb);
+     const data=ctx.getImageData(ox,oy,64,50),pixels=data.data;
+     for(let y=0;y<50;y++)for(let x=0;x<64;x++){
+      if(!inside(x+.5,y+.5,areas[f]))continue;
+      const offset=4*(64*y+x),r=pixels[offset],g=pixels[offset+1],b=pixels[offset+2],a=pixels[offset+3];
+      if(a<210)continue;
+      let replacement=null;
+      if(Math.abs(r-172)<=17&&Math.abs(g-169)<=17&&Math.abs(b-165)<=17)
+       replacement=palette[(y<26||x<18||(x+y)%13<3)?1:0];
+      else if(r>65&&r<135&&Math.abs(r-g)<28&&Math.abs(g-b)<30)
+       replacement=palette[2];
+      if(replacement){
+       pixels[offset]=replacement[0];pixels[offset+1]=replacement[1];pixels[offset+2]=replacement[2];pixels[offset+3]=253;
       }
      }
-     // Subtle embroidery is clipped to the cat's torso and scaled in original pixels.
-     for(let yy=3;yy<10;yy++){
-      const y=top+yy,x=center+1;
-      if(safe(x,y))dot(x,y,colors.trim);
-     }
-     if(e.body==='student'){
-      for(let x=center-6;x<center-1;x++)if(safe(x,top+4))dot(x,top+4,'#e8efdf');
-      if(safe(center-4,top+5))dot(center-4,top+5,'#edc177');
-     }else if(e.body==='aoba'){
-      for(const y of [top+4,top+7,top+9])if(safe(center+3,y))dot(center+3,y,'#e9c48a');
-      for(let x=center-5;x<center-2;x++)if(safe(x,top+5))dot(x,top+5,'#e0c3d3');
-     }else if(e.body==='royal'){
-      for(let x=center-6;x<center+6;x++)if(safe(x,top+8))dot(x,top+8,'#edc475');
-      for(let j=0;j<5;j++){const x=center-3+j,y=top+3+Math.abs(2-j);
-       if(safe(x,y))dot(x,y,'#f3d68c')}
-     }else{
-      for(let x=center-5;x<center-1;x++)if(safe(x,top+4))dot(x,top+4,'#f1e9d4');
-      if(safe(center-3,top+5))dot(center-3,top+5,'#efbfc9');
-     }
+     ctx.putImageData(data,ox,oy);
     }
-    // All add-ons are baked INTO the same image, at the same 64x50 pixel coordinates.
-    const eyes=poseData.eye,[nx,ny]=poseData.neck;
-    const wearingGlasses=e.head==='glasses';
-    function glasses(){
-     const [left,right,cy]=eyes;
-     const color='#48667a',shine='#bce2de';
-     // Light 7x6 frames line up with BOTH eye pupils, no chunky lens panel.
-     for(const c of [left,right]){
-      const xx=c-4,yy=cy-3;
-      for(let x=xx+1;x<xx+7;x++)dot(x,yy,color);
-      for(let x=xx+1;x<xx+7;x++)dot(x,yy+6,color);
-      for(let y=yy+1;y<yy+6;y++){dot(xx,y,color);dot(xx+7,y,color)}
-      dot(xx+2,yy+1,shine);dot(xx+3,yy+1,shine);
-     }
-     for(let x=left+4;x<right-4;x++)dot(x,cy-1,color);
-     dot(left-5,cy-1,color,2,1);dot(right+4,cy-1,color,2,1);
+    ctx.save();ctx.translate(ox,oy);
+    const rect=(x,y,w,h,c)=>{
+     ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)));
+    };
+    const dot=(x,y,c)=>rect(x,y,1,1,c);
+    if(e.body){
+     const colors=paints[e.body];
+     if(f<4){
+      rect(30,28,6,2,colors[3]);rect(32,30,2,3,colors[3]);rect(20,36,5,1,colors[1]);
+      if(e.body==='student'){rect(21,31,3,2,colors[3]);dot(22,32,colors[4]);}
+      else if(e.body==='aoba'){rect(27,30,1,7,colors[3]);dot(28,32,colors[4]);dot(28,35,colors[4]);}
+      else if(e.body==='royal'){rect(17,36,13,1,colors[4]);rect(26,29,3,3,colors[4]);}
+      else{rect(20,29,4,2,colors[3]);rect(27,36,3,2,colors[3]);dot(23,30,colors[4]);}
+     }else if(f===4||f===5){
+      rect(30,32,6,2,colors[3]);
+      if(e.body==='aoba')dot(32,35,colors[4]);
+     }else if(f===6){rect(34,25,2,5,colors[3]);}
+     else{rect(38,23,6,1,colors[3]);}
     }
-    if(wearingGlasses)glasses();
+    if(e.head==='glasses'&&f<6){
+     const [centers,ey]=eyeCenters[f];
+     const ink='#364f69',highlight='#9ebfcb';
+     for(const cx of centers){
+      const x=cx-4,y=ey-4;
+      rect(x+1,y,6,1,ink);rect(x,y+1,1,5,ink);
+      rect(x+7,y+1,1,5,ink);rect(x+1,y+6,6,1,ink);
+      dot(x+2,y+1,highlight);
+     }
+     const [left,right]=centers;
+     rect(left+4,ey-2,Math.max(1,right-left-8),1,ink);
+     rect(left-6,ey-2,3,1,ink);rect(right+3,ey-2,3,1,ink);
+    }else if(e.head==='crown'&&f!==6&&f!==7){
+     const x=[45,45,45,45,38,36][f],y=f<4?6:4;
+     rect(x-7,y+3,15,3,'#edc168');rect(x-7,y+1,2,4,'#edc168');
+     rect(x,y-2,2,6,'#edc168');rect(x+6,y+1,2,4,'#edc168');
+     rect(x-7,y+5,15,1,'#9a6133');dot(x,y+4,'#ba566a');
+    }else if(e.head==='beanie'&&f!==6){
+     let x,y;
+     if(f===7){x=27;y=9}
+     else if(f>=4){x=29;y=6}
+     else{x=37;y=6}
+     const rows=[[x,y-1,3],[x-2,y,7],[x-4,y+1,11],[x-5,y+2,12],[x-6,y+3,14],[x-6,y+4,14]];
+     for(const [xx,yy,w] of rows)rect(xx,yy,w,1,'#599077');
+     rect(x-6,y+5,14,2,'#386756');rect(x+4,y-2,3,3,'#edb3bc');
+    }
+    const [nx,ny]=necks[f];
     if(e.neck==='scarf'){
-     for(let x=nx-4;x<nx+5;x++)dot(x,ny-2,'#b95f77');
-     for(let x=nx-3;x<nx+4;x++)dot(x,ny-1,'#ec9baf');
-     for(let y=ny;y<ny+4;y++)dot(nx+1,y,'#b95f77',3,1);
-     dot(nx+1,ny+2,'#ffd4d2',3,1);
+     rect(nx-4,ny,7,2,'#b9536c');rect(nx-4,ny,7,1,'#ec9ba6');
+     rect(nx-1,ny+2,2,3,'#b9536c');dot(nx-1,ny+3,'#ec9ba6');
     }else if(e.neck==='bell'){
-     for(let x=nx-4;x<nx+5;x++)dot(x,ny-2,'#547e85');
-     dot(nx-2,ny-1,'#f0ce75',5,2);
-     dot(nx-1,ny+1,'#c79548',3,1);dot(nx,ny,'#fff1ab');
-    }
-    if(e.head==='beanie'){
-     const [left,,ey]=eyes;const x=left+3,y=ey-12;
-     for(let j=0;j<5;j++)dot(x-j,y+j,11+j*2,j<2?'#8bb6a9':'#6b9c90');
-     dot(x-5,y+5,'#477f72',24,2);dot(x+3,y-2,'#eeb6c5',4,3);
-    }else if(e.head==='crown'){
-     const [left,,ey]=eyes,x=left+3,y=ey-12;
-     dot(x-8,y+4,'#c69a4e',22,3);dot(x-8,y+3,'#ecc66d',22,1);
-     dot(x-8,y,'#efcc78',3,4);dot(x,y-2,'#efcc78',3,6);dot(x+11,y,'#efcc78',3,4);
-     dot(x+1,y+4,'#c65d7e',2,2);dot(x-5,y+4,'#a6ced1',2,1);
+     rect(nx-4,ny-1,7,1,'#43727b');
+     rect(nx-2,ny,4,3,'#ebc061');dot(nx,ny+2,'#795a2e');
     }
     ctx.restore();
    });
