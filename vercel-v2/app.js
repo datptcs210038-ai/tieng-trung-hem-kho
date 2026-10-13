@@ -1287,7 +1287,7 @@ if(gate&&window.supabase){
  const style=document.createElement('link');
  style.id='tthk2026RefreshStyle';
  style.rel='stylesheet';
- style.href='/site-refresh.css?v=mint-no-oldlogo-20261013-v2';
+ style.href='/site-refresh.css?v=nav-fixed-20261013-v3';
  document.head.append(style);
  const script=document.createElement('script');
  script.id='tthk2026RefreshLoader';
