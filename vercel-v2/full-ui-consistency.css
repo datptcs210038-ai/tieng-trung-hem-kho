@@ -278,3 +278,96 @@ html body #site.site:not([hidden])>.side .nav button.on{
 @media(prefers-reduced-motion:reduce){
  html body #site :is(.box,.card,.word,.member,.btn){transition:none!important}
 }
+
+
+/* HSK 2.0 exam pages were an independent mint-colored UI. Align with site. */
+html body #hsk20Intro,
+html body #examBody .hsk20-app,
+html body #hsk20PaperShelf,
+html body #hsk20Reviews .hsk20-review{
+ background:linear-gradient(145deg,#fffefd,#f8fbfc)!important;
+ border:1px solid #dce7ed!important;
+ border-radius:18px!important;
+ box-shadow:0 14px 39px rgba(35,78,107,.075)!important;
+ color:#2d4c61!important;
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+html body #hsk20Intro :is(strong,small,p),
+html body #examBody .hsk20-app :is(h1,h2,h3,p,small,strong,button,span,label,div),
+html body #hsk20PaperShelf :is(h1,h2,h3,p,small,strong,button,span,label,div),
+html body #hsk20Reviews :is(h1,h2,h3,p,small,strong,button,span,label,div){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+}
+html body #examBody .hsk20-head{
+ background:linear-gradient(115deg,#295f82,#4a8eb2)!important;
+ color:#fff!important;
+ border-radius:18px 18px 0 0!important;
+}
+html body #examBody .hsk20-head :is(h2,small){color:#fff!important}
+html body #examBody :is(.hsk20-choice,.hsk20-number,.hsk20-answer,.hsk20-action,.hsk20-submit),
+html body #hsk20PaperShelf :is(button,.hsk20-paper-card){
+ font-family:'Manrope','Noto Sans SC',system-ui,sans-serif!important;
+ border-radius:11px!important;
+}
+html body #examBody .hsk20-choice{
+ border:1px solid #d0e1ea!important;
+ background:#fff!important;
+ box-shadow:0 5px 13px rgba(37,78,103,.065)!important;
+ color:#325b73!important;
+}
+html body #examBody .hsk20-choice:hover{
+ background:#eef7fa!important;border-color:#99c5dc!important;
+}
+html body #examBody .hsk20-choice[aria-pressed="true"],
+html body #examBody .hsk20-choice.is-selected,
+html body #examBody .hsk20-choice.selected{
+ background:#e3f2fa!important;border-color:#6aa8c9!important;
+ color:#275b80!important;
+}
+html body #examBody .hsk20-progress{
+ background:#e9f1f6!important;border-radius:999px!important;
+}
+html body #examBody .hsk20-progress>div,
+html body #examBody .hsk20-progress>span{
+ background:linear-gradient(90deg,#76b5d3,#3e82a9)!important;border-radius:999px!important;
+}
+html body #examBody :is(.hsk20-aside,.hsk20-numbers,.hsk20-scoredetail){
+ background:#f6fafb!important;border-color:#dce8ed!important;
+ color:#456a80!important;
+}
+html body #examBody :is(.hsk20-score,.hsk20-results strong){
+ color:#2d7ba5!important;
+}
+/* Music and quick speaker controls also use soft borders (no square pixel cast shadow). */
+html body :is(.lofi-toggle,#lofiAuthButton,#lofiSiteButton){
+ border:1px solid #c8deeb!important;
+ border-radius:12px!important;
+ background:rgba(255,254,251,.91)!important;
+ box-shadow:0 8px 22px rgba(36,78,106,.14)!important;
+ color:#2e698d!important;
+}
+html body :is(.lofi-toggle,#lofiAuthButton,#lofiSiteButton):hover{
+ background:#eaf5fa!important;
+ box-shadow:0 10px 26px rgba(36,78,106,.17)!important;
+ transform:translateY(-1px)!important;
+}
+html body :is(.lofi-toggle,#lofiAuthButton,#lofiSiteButton).is-playing{
+ background:#e6f3f9!important;border-color:#93c4da!important;
+ color:#225c80!important;
+}
+html body #lofiAudioStatus{
+ font:700 12px/1.6 'Manrope',sans-serif!important;
+ background:rgba(255,254,251,.94)!important;
+ border:1px solid #d6e4eb!important;border-radius:12px!important;
+ box-shadow:0 11px 25px rgba(32,71,95,.13)!important;
+ color:#4c7185!important;
+}
+html body #lofiSourceLink{
+ font-family:'Manrope',sans-serif!important;
+ color:#6a8da5!important;border-radius:8px!important;
+}
+/* Keep in-game artwork crisp: only chrome is modernized. */
+html body #site #flash #pixelArcade :is(.pa-cat,.pa-cat-base,.pa-set-preview,.pa-shop-sprite svg),
+html body #site #intro .garden-cat-sprite{
+ image-rendering:pixelated!important;
+}
