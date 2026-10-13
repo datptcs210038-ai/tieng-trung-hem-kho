@@ -1242,3 +1242,24 @@ if(gate&&window.supabase){
  atlas.onerror=loadWardrobe;
  document.head.append(atlas);
 })();
+
+
+// Classic HSK 2.0 simulated examination; independent section timer and answer sheet.
+;(()=>{
+ 'use strict';
+ if(document.getElementById('hsk20ExamLoader'))return;
+ const css=document.createElement('link');css.rel='stylesheet';css.href='/hsk20-exam.css?v=hsk20-realformat-20261013-v1';document.head.append(css);
+ const scripts=[
+  '/hsk20-bank.js?v=hsk20-realformat-20261013-v1',
+  '/hsk20-hsk1.js?v=hsk20-realformat-20261013-v1',
+  '/hsk20-exam.js?v=hsk20-realformat-20261013-v1'
+ ];
+ function load(i){
+  if(i>=scripts.length)return;
+  const n=document.createElement('script');if(i===scripts.length-1)n.id='hsk20ExamLoader';
+  n.src=scripts[i];n.onload=()=>load(i+1);
+  n.onerror=()=>console.warn('Không tải được bộ đề HSK 2.0: '+scripts[i]);
+  document.head.append(n);
+ }
+ load(0);
+})();
