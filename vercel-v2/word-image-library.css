@@ -57,3 +57,22 @@ body.tthk-word-image-open{overflow:hidden!important}
  #tthkWordImageLibrary .twil-detail{padding:14px}
  #tthkWordImageLibrary .twil-preview{height:190px}
 }
+
+/* Baby-blue content management, aligned with the 2026 system palette. */
+#tthkWordImageLibrary{background:#EAF6FF!important;color:#335B79!important}
+#tthkWordImageLibrary .twil-shell{background:#FFFFFF!important}
+#tthkWordImageLibrary .twil-top{background:#EFF9FF!important;border-color:#D6E8F5!important;box-shadow:0 6px 21px #335B7912!important}
+#tthkWordImageLibrary .twil-top h1,#tthkWordImageLibrary .twil-word-heading strong{color:#335B79!important}
+#tthkWordImageLibrary .twil-top small{color:#5A92B4!important}
+#tthkWordImageLibrary .twil-sidebar{background:#F3FAFF!important;border-color:#D6E8F5!important}
+#tthkWordImageLibrary .twil-word{border-color:#D6E8F5!important;color:#335B79!important;background:white!important}
+#tthkWordImageLibrary .twil-word.on{background:#CDEAFF!important;border-color:#91C9EA!important}
+#tthkWordImageLibrary .twil-hanzi{color:#335B79!important}
+#tthkWordImageLibrary .twil-word-heading{background:#EAF6FF!important;border-color:#D6E8F5!important}
+#tthkWordImageLibrary .twil-preview,#tthkWordImageLibrary #twilForm input,#tthkWordImageLibrary #twilForm textarea{border-color:#D6E8F5!important;background:#FFF!important;color:#335B79!important}
+#tthkWordImageLibrary .twil-save{background:#A8D8F0!important;color:#335B79!important;border:1px solid #8CC5E5!important}
+#tthkWordImageLibrary .twil-hint,#tthkWordImageLibrary #twilMessage{color:#557D99!important}
+#tthkWordImageLibrary .twil-header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#tthkWordImageLibrary .twil-export,#tthkWordImageLibrary .twil-preview-button{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:1px solid #B5D6EA;border-radius:10px;background:#CDEAFF;color:#335B79;font-weight:850;padding:10px 12px;text-decoration:none;font-size:12px}
+#tthkWordImageLibrary .twil-preview-button{align-self:flex-start}
+@media(max-width:750px){#tthkWordImageLibrary .twil-header-actions{max-width:100%}}
