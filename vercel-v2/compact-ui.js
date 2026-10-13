@@ -6,14 +6,15 @@ function whenReady(){
  const nav=$('.nav');
  if(nav&&!nav.classList.contains('nav-organized')){
   const groups=[
-    {key:'learn',name:'HỌC TẬP',ids:['intro','vocab','lookup']},
-    {key:'practice',name:'LUYỆN TẬP',ids:['writing','flash','exams','rank']},
-    {key:'tools',name:'CÔNG CỤ',ids:['timer','notes','profile']}
+    {key:'home',name:'BẮT ĐẦU',ids:['intro']},
+    {key:'learn',name:'HỌC TIẾNG TRUNG',ids:['vocab','lookup','writing']},
+    {key:'practice',name:'ÔN LUYỆN · KIỂM TRA',ids:['flash','exams','rank']},
+    {key:'tools',name:'CÔNG CỤ · CÁ NHÂN',ids:['timer','notes','profile']}
   ];
   const titles={
     intro:'Tổng quan',vocab:'Từ vựng',lookup:'Tra cứu',
-    writing:'Luyện viết',flash:'Flashcard',exams:'Đề HSK',rank:'Xếp hạng',
-    timer:'Đồng hồ',notes:'Lịch học',profile:'Cá nhân'
+    writing:'Luyện viết',flash:'Học với Hành',exams:'Đề HSK',rank:'Xếp hạng',
+    timer:'Pomodoro',notes:'Lịch học',profile:'Cá nhân'
   };
   const map=new Map([...nav.querySelectorAll('button[data-page]')].map(btn=>[btn.dataset.page,btn]));
   const addGroup=(name,key,ids)=>{
@@ -40,7 +41,7 @@ function whenReady(){
  }
  const descriptions={
   vocab:'Chọn cấp độ, chủ đề và bắt đầu học.',
-  lookup:'Tìm chữ Hán, Pinyin hoặc nghĩa tiếng Việt.',
+  lookup:'Tra nhanh chữ Hán, phiên âm và nghĩa tiếng Việt.',
   writing:'Chọn chữ rồi luyện từng nét.',
   flash:'Ôn nhanh và kiểm tra trí nhớ.',
   exams:'Luyện đề theo cấp độ HSK.',
