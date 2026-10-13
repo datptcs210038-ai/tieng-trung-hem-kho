@@ -125,7 +125,7 @@ D.vocab=function(){
 function renderSavedWords(){
  const grid=$('#wordGrid');if(!grid)return;
  const lv=$('#level')?.value||'all',topic=$('#topic')?.value||'all',query=String($('#vocabQuery')?.value||'').toLowerCase();
- const arr=(D.words||[]).filter(w=>favorites.has(w.h)&&(lv==='all'||String(w.l)===lv)&&(topic==='all'||w.topic===topic)&&[w.h,w.p,w.m].some(x=>String(x||'').toLowerCase().includes(query)));
+ const arr=(D.words||[]).filter(w=>favorites.has(w.h)&&(lv==='all'||String(w.l)===lv)&&(topic==='all'||w.topic===topic)&&[w.h,w.m].some(x=>String(x||'').toLowerCase().includes(query)));
  const view=arr.slice(0,D.shown||32);
  if(view.length){grid.innerHTML=view.map(D.card).join('');D.bindCards(grid)}
  else{grid.innerHTML='<div class="box" style="padding:25px;grid-column:1/-1;text-align:center"><h3>♡ Chưa có từ yêu thích phù hợp</h3><p class="muted">Bấm hình trái tim trên một từ để lưu lại và ôn tập sau nhé.</p></div>';}
