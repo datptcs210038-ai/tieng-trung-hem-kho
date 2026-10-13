@@ -1208,14 +1208,22 @@ if(gate&&window.supabase){
  function loadArcade(){
   const script=document.createElement('script');
   script.id='pixelArcadeBootstrap';
-  script.src='/pixel-arcade.js?v=matching-pixel-sets-v10';
+  script.src='/pixel-arcade.js?v=native-pixel-wardrobe-v11';
   script.onerror=()=>console.warn('Pixel Arcade could not load.');
   document.head.append(script);
+ }
+ function loadWardrobe(){
+  const sprite=document.createElement('script');
+  sprite.id='catNativePixelWardrobe';
+  sprite.src='/cat-wardrobe-pixel.js?v=native-pixel-wardrobe-v11';
+  sprite.onload=loadArcade;
+  sprite.onerror=()=>{console.warn('Pixel clothing sprites unavailable.');loadArcade()};
+  document.head.append(sprite);
  }
  const atlas=document.createElement('script');
  atlas.id='catPixelAtlas';
  atlas.src='/cat-atlas-data.js?v=cat-final-v6';
- atlas.onload=loadArcade;
- atlas.onerror=loadArcade;
+ atlas.onload=loadWardrobe;
+ atlas.onerror=loadWardrobe;
  document.head.append(atlas);
 })();
