@@ -19,7 +19,7 @@
  R3:'Đọc câu hỏi và chọn câu trả lời phù hợp nhất.',
  R4:'Đọc câu và chọn từ thích hợp điền vào chỗ trống.'
  };
- let state=null,tick=null,voiceCounter=0;
+ let state=null,tick=null,voiceCounter=0,examOverlay=null,dialog=null,papersPanel=null,selectedLevel=1;
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function shuffle(src,seed){
   const arr=[...src];let n=seed>>>0;
@@ -59,29 +59,106 @@
    u.onerror=()=>{if(token===voiceCounter)showMessage('Thiết bị không phát được giọng đọc tiếng Trung. Hãy kiểm tra cài đặt giọng đọc.');};
    window.speechSynthesis.speak(u);
   }catch(e){showMessage('Không phát được âm thanh trên thiết bị này.')}
-  const b=document.getElementById('hsk20Listen');if(b){b.textContent='🔊 Nghe tiếng Trung ('+state.listenCount[q.number]+'/2)';b.disabled=state.listenCount[q.number]>=2;}
+  const b=(examOverlay||body).querySelector('#hsk20Listen');if(b){b.textContent='🔊 Nghe tiếng Trung ('+state.listenCount[q.number]+'/2)';b.disabled=state.listenCount[q.number]>=2;}
  }
- function showMessage(v){const e=document.getElementById('hsk20Message');if(e)e.textContent=v}
+ function showMessage(v){const e=(examOverlay||body).querySelector('#hsk20Message');if(e)e.textContent=v}
+
+ const PAPER_COUNT=6;
+ function paperTitle(l,n){return 'HSK '+l+' · Đề '+String(n).padStart(2,'0')}
+ function closeDialog(){if(dialog){dialog.remove();dialog=null}}
+ function openDialog(title,description,confirmLabel,action,danger){
+  closeDialog();
+  dialog=document.createElement('div');dialog.className='hsk20-dialog-layer';
+  dialog.innerHTML='<section class="hsk20-dialog" role="dialog" aria-modal="true" aria-labelledby="hsk20DialogTitle">'+
+   '<span class="hsk20-dialog-icon" aria-hidden="true">▧</span><h2 id="hsk20DialogTitle">'+esc(title)+'</h2>'+
+   '<p>'+esc(description)+'</p><div class="hsk20-dialog-actions">'+
+   '<button type="button" class="hsk20-action secondary" data-hsk-cancel>Quay lại</button>'+
+   '<button type="button" class="hsk20-action '+(danger?'danger':'')+'" data-hsk-yes>'+esc(confirmLabel)+'</button></div></section>';
+  (examOverlay||document.body).appendChild(dialog);
+  dialog.querySelector('[data-hsk-cancel]').onclick=closeDialog;
+  dialog.querySelector('[data-hsk-yes]').onclick=()=>{closeDialog();action()};
+  dialog.querySelector('[data-hsk-cancel]').focus();
+ }
+ function paperCard(l,n){
+  const conf=CONFIG[l];
+  return '<button type="button" class="hsk20-paper-card" data-hsk-paper="'+n+'" aria-label="Chọn '+paperTitle(l,n)+'">'+
+   '<span class="hsk20-paper-art" aria-hidden="true"><span class="hsk20-paper-fold"></span>'+
+   '<span class="hsk20-paper-rule r1"></span><span class="hsk20-paper-rule r2"></span><span class="hsk20-paper-rule r3"></span>'+
+   '<span class="hsk20-paper-check c1">✓</span><span class="hsk20-paper-check c2">✓</span><span class="hsk20-paper-check c3">✓</span>'+
+   '<span class="hsk20-paper-number">'+String(n).padStart(2,'0')+'</span></span>'+
+   '<span class="hsk20-paper-title">HSK '+l+'</span><strong>Đề số '+String(n).padStart(2,'0')+'</strong>'+
+   '<small>'+conf.total+' câu · '+conf.reported+' phút</small><span class="hsk20-paper-select">Chọn đề →</span></button>';
+ }
+ function renderPaperShelf(l){
+  selectedLevel=Number(l)===2?2:1;
+  if(level)level.value=String(selectedLevel);
+  if(!papersPanel)return;
+  papersPanel.innerHTML='<div class="hsk20-library-head"><div><small>▦ BỘ ĐỀ PIXEL</small>'+
+   '<h3>Chọn tờ giấy kiểm tra</h3><p>Chọn một đề để luyện thi HSK 2.0 theo từng phần Nghe – Đọc.</p></div>'+
+   '<div class="hsk20-library-tabs"><button type="button" data-hsk-level="1" aria-pressed="'+(selectedLevel===1)+'">HSK 1</button>'+
+   '<button type="button" data-hsk-level="2" aria-pressed="'+(selectedLevel===2)+'">HSK 2</button></div></div>'+
+   '<div class="hsk20-paper-grid">'+Array.from({length:PAPER_COUNT},(_,i)=>paperCard(selectedLevel,i+1)).join('')+'</div>'+
+   '<p class="hsk20-library-note">Các số đề là phiên bản luyện tập được trộn từ ngân hàng câu hỏi chung; không phải 6 đề thi chính thức độc lập.</p>';
+  papersPanel.querySelectorAll('[data-hsk-level]').forEach(x=>x.onclick=()=>renderPaperShelf(Number(x.dataset.hskLevel)));
+  papersPanel.querySelectorAll('[data-hsk-paper]').forEach(x=>x.onclick=()=>confirmPaper(selectedLevel,Number(x.dataset.hskPaper)));
+ }
  function setupBanner(){
   if(document.getElementById('hsk20Intro'))return;
-  const n=document.createElement('div');n.id='hsk20Intro';n.className='hsk20-intro';
-  n.innerHTML='<strong>📝 Thi thử HSK 2.0 · Hệ 6 cấp truyền thống</strong>'+
-  '<p>Đề luyện tập tự biên soạn mô phỏng bố cục bài thi: 8 phần Nghe – Đọc, đồng hồ, phiếu trả lời, kết quả 200 điểm và xem lại câu sai. Không phải đề chính thức.</p>'+
-  '<p><b>HSK 1:</b> 40 câu · khoảng 40 phút (35 phút làm bài) &nbsp; <b>HSK 2:</b> 60 câu · khoảng 55 phút (50 phút làm bài). Mỗi tổng thời gian có 5 phút điền thông tin.</p>'+
-  '<small>Phần Nghe sử dụng giọng đọc tiếng Trung có sẵn trên thiết bị; hình minh họa bằng biểu tượng thay cho tranh in của đề thật.</small>';
-  start.insertAdjacentElement('beforebegin',n);
-  start.textContent='▶ Bắt đầu thi thử HSK 2.0';
+  const intro=document.createElement('div');intro.id='hsk20Intro';intro.className='hsk20-intro';
+  intro.innerHTML='<strong>📝 Thi thử HSK 2.0 · Hệ 6 cấp truyền thống</strong>'+
+   '<p>Chọn đề pixel, xác nhận bắt đầu, làm bài trên màn hình tràn viền. Nhấn Dừng thi bất cứ lúc nào để được chấm theo số câu đúng.</p>'+
+   '<p><b>HSK 1:</b> 40 câu · 40 phút. <b>HSK 2:</b> 60 câu · 55 phút (bao gồm 5 phút thủ tục). Đây là đề luyện tập tự biên soạn.</p>';
+  start.insertAdjacentElement('beforebegin',intro);
+  papersPanel=document.createElement('section');papersPanel.id='hsk20PaperShelf';
+  start.insertAdjacentElement('afterend',papersPanel);
+  start.hidden=true;start.style.display='none';
+  for(const control of [level,paperId]){
+   if(!control)continue;
+   const label=control.closest('label');if(label)label.hidden=true;
+   control.hidden=true;control.style.display='none';
+  }
+  renderPaperShelf(Number(level?.value)||1);
  }
- function begin(){
+ function confirmPaper(l,series){
+  if(!CONFIG[l]||series<1||series>PAPER_COUNT)return;
+  const conf=CONFIG[l];
+  openDialog('Bắt đầu '+paperTitle(l,series)+'?',
+   conf.total+' câu · '+conf.reported+' phút. Chế độ thi sẽ phủ toàn bộ vùng hiển thị, có nút Dừng thi để quay lại và xem ngay số câu đúng.',
+   'Bắt đầu thi',()=>begin(l,series),false);
+ }
+ function enterExamMode(){
+  examOverlay=document.createElement('main');examOverlay.id='hsk20ExamOverlay';
+  examOverlay.setAttribute('aria-label','Phòng thi HSK 2.0');examOverlay.tabIndex=-1;
+  document.body.appendChild(examOverlay);document.body.classList.add('hsk20-exam-running');
+  try{examOverlay.focus({preventScroll:true})}catch(e){}
+  // Unsupported native fullscreen on iPhone still gets a fixed, edge-to-edge exam view.
+  try{const p=examOverlay.requestFullscreen?.();if(p?.catch)p.catch(()=>{})}catch(e){}
+ }
+ function exitExamMode(){
+  closeDialog();
+  if(document.fullscreenElement&&document.exitFullscreen)try{const p=document.exitFullscreen();if(p?.catch)p.catch(()=>{})}catch(e){}
+  if(examOverlay){examOverlay.remove();examOverlay=null}
+  document.body.classList.remove('hsk20-exam-running');
+ }
+ function begin(l,series){
+  if(state&&!state.completed)return;
   stopVoice();clearInterval(tick);
-  const l=Number(level?.value)===2?2:1,series=Math.max(1,Number(paperId?.value)||1);
+  l=Number(l)===2?2:1;series=Math.min(PAPER_COUNT,Math.max(1,Number(series)||1));
+  selectedLevel=l;
+  if(level)level.value=String(l);
+  if(paperId)paperId.value=String(series);
   const built=createPaper(l,series),conf=CONFIG[l];
-  state={
-   level:l,series,conf,items:built.items,blocks:built.blocks,answers:{},flags:{},
-   listenCount:{},index:0,section:0,started:Date.now(),deadline:Date.now()+conf.listening*60000,
-   completed:false,submitted:false,saveStatus:'',needsRender:true
-  };
-  render();tick=setInterval(tock,900);
+  state={level:l,series,conf,items:built.items,blocks:built.blocks,answers:{},flags:{},
+   listenCount:{},index:0,section:0,started:Date.now(),deadline:Date.now()+conf.listening*60000,completed:false};
+  enterExamMode();render();tick=setInterval(tock,900);
+ }
+ function confirmStop(){
+  if(!state||state.completed)return;
+  const done=state.items.filter(q=>state.answers[q.number]!==undefined);
+  const correct=done.filter(q=>state.answers[q.number]===q.answer).length;
+  openDialog('Dừng thi '+paperTitle(state.level,state.series)+'?',
+   'Bạn đã trả lời '+done.length+'/'+state.items.length+' câu; đúng '+correct+' câu. Nếu dừng, kết quả hiện số câu đúng ngay và quay về màn hình chọn đề.',
+   'Dừng thi và xem điểm',()=>finishExam('stopped'),true);
  }
  function changeSection(){
   if(!state||state.completed||state.section!==0)return;
@@ -93,9 +170,9 @@
  }
  function tock(){
   if(!state||state.completed){clearInterval(tick);return}
-  const remain=timerSecs(),node=document.getElementById('hsk20Clock');
+  const remain=timerSecs(),node=(examOverlay||body).querySelector('#hsk20Clock');
   if(node){node.textContent=clock(remain);node.classList.toggle('hsk20-warning',remain<=60);}
-  if(remain===0){if(state.section===0)changeSection();else submit();}
+  if(remain===0){if(state.section===0)changeSection();else finishExam('time');}
  }
  function choiceText(q,i){return q.options[i]}
  function sectionItems(){return state.items.filter(q=>q.section===state.section)}
@@ -126,7 +203,8 @@
   const q=state.items[state.index],conf=state.conf,answered=Object.keys(state.answers).filter(n=>state.items[+n-1]?.section===state.section).length;
   const total=sectionItems().length;
   const ui='<div class="hsk20-app">'+
-   '<div class="hsk20-head"><div><small>ĐỀ THI THỬ HSK '+state.level+' · 2.0</small><h2>'+(state.section===0?'听力 · Nghe hiểu':'阅读 · Đọc hiểu')+'</h2><span>'+state.conf.reported+' phút gồm 5 phút thủ tục · '+state.conf.total+' câu</span></div><div class="hsk20-time" id="hsk20Clock">'+clock(timerSecs())+'</div></div>'+
+   '<div class="hsk20-head"><div><small>ĐỀ THI THỬ HSK '+state.level+' · SỐ '+String(state.series).padStart(2,'0')+' · 2.0</small><h2>'+(state.section===0?'听力 · Nghe hiểu':'阅读 · Đọc hiểu')+'</h2><span>'+state.conf.reported+' phút gồm 5 phút thủ tục · '+state.conf.total+' câu</span></div><div class="hsk20-time" id="hsk20Clock">'+clock(timerSecs())+'</div></div>'+
+   '<div class="hsk20-stop-bar"><span>📝 '+paperTitle(state.level,state.series)+' · Câu '+q.number+'/'+conf.total+'</span><button type="button" class="hsk20-action danger" id="hsk20Stop">⏹ Dừng thi</button></div>'+ 
    '<div class="hsk20-main"><div class="hsk20-question">'+
     '<div class="hsk20-qhead"><span>Câu '+q.number+' / '+conf.total+'</span><strong>'+esc((state.section===0?'听力':'阅读')+' — Phần '+q.part)+'</strong></div>'+
     questionMarkup(q)+
@@ -134,22 +212,23 @@
     '<div class="hsk20-message" id="hsk20Message" aria-live="polite"></div>'+
    '</div><aside class="hsk20-aside"><h3>Phiếu trả lời</h3><p>'+answered+'/'+total+' câu trong phần này</p><div class="hsk20-progress"><span style="width:'+Math.round(100*answered/total)+'%"></span></div>'+
     '<div class="hsk20-blocks">'+state.blocks.filter(b=>b.section===state.section).map(b=>'<div class="hsk20-part"><b>Phần '+b.part+'</b><div class="hsk20-numbers">'+b.items.map(i=>{const num=state.items.find(x=>x.id===i.id&&x.block===b.kind)?.number;return '<button type="button" data-hsk-jump="'+(num-1)+'" class="'+(num===q.number?'current ':'')+(state.answers[num]!==undefined?'done ':'')+(state.flags[num]?'marked ':'')+'">'+num+'</button>'}).join('')+'</div></div>').join('')+'</div>'+
-    '<button type="button" id="hsk20Finish" class="hsk20-action hsk20-submit">'+(state.section===0?'Chuyển sang Đọc →':'Nộp bài thi ✓')+'</button>'+
+    '<button type="button" id="hsk20Finish" class="hsk20-action hsk20-submit">'+(state.section===0?'Chuyển sang Đọc →':'⏹ Dừng thi và chấm điểm')+'</button>'+
     '<small class="hsk20-note">Xanh: đã trả lời · Sao: cần xem lại · Phần Nghe khóa khi chuyển sang Đọc.</small>'+
    '</aside></div></div>';
-  body.innerHTML=ui;
-  body.querySelectorAll('[data-hsk-answer]').forEach(b=>b.onclick=()=>{state.answers[q.number]=Number(b.dataset.hskAnswer);render()});
-  body.querySelectorAll('[data-hsk-jump]').forEach(b=>b.onclick=()=>jumpTo(Number(b.dataset.hskJump)));
-  body.querySelector('#hsk20Prev').onclick=()=>advance(-1);
-  body.querySelector('#hsk20Next').onclick=()=>advance(1);
-  body.querySelector('#hsk20Mark').onclick=()=>{state.flags[q.number]=!state.flags[q.number];render()};
-  body.querySelector('#hsk20Finish').onclick=()=>{
+  const root=examOverlay||body;root.innerHTML=ui;
+  root.querySelectorAll('[data-hsk-answer]').forEach(b=>b.onclick=()=>{state.answers[q.number]=Number(b.dataset.hskAnswer);render()});
+  root.querySelectorAll('[data-hsk-jump]').forEach(b=>b.onclick=()=>jumpTo(Number(b.dataset.hskJump)));
+  root.querySelector('#hsk20Prev').onclick=()=>advance(-1);
+  root.querySelector('#hsk20Next').onclick=()=>advance(1);
+  root.querySelector('#hsk20Mark').onclick=()=>{state.flags[q.number]=!state.flags[q.number];render()};
+  root.querySelector('#hsk20Finish').onclick=()=>{
    const unfilled=sectionItems().filter(x=>state.answers[x.number]===undefined).length;
    if(unfilled&&!confirm('Còn '+unfilled+' câu chưa trả lời. '+(state.section===0?'Chuyển sang phần Đọc và không thể quay lại?':'Bạn chắc chắn muốn nộp bài?')))return;
-   if(state.section===0)changeSection();else submit();
+   if(state.section===0)changeSection();else confirmStop();
   };
+  root.querySelector('#hsk20Stop').onclick=confirmStop;
   if(q.section===0){
-   const b=body.querySelector('#hsk20Listen');b.disabled=(state.listenCount[q.number]||0)>=2;
+   const b=root.querySelector('#hsk20Listen');b.disabled=(state.listenCount[q.number]||0)>=2;
    b.onclick=()=>speak(q.audio||q.zh);
   }
  }
@@ -171,20 +250,31 @@
   }catch(e){updateSave('Lỗi khi lưu điểm: '+String(e.message||e))}
  }
  function updateSave(msg){const el=document.getElementById('hsk20Saved');if(el)el.textContent=msg}
- function submit(){
+
+ function finishExam(reason){
   if(!state||state.completed)return;
-  state.completed=true;stopVoice();clearInterval(tick);
-  const res=scored(),pass=res.score>=120;
-  body.innerHTML='<div class="hsk20-app hsk20-results"><h2>📋 Kết quả thi thử HSK '+state.level+' (2.0)</h2>'+
-   '<p class="hsk20-label">Điểm tham khảo, không phải kết quả hay chứng chỉ thi chính thức.</p>'+
-   '<div class="hsk20-score '+(pass?'pass':'fail')+'">'+res.score+'<small>/200</small></div><h3>'+(pass?'✅ Đạt ngưỡng luyện tập 120/200':'📖 Chưa đạt ngưỡng luyện tập 120/200')+'</h3>'+
-   '<div class="hsk20-scoredetail"><div>听力 · Nghe <b>'+res.groups[0].points+'/100</b><small>'+res.groups[0].correct+'/'+res.groups[0].total+' câu</small></div><div>阅读 · Đọc <b>'+res.groups[1].points+'/100</b><small>'+res.groups[1].correct+'/'+res.groups[1].total+' câu</small></div></div>'+
-   '<p>Đúng '+res.correct+'/'+res.total+' câu · Điểm mỗi kỹ năng quy đổi tuyến tính về thang 100; điểm thi thật có thể áp dụng quy trình chấm khác.</p>'+
-   '<p id="hsk20Saved" class="hsk20-label">Đang lưu kết quả…</p>'+
-   '<div class="hsk20-result-actions"><button class="hsk20-action" id="hsk20Review">Xem đáp án và lời giải</button><button class="hsk20-action secondary" id="hsk20Try">Làm đề khác ↻</button></div><div id="hsk20Reviews"></div></div>';
-  document.getElementById('hsk20Review').onclick=review;
-  document.getElementById('hsk20Try').onclick=begin;
-  save(res);
+  state.completed=true;state.reason=reason;stopVoice();clearInterval(tick);tick=null;
+  const result=scored(),answered=state.items.filter(q=>state.answers[q.number]!==undefined).length;
+  const accuracy=answered?Math.round(result.correct/answered*1000)/10:0;
+  const finished=reason==='stopped'?'Đã dừng thi':reason==='time'?'Hết giờ làm bài':'Hoàn thành bài thi';
+  exitExamMode();
+  renderPaperShelf(state.level);
+  body.innerHTML='<div class="hsk20-app hsk20-results"><h2>📋 '+finished+' · '+paperTitle(state.level,state.series)+'</h2>'+
+   '<p class="hsk20-label">Điểm chính được tính theo số câu trả lời đúng khi dừng, không phải điểm chứng chỉ HSK chính thức.</p>'+
+   '<div class="hsk20-correct-count"><strong>'+result.correct+'</strong><span>câu đúng / '+result.total+' câu</span></div>'+
+   '<div class="hsk20-stop-stats"><div><strong>'+answered+'/'+result.total+'</strong><span>Số câu đã làm</span></div>'+
+   '<div><strong>'+result.correct+'</strong><span>Số câu đúng</span></div>'+
+   '<div><strong>'+accuracy+'%</strong><span>Tỷ lệ đúng trên câu đã làm</span></div></div>'+
+   '<div class="hsk20-scoredetail"><div>听力 · Nghe<b>'+result.groups[0].correct+'/'+result.groups[0].total+' câu</b><small>'+result.groups[0].points+'/100 quy đổi</small></div>'+
+   '<div>阅读 · Đọc<b>'+result.groups[1].correct+'/'+result.groups[1].total+' câu</b><small>'+result.groups[1].points+'/100 quy đổi</small></div></div>'+
+   '<p class="hsk20-label">Điểm HSK quy đổi tham khảo: '+result.score+'/200, tính cả những câu chưa làm là chưa đúng.</p>'+
+   '<p id="hsk20Saved" class="hsk20-label">Đang lưu kết quả...</p>'+
+   '<div class="hsk20-result-actions"><button type="button" class="hsk20-action" id="hsk20Review">Xem đáp án và lời giải</button>'+
+   '<button type="button" class="hsk20-action secondary" id="hsk20Try">← Chọn tờ đề khác</button></div>'+
+   '<div id="hsk20Reviews"></div></div>';
+  body.querySelector('#hsk20Review').onclick=review;
+  body.querySelector('#hsk20Try').onclick=()=>{state=null;body.innerHTML='';renderPaperShelf(selectedLevel);papersPanel?.scrollIntoView?.({block:'nearest',behavior:'smooth'})};
+  save(result);
  }
  function review(){
   if(!state||!state.completed)return;
@@ -199,6 +289,8 @@
   }).join('');
  }
  setupBanner();
- start.onclick=begin;
- D.hsk20={start:begin,getStatus:()=>state?{level:state.level,section:state.section,completed:state.completed,question:state.index+1}:null};
+ start.onclick=()=>confirmPaper(Number(level?.value)||selectedLevel,Number(paperId?.value)||1);
+ window.addEventListener('keydown',event=>{if(event.key==='Escape'&&state&&!state.completed){event.preventDefault();if(dialog)closeDialog();else confirmStop()}});
+ window.addEventListener('beforeunload',event=>{if(state&&!state.completed){event.preventDefault();event.returnValue=''}});
+ D.hsk20={start:()=>confirmPaper(selectedLevel,1),getStatus:()=>state?{level:state.level,series:state.series,section:state.section,completed:state.completed,question:state.index+1}:null};
 })();
