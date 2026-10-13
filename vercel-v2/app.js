@@ -1223,7 +1223,7 @@ if(gate&&window.supabase){
  function loadArcade(){
   const script=document.createElement('script');
   script.id='pixelArcadeBootstrap';
-  script.src='/pixel-arcade.js?v=complete-cat-looks-v15';
+  script.src='/pixel-arcade.js?v=editorial-modern-cat-ui-v16';
   script.onerror=()=>console.warn('Pixel Arcade could not load.');
   document.head.append(script);
  }
@@ -1319,4 +1319,17 @@ if(gate&&window.supabase){
  stylesheet.rel='stylesheet';
  stylesheet.href='/visual-unity-2026.css?v=unified-font-bg-no-video-v1';
  document.head.appendChild(stylesheet);
+})();
+
+
+// Sitewide visual consistency for *all* study areas, auth and popovers.
+// The pixel-cat illustrations remain intentionally untouched.
+;(()=>{
+  'use strict';
+  if(document.getElementById('tthkFullUiConsistency'))return;
+  const css=document.createElement('link');
+  css.id='tthkFullUiConsistency';
+  css.rel='stylesheet';
+  css.href='/full-ui-consistency.css?v=unified-arcade-and-auth-20261014-v1';
+  document.head.append(css);
 })();
