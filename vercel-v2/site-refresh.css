@@ -192,3 +192,100 @@ p,.muted{color:#638076}
  #gate.authgate .login-showcase h1{font-size:22px!important}
  #gate .authcard{max-width:100%!important}
 }
+
+
+/* CRITICAL: layout isolation. The legacy sidebar still had height:100dvh,
+   which made the mint horizontal toolbar occupy a full viewport and pushed
+   the real page below the fold. Keep it a compact single-row header. */
+#site.site:not([hidden]) {
+ display:flex!important; flex-direction:column!important;
+ grid-template-columns:none!important;
+ width:100%!important; max-width:100%!important;
+ min-height:100dvh!important; height:auto!important;
+ align-items:stretch!important; justify-content:flex-start!important;
+ gap:0!important; overflow-x:clip!important;
+}
+#site.site > .side {
+ position:sticky!important; top:0!important; bottom:auto!important;
+ inset-inline:auto!important;
+ display:flex!important; flex-direction:row!important;
+ justify-content:space-between!important; align-items:center!important;
+ flex-wrap:nowrap!important; align-content:center!important;
+ width:100%!important; max-width:100%!important;
+ min-height:58px!important; height:auto!important;
+ max-height:85px!important; flex:0 0 auto!important;
+ padding:8px clamp(10px,2vw,24px)!important;
+ margin:0!important; gap:14px!important;
+ overflow:visible!important;
+ border-right:0!important; border-bottom:1px solid #d0e6d7!important;
+ background:#f7fcf8f5!important; box-shadow:0 5px 16px #29594312!important;
+ z-index:130!important;
+}
+#site .side h2 {
+ display:inline-flex!important; align-items:center!important; justify-content:flex-start!important;
+ flex:0 0 auto!important; width:auto!important; max-width:180px!important;
+ margin:0!important; padding:0!important; border:0!important;
+ text-align:left!important;
+}
+#site .side .nav {
+ display:flex!important; flex-direction:row!important;
+ align-items:center!important; justify-content:flex-start!important;
+ flex-wrap:nowrap!important; align-content:center!important;
+ gap:7px!important; flex:1 1 0!important; width:auto!important;
+ min-width:0!important; max-width:100%!important;
+ height:auto!important; max-height:66px!important;
+ overflow-x:auto!important; overflow-y:hidden!important;
+ padding:5px 2px!important; margin:0!important;
+ scrollbar-width:none!important; scroll-snap-type:x proximity!important;
+}
+#site .side .nav::-webkit-scrollbar{display:none!important}
+#site .side .nav>div,
+#site .side .nav>.nav-section,
+#site .side .nav>.nav-group {
+ display:contents!important; height:auto!important; min-height:0!important;
+}
+#site .side .nav .nav-group-title,
+#site .side .nav .nav-section-title,
+#site .side .nav .nav-category,
+#site .side .nav>.nav-label,
+#site .side .nav>div>h3,
+#site .side .nav>div>small {
+ display:none!important;
+}
+#site .side .nav button[data-page],
+#site .side .nav button#logout {
+ display:inline-flex!important;
+ flex:0 0 auto!important; align-items:center!important;
+ justify-content:center!important; width:auto!important;
+ max-width:max-content!important; min-height:40px!important;
+ white-space:nowrap!important; margin:0!important;
+ padding:9px 12px!important; transform:none!important;
+ line-height:1.3!important; scroll-snap-align:start;
+}
+#site .side .nav button[hidden],
+#site .side .nav button[data-page="lookup"],
+#site .side .nav button[data-page="writing"]{display:none!important}
+#site.site > main {
+ display:block!important; position:relative!important;
+ flex:1 0 auto!important; align-self:center!important;
+ width:100%!important; max-width:1320px!important;
+ height:auto!important; min-height:50vh!important;
+ margin:0 auto!important;
+ padding:clamp(18px,3vw,36px) clamp(12px,3vw,32px) 68px!important;
+ overflow:visible!important;
+}
+#site.site > main > .page.on {display:block!important}
+#site.site > main > .page:not(.on) {display:none!important}
+#site.site > main > #tthkContactFooter {display:grid!important}
+@media(max-width:850px){
+ #site.site>.side{max-height:116px!important;min-height:54px!important;flex-wrap:wrap!important;gap:5px!important}
+ #site .side h2{font-size:20px!important;max-width:100%!important}
+ #site .side .nav{flex-basis:100%!important;max-height:54px!important;padding:3px 0 6px!important}
+ #site .side .nav button[data-page]{min-height:39px!important;padding:9px 11px!important}
+ #site.site>main{padding:14px 12px 50px!important}
+}
+@media(max-width:440px){
+ #site.site>.side{padding:6px 9px!important}
+ #site .side .nav{gap:5px!important}
+ #site .side .nav button[data-page]{font-size:12px!important;padding:9px 10px!important}
+}
