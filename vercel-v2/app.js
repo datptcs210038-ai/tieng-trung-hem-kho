@@ -1291,3 +1291,20 @@ if(gate&&window.supabase){
  js.onerror=()=>console.warn('Motion design unavailable; classic website remains functional.');
  document.head.appendChild(js);
 })();
+
+
+// Refined editorial UI depth and contemporary SVG icon system.
+// Scoped overrides preserve the existing auth, HSK, vocabulary and pixel-pet runtime.
+;(()=>{
+ 'use strict';
+ if(document.getElementById('tthkStudioDepthLoader'))return;
+ const styles=document.createElement('link');
+ styles.rel='stylesheet';
+ styles.href='/studio-depth-2026.css?v=editorial-navy-type-v1';
+ document.head.append(styles);
+ const script=document.createElement('script');
+ script.id='tthkStudioDepthLoader';
+ script.src='/studio-depth-2026.js?v=editorial-navy-type-v1';
+ script.onerror=()=>console.warn('Editorial UI polish could not load; the existing website remains available.');
+ document.head.append(script);
+})();
