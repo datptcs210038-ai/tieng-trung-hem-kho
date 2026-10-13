@@ -126,3 +126,8 @@ p,.muted{color:#638076}
 }
 @media(max-width:360px){.word img{height:94px}.word h2{font-size:26px!important}.words{gap:7px!important}}
 @media(prefers-reduced-motion:reduce){.page.on{animation:none}.tthk-choice-option,.site>.side .nav button{transition:none!important}}
+
+/* The new contact block replaces the original minimal footer. */
+.site main>footer:not(#tthkContactFooter),.site>footer:not(#tthkContactFooter){display:none!important}
+.tthk-choice-search>input{width:100%;min-height:44px;padding:11px 14px;margin:3px 0 9px}
+.tthk-choice-search>.tthk-choice-strip{width:100%}
