@@ -1325,11 +1325,11 @@ if(gate&&window.supabase){
  const style=document.createElement('link');
  style.id='tthk2026RefreshStyle';
  style.rel='stylesheet';
- style.href='/site-refresh.css?v=nav-fixed-20261013-v3';
+ style.href='/site-refresh.css?v=brand-pictures-restored-v4';
  document.head.append(style);
  const script=document.createElement('script');
  script.id='tthk2026RefreshLoader';
- script.src='/site-refresh.js?v=mint-no-oldlogo-20261013-v2';
+ script.src='/site-refresh.js?v=brand-pictures-restored-v4';
  script.onerror=()=>console.warn('The new study layout did not load.');
  document.head.append(script);
 })();
