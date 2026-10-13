@@ -6,14 +6,15 @@
  const BASE=win.TTHK_CAT_ATLAS;
  const poses=['idle','blink','walk1','walk2','groom1','groom2','eat','sleep'];
  const P={
-  idle:  {eye: [37,52,20], neck:[35,29], coat:[29,30,31,31]},
-  blink: {eye: [37,52,20], neck:[35,29], coat:[29,30,31,31]},
-  walk1: {eye: [38,53,19], neck:[35,29], coat:[28,30,32,31]},
-  walk2: {eye: [39,54,20], neck:[36,30], coat:[29,31,32,31]},
-  groom1:{eye: [34,49,19], neck:[33,31], coat:[27,31,30,31]},
-  groom2:{eye: [33,48,20], neck:[33,31], coat:[28,31,29,31]},
-  eat:   {eye: [40,54,22], neck:[39,30], coat:[28,32,32,30]},
-  sleep: {eye: [33,47,25], neck:[36,33], coat:[30,32,31,30]}
+  // Landmarks calibrated against the original cat: head at x28–58, body at x12–36.
+  idle:  {eye:[38,50,24],neck:[34,33],coat:[23,33]},
+  blink: {eye:[38,50,24],neck:[34,33],coat:[23,33]},
+  walk1: {eye:[39,51,23],neck:[34,33],coat:[22,33]},
+  walk2: {eye:[39,51,24],neck:[35,34],coat:[23,34]},
+  groom1:{eye:[36,48,23],neck:[32,34],coat:[23,34]},
+  groom2:{eye:[35,47,24],neck:[32,34],coat:[23,34]},
+  eat:   {eye:[40,51,25],neck:[37,33],coat:[23,33]},
+  sleep: {eye:[36,47,27],neck:[35,36],coat:[26,36]}
  };
  const paints={
   student:{cloth:'#45698a',highlight:'#81adbd',dark:'#2e506e',trim:'#f4ecdc'},
@@ -59,6 +60,8 @@
      const t=(y*64+x)*4,red=original[t],green=original[t+1],blue=original[t+2];
      // Only repaint opaque fur, never transparent room, black outlines, eyes or pink ears.
      if(original[t+3]<150)return false;
+     // The face and eyes must remain pixel-for-pixel identical beneath its glasses.
+     if(x>=35&&y<38)return false;
      if(Math.max(red,green,blue)<76)return false;
      if(red>green*1.2&&red>blue*1.12&&red>115)return false;
      return true;
@@ -67,7 +70,7 @@
      const colors=paints[e.body];
      const [cx,cy,w,h]=poseData.coat;
      const widths=[8,12,16,19,21,22,22,21,19,17,13];
-     const center=cx+9;
+     const center=cx+2;
      const top=cy-7;
      // Garment follows the organic torso, not a rectangle or a separate CSS overlay.
      for(let yy=0;yy<11;yy++){
