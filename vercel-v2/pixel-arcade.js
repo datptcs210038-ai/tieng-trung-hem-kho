@@ -3,7 +3,7 @@
 'use strict';
 const D=window.TTHK,flash=document.getElementById('flash');
 if(!D||!flash||document.getElementById('pixelArcade'))return;
-const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=matching-pixel-sets-v10';document.head.append(sheet);
+const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href='/pixel-arcade.css?v=native-pixel-wardrobe-v11';document.head.append(sheet);
 flash.classList.add('pixel-arcade-page');
 Array.from(flash.children).forEach(el=>el.classList.add('old-flash-content'));
 const root=document.createElement('div');root.id='pixelArcade';
@@ -423,130 +423,54 @@ function renderResults(){
  $('#paBackHome').onclick=()=>{run=null;tab('home')};
 }
 
-/* Virtual wardrobe V7: redesigned pixel outfits fitted to each native 128×100 cat pose.
- * Existing owned_items/equipped IDs and shop prices stay unchanged. */
-
-/* WARDROBE v8 · clothes are fitted to the *actual* 64×50 kitten, drawn on a matching 128×100 transparent artboard.
-   No rectangular costumes, no detached jacket, no accessory covering the face. */
-const WARDROBE_COLORS={
- ink:'#3f3c49',seam:'#46616f',white:'#fff7ee',blue:'#65aacc',blueDark:'#426d99',blueLight:'#a1dce6',
- sage:'#70a58e',sageDark:'#3d7b68',rose:'#f08aa9',roseLight:'#ffbfd4',
- gold:'#f3c763',amber:'#a97936',navy:'#405d83',purple:'#987db1',
- purpleLight:'#d1b6db',red:'#bf596e',redLight:'#efa1ad',soft:'#f5e1c7'
-};
-const CLOTHES={student:['navy','blue','blueLight'],aoba:['purple','purpleLight','roseLight'],royal:['red','redLight','gold'],pajamas:['sage','soft','roseLight']};
-function wearableSvg(id,pose='idle'){
- const p=[],C=WARDROBE_COLORS;
- const r=(x,y,w,h,color)=>p.push('<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+(C[color]||color)+'"/>');
- const poly=(pts,color,stroke='ink',sw=1.5)=>p.push('<polygon points="'+pts+'" fill="'+(C[color]||color)+'" stroke="'+(C[stroke]||stroke)+'" stroke-width="'+sw+'" stroke-linejoin="bevel"/>');
- const line=(path,color,width=2)=>p.push('<path d="'+path+'" fill="none" stroke="'+(C[color]||color)+'" stroke-width="'+width+'" stroke-linejoin="bevel"/>');
- const sleep=pose==='sleep',groom=pose.startsWith('groom'),eat=pose==='eat';
- const moving=pose.startsWith('walk');
- // All coordinates are in the same 128x100 space as the kitten: head x~58–118; torso x~25–75.
- const dx=pose==='walk2'?1:0,dy=pose==='walk2'?2:0;
- if(CLOTHES[id]){
-  const [main,panel,trim]=CLOTHES[id];
-  if(sleep){
-   // A small soft fabric patch rests on the curled back. Not a box over the sleeping kitten.
-   poly('49,66 54,58 67,54 78,56 85,64 82,71 72,74 59,73',main,'ink',1.3);
-   line('M54 63 H74',panel,3);
-   r(67,68,6,2,trim);
-  }else if(groom){
-   // Grooming swaps to a front-facing pose; only a small collar under the chin remains.
-   poly('52,76 60,72 70,73 76,78 70,83 58,83',main,'ink',1.2);
-   r(61,76,7,3,trim);
-  }else if(eat){
-   // The kitten bends toward the bowl. A thin tailored band on the back remains.
-   poly('72,54 85,50 101,54 106,61 99,66 85,63 76,65',main,'ink',1.2);
-   line('M82 55 L99 57',panel,2.4);
-  }else{
-   // Back-shaped pixel vest. Silhouette follows the sloping cat torso instead of a square jacket.
-   const wrap='<g transform="translate('+dx+' '+dy+')">';
-   p.push(wrap);
-   poly('28,53 34,49 43,47 52,48 59,54 61,63 64,69 60,76 50,79 42,76 32,77 25,70 25,61',main,'ink',1.6);
-   // Keep the shoulders rounded and give the tail a free area.
-   poly('31,56 37,51 46,50 53,53 56,59 55,67 51,72 42,71 33,72 30,67',panel,'none',0);
-   line('M34 55 L40 53 L47 54',trim,2.4);
-   r(35,61,7,2,trim);
-   r(36,66,4,2,trim);
-   // Tailored neckline joins the back vest to the chest: visually a shirt, not a backpack.
-   poly('59,60 66,66 72,72 70,83 65,83 63,72 57,66',main,'ink',1.3);
-   line('M60 61 L68 67 L65 72',id==='royal'?'gold':'white',2.8);
-   if(id==='student'){
-    // Very small varsity-like trim and one gold stitch, not a floating blue rectangle.
-    r(55,59,3,9,'white');r(45,62,4,3,'gold');
-    r(34,70,5,2,'blueLight');
-   }else if(id==='aoba'){
-    r(51,55,2,17,'white');r(54,60,2,2,'gold');r(54,67,2,2,'gold');
-   }else if(id==='pajamas'){
-    r(54,58,3,8,'white');r(42,59,3,3,'roseLight');
-    r(35,69,3,2,'white');r(48,67,3,2,'sageDark');r(34,75,16,2,'roseLight');
-   }else{
-    r(52,55,3,14,'gold');r(39,59,6,4,'gold');r(39,61,3,2,'red');
-    r(31,72,20,2,'gold');
-   }
-   p.push('</g>');
-  }
- }else if(id==='bow'){
-  if(sleep){poly('75,35 84,33 85,41 79,44','blue');poly('86,36 93,33 96,40 87,42','blue');r(84,36,4,5,'navy')}
-  else if(groom){
-   poly('71,16 80,13 81,19 74,21','blue');poly('82,17 90,13 92,20 84,21','blue');r(80,16,4,5,'navy');
-  }else{
-   poly('78,17 87,13 88,20 82,23','blue');poly('89,17 97,13 99,21 91,22','blue');r(86,17,6,5,'navy');r(80,16,4,2,'blueLight');
-  }
- }else if(id==='glasses'){
-  if(!sleep&&!groom&&!eat){
-   line('M66 40 H82 V54 H67 Z', 'navy',2.8);
-   line('M88 40 H106 V54 H88 Z','navy',2.8);
-   r(82,43,6,3,'navy');r(70,43,3,3,'blueLight');r(91,43,3,3,'blueLight');
-  }
- }else if(id==='beanie'){
-  if(sleep){
-   // Small soft nightcap stays visible when the kitten curls up.
-   poly('32,54 34,44 42,36 51,35 59,39 64,49 64,54','sage');
-   r(32,53,33,5,'sageDark');r(59,35,6,6,'roseLight');
-   r(38,44,8,3,'blueLight');
-  }else if(!eat){
-   const sx=groom?-13:0,sy=groom?1:0;
-   p.push('<g transform="translate('+sx+' '+sy+')">');
-   poly('71,27 72,18 79,12 85,9 98,10 105,15 107,26','sage');
-   r(71,24,36,6,'sageDark');r(75,15,6,3,'blueLight');r(95,17,6,3,'blueLight');r(88,6,7,6,'rose');p.push('</g>');
-  }
- }else if(id==='crown'){
-  if(!sleep&&!eat&&!groom){
-   poly('73,27 73,14 81,20 87,11 94,20 102,12 103,27','gold');
-   r(74,24,28,5,'amber');r(79,21,4,4,'rose');r(93,21,4,4,'blue');
-  }
- }else if(id==='scarf'){
-  if(sleep){
-   poly('60,70 72,71 76,76 63,78','rose');r(68,76,5,7,'redLight');
-  }else if(groom){
-   poly('50,72 62,70 76,73 72,78 56,79','rose');r(65,78,6,8,'redLight');
-  }else{
-   poly('54,61 64,58 71,63 66,69 56,70','rose');r(60,67,6,11,'red');r(61,70,3,5,'roseLight');
-  }
- }else if(id==='bell'){
-  if(sleep){r(70,75,11,2,'navy');r(73,77,5,5,'gold');r(75,81,2,2,'ink')}
-  else if(groom){r(57,73,16,3,'navy');r(63,76,6,6,'gold');r(65,80,2,2,'ink')}
-  else{
-   line('M55 63 L67 64','navy',3);
-   poly('59,67 66,67 68,73 63,78 58,73','gold');
-   r(62,72,3,3,'amber');
-  }
- }
- return '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="100" viewBox="0 0 128 100" shape-rendering="crispEdges" aria-hidden="true">'+p.join('')+'</svg>';
+/* Native pixel wardrobe v11: 10 equippable items × 8 exact 64×50 poses.
+   Body fabric is masked to the same pixel-atlas alpha to prevent floating outside the cat. */
+function wardrobeUrl(id,pose){
+ return window.TTHK_CAT_WARDROBE?.url(id,pose||'idle')||'none';
 }
-function wardrobeUrl(id,pose){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(wearableSvg(id,pose))}
+function applyCatGearFrame(el,id,pose){
+ if(el.dataset.frame===pose&&el.dataset.wearable===id)return;
+ el.dataset.frame=pose;el.dataset.wearable=id;
+ el.style.setProperty('background-image','url("'+wardrobeUrl(id,pose)+'")','important');
+ el.style.setProperty('background-size','100% 100%','important');
+ el.style.setProperty('background-position','center','important');
+ el.style.setProperty('background-repeat','no-repeat','important');
+ if(el.classList.contains('body')&&window.TTHK_CAT_ATLAS){
+  const loc=POSES[pose]||POSES.idle;
+  const image='url("'+window.TTHK_CAT_ATLAS+'")';
+  const position=(loc[0]*100/3)+'% '+(loc[1]*100)+'%';
+  ['mask-image','-webkit-mask-image'].forEach(k=>el.style.setProperty(k,image,'important'));
+  ['mask-size','-webkit-mask-size'].forEach(k=>el.style.setProperty(k,'400% 200%','important'));
+  ['mask-position','-webkit-mask-position'].forEach(k=>el.style.setProperty(k,position,'important'));
+  ['mask-repeat','-webkit-mask-repeat'].forEach(k=>el.style.setProperty(k,'no-repeat','important'));
+ }else{
+  ['mask-image','-webkit-mask-image'].forEach(k=>el.style.setProperty(k,'none','important'));
+ }
+}
 function drawWornClothes(pose){
  const cat=$('.pa-cat');if(!cat)return;
  cat.querySelectorAll('.pa-gear[data-wearable]').forEach(el=>{
-  const id=el.dataset.wearable||'';
-  if(el.dataset.frame===pose)return;
-  el.dataset.frame=pose;
-  el.style.setProperty('background-image','url("'+wardrobeUrl(id,pose)+'")','important');
-  el.style.setProperty('background-size','100% 100%','important');
-  el.style.setProperty('background-position','center','important');
-  el.style.setProperty('background-repeat','no-repeat','important');
+  const id=el.dataset.wearable;
+  if(id)applyCatGearFrame(el,id,pose);
+ });
+}
+function drawGardenOutfit(hero,pose,direction){
+ if(!hero)return;
+ const worn=pet.equipped||{};
+ ['body','neck','head'].forEach(slot=>{
+  let el=hero.querySelector('.garden-cat-gear[data-slot="'+slot+'"]');
+  const id=worn[slot];
+  if(!id||!ITEMS.some(item=>item.category===slot&&item.id===id)){el?.remove();return}
+  if(!el){
+   el=document.createElement('span');
+   el.className='garden-cat-gear '+slot;
+   el.dataset.slot=slot;
+   el.setAttribute('aria-hidden','true');
+   hero.append(el);
+  }
+  // This mirror matches the cat atlas direction for both walking directions.
+  el.style.setProperty('transform','scaleX('+direction+')','important');
+  applyCatGearFrame(el,id,pose);
  });
 }
 
@@ -555,7 +479,7 @@ function outfitSetCard(set){
  const due=missing.reduce((n,id)=>n+(ITEMS.find(i=>i.id===id)?.cost||0),0);
  const wearing=set.items.every(id=>pet.equipped?.[ITEMS.find(x=>x.id===id)?.category]===id)&&Object.keys(pet.equipped||{}).length===set.items.length;
  const sorted=set.items.filter(id=>ITEMS.find(i=>i.id===id)?.category==='body').concat(set.items.filter(id=>ITEMS.find(i=>i.id===id)?.category==='neck'),set.items.filter(id=>ITEMS.find(i=>i.id===id)?.category==='head'));
- const preview='<span class="pa-shop-preview pa-set-preview" aria-hidden="true"><span class="pa-shop-cat"></span>'+sorted.map((id,i)=>'<span class="pa-shop-wear pa-set-layer pa-set-layer-'+i+'" style="background-image:url(&quot;'+wardrobeUrl(id,'idle')+'&quot;)"></span>').join('')+'</span>';
+ const preview='<span class="pa-shop-preview pa-set-preview" aria-hidden="true"><span class="pa-shop-cat"></span>'+sorted.map((id,i)=>'<span class="pa-shop-wear pa-wear-'+ITEMS.find(x=>x.id===id).category+' pa-set-layer pa-set-layer-'+i+'" style="background-image:url(&quot;'+wardrobeUrl(id,'idle')+'&quot;)"></span>').join('')+'</span>';
  return '<article class="pa-set-card pa-set-'+set.scheme+'"><div class="pa-set-top"><span>'+set.icon+' '+set.tag+'</span><span>🪙 '+set.price+' xu</span></div>'+
  preview+'<h3>'+set.name+'</h3><p>'+set.description+'</p><div class="pa-set-detail">'+(missing.length?'Cần mua: '+missing.map(id=>ITEMS.find(i=>i.id===id)?.name||id).join(' + '):'Đã sở hữu đầy đủ ✓')+'</div>'+
  '<button type="button" data-pa-set="'+set.id+'" '+(wearing?'disabled':'')+' '+(due>Number(pet.coins||0)?'disabled title="Chưa đủ xu"':'')+'>'+
@@ -581,7 +505,7 @@ async function applyOutfitSet(id,btn){
 
 function wardrobePreview(id){
  const url=wardrobeUrl(id,'idle');
- return '<span class="pa-shop-preview"><span class="pa-shop-cat" aria-hidden="true"></span><span class="pa-shop-wear" aria-hidden="true" style="background-image:url(&quot;'+url+'&quot;)"></span></span>';
+ return '<span class="pa-shop-preview"><span class="pa-shop-cat" aria-hidden="true"></span><span class="pa-shop-wear pa-wear-'+(ITEMS.find(x=>x.id===id)?.category||'')+'" aria-hidden="true" style="background-image:url(&quot;'+url+'&quot;)"></span></span>';
 }
 
 const originalPage=D.page;
@@ -752,6 +676,7 @@ function paintKitten(now=performance.now()){
    heroCat.style.setProperty('animation','none','important');
    heroCat.style.setProperty('transform','translate3d('+x.toFixed(2)+'px,0,0)','important');
    sprite?.style.setProperty('transform','scaleX('+trip.direction+')','important');
+   drawGardenOutfit(heroCat,hpose,trip.direction);
    if(prevHeroDirection!==trip.direction)prevHeroDirection=trip.direction;
    let name=heroCat.querySelector('.garden-cat-name');
    if(!name){name=document.createElement('span');name.className='garden-cat-name';heroCat.append(name)}
