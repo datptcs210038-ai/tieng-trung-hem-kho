@@ -489,3 +489,16 @@ body .page>h2,body .page h2{color:#244e6e}
  #intro .tthk-cinema-stage:hover #tthkCinemaVideo{transform:none!important}
  #intro .tthk-reveal{opacity:1!important;transform:none!important;transition:none!important}
 }
+
+/* The mobile study dock lives under <body>, not inside #site. */
+body .mobile-dock:not([hidden]){
+ background:rgba(251,253,255,.94)!important;
+ border:1px solid #d7e5ee!important;
+ border-radius:19px!important;
+ backdrop-filter:blur(18px);
+ box-shadow:0 16px 42px rgba(22,68,102,.15)!important;
+}
+body .mobile-dock button{color:#718ba0!important}
+body .mobile-dock button.active{background:#e6f2f9!important;color:#245e82!important;border-radius:13px!important}
+body .mobile-dock .studio-dock-icon{display:flex;align-items:center;justify-content:center}
+body .mobile-dock .studio-dock-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;image-rendering:auto}
