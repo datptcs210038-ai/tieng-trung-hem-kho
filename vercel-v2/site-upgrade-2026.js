@@ -213,6 +213,51 @@ function footer(){
  '<a href="mailto:tiengtrunghemkho@gmail.com">'+pixel('mail',18)+'<span>tiengtrunghemkho@gmail.com</span></a></div>';
  root.append(el);brand();
 }
+function replaceDropdowns(){
+ const selects=$('#site main select');
+ for(const el of selects){
+  if(el.dataset.tthkConverted||el.closest('#hsk20ExamOverlay')||el.hidden||!el.options?.length)continue;
+  const choices=[...el.options];el.dataset.tthkConverted='true';
+  const container=document.createElement('div');container.className='tthk-select-panel';
+  const needsSearch=choices.length>18;
+  const rail=document.createElement('div');rail.className='tthk-choice-rail';
+  const search=needsSearch?document.createElement('input'):null;
+  if(search){
+   search.type='search';search.className='tthk-choice-search';
+   search.placeholder='Tìm chữ Hán hoặc nghĩa tiếng Việt';
+   search.setAttribute('aria-label','Tìm trong danh sách từ');
+   container.append(search);
+  }
+  container.append(rail);el.insertAdjacentElement('afterend',container);
+  const norm=v=>String(v||'').toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+  const render=()=>{
+   const q=norm(search?.value.trim()||'');
+   const options=[...el.options].filter(o=>!o.disabled&&(!q||norm(o.textContent).includes(q)));
+   rail.replaceChildren();
+   for(const op of options.slice(0,needsSearch?14:45)){
+    const b=document.createElement('button');
+    b.type='button';b.className='tthk-choice-pill';b.textContent=op.textContent||op.value;
+    b.setAttribute('aria-pressed',String(el.value===op.value));
+    b.onclick=()=>{
+     el.value=op.value;
+     el.dispatchEvent(new Event('input',{bubbles:true}));
+     el.dispatchEvent(new Event('change',{bubbles:true}));
+     render();
+    };
+    rail.append(b);
+   }
+   if(needsSearch&&options.length>14){
+    const note=document.createElement('span');note.className='tthk-more-options';
+    note.textContent='Gõ để tìm trong '+options.length+' lựa chọn';rail.append(note);
+   }
+  };
+  el.classList.add('tthk-native-select');
+  el.addEventListener('change',render);
+  new MutationObserver(render).observe(el,{childList:true,subtree:true});
+  if(search)search.oninput=render;
+  render();
+ }
+}
 function cleanLegacy(){
  const signout=$('#quickSignOut');if(signout)signout.remove();
  const out=$('#logout');
@@ -315,6 +360,8 @@ async function refreshProfileLimit(){
    return next>Date.now()?label+': đổi tiếp '+new Date(next).toLocaleDateString('vi-VN'):label+': có thể thay đổi';
   });
   $('#tthkProfileLimit').textContent=notes.join(' · ');
+  const n=Date.parse(r.data.name_changed_at||'');
+  const save=$('#saveName');if(save)save.disabled=Number.isFinite(n)&&n+7*86400000>Date.now();
   const t=Date.parse(r.data.avatar_changed_at||'');
   if(Number.isFinite(t)&&t+7*86400000>Date.now())$('#uploadPhoto').disabled=true;
   else $('#uploadPhoto').disabled=false;
@@ -323,11 +370,11 @@ async function refreshProfileLimit(){
 function start(){
  if(!$('#site')||!$main())return;
  header();makePages();subnav();footer();cleanLegacy();profileUI();installNavigation();
- pixelUI();
+ replaceDropdowns();pixelUI();
  let painting=false;
  const observer=new MutationObserver(()=>{
   if(painting)return;painting=true;
-  requestAnimationFrame(()=>{painting=false;pixelUI()});
+  requestAnimationFrame(()=>{painting=false;replaceDropdowns();pixelUI()});
  });
  observer.observe($main(),{childList:true,subtree:true});
  window.TTHK_V2={go,loadContent,renderTeam,refreshProfileLimit,icons:pixel};
