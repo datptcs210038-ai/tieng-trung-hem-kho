@@ -141,10 +141,8 @@ p,.muted{color:#638076}
 #gate .login-logo-frame,
 #gate .login-logo-frame img,
 #gate .crisp-logo-art,
-#site .side-brand,
-#site .hero-brand-watermark,
-.page-loader .page-loader-img,
-.tthk-footer-brand>img {display:none!important}
+.page-loader .page-loader-img {display:none!important}
+/* Don't hide real uploaded brand assets throughout the site. */
 #gate .login-pixel-wordmark {
  display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;
  font-family:"VT323",ui-monospace,monospace;font-weight:800;
@@ -295,3 +293,40 @@ p,.muted{color:#638076}
 #site .side .nav.nav-organized>.nav-group{display:contents!important}
 #site .side h2{min-height:0!important;height:auto!important}
 #site .side .nav.nav-organized{flex-direction:row!important;align-items:center!important;gap:7px!important}
+
+
+/* Uploaded brand is compact and present in the actual application, never the login frame. */
+#site .side h2:has(.tthk-brand-logo) {
+ display:inline-flex!important;align-items:center!important;
+ gap:9px!important;max-width:245px!important;
+}
+#site .side h2>.tthk-brand-logo {
+ display:block!important;flex:0 0 auto!important;
+ max-width:70px!important;width:auto!important;height:43px!important;
+ object-fit:contain!important;border-radius:5px!important;
+ mix-blend-mode:normal!important;box-shadow:none!important;
+}
+#site .side h2>.tthk-brand-logo[hidden]{display:none!important}
+#tthkContactFooter .tthk-footer-brand>.tthk-footer-logo{
+ display:block!important;flex:0 0 auto!important;
+ width:92px!important;height:92px!important;object-fit:contain!important;
+ background:#f7fcf8;border:1px solid #cee4d8;border-radius:10px;
+ padding:5px;box-shadow:0 3px 12px #286f5020;
+}
+#tthkContactFooter .tthk-footer-brand>.tthk-footer-logo[hidden]{display:none!important}
+#tthkContactFooter .tthk-footer-pixelmark[hidden]{display:none!important}
+@media(max-width:560px){
+ #site .side h2:has(.tthk-brand-logo){max-width:100%!important}
+ #site .side h2>.tthk-brand-logo{max-width:54px!important;height:35px!important}
+ #tthkContactFooter .tthk-footer-brand>.tthk-footer-logo{width:70px!important;height:70px!important}
+}
+/* If fetching the five remote portraits fails, keep the bundled member art visible. */
+#team .memberpic.no-image{
+ background-image:url('/team.webp')!important;
+ background-repeat:no-repeat!important;
+ background-size:500% 100%!important;
+ background-color:#eaf7ee!important;
+}
+#team .memberpic.no-image::after{display:none!important}
+#team .memberpic.has-image{background-image:none!important}
+#team .memberpic.has-image img{max-width:100%;width:100%!important;height:100%!important;object-fit:contain!important}
