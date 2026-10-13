@@ -135,3 +135,60 @@ p,.muted{color:#638076}
 /* CRITICAL: never override hidden auth/app views with display:flex!important. */
 #site[hidden],#gate[hidden],#music[hidden],.page[hidden],#hsk20PaperShelf[hidden],.tthk-original-select[hidden]{display:none!important}
 #site:not([hidden]){visibility:visible}
+
+
+/* Legacy-logo removal: old circle/lotus image must never appear on login or headers. */
+#gate .login-logo-frame,
+#gate .login-logo-frame img,
+#gate .crisp-logo-art,
+#site .side-brand,
+#site .hero-brand-watermark,
+.page-loader .page-loader-img,
+.tthk-footer-brand>img {display:none!important}
+#gate .login-pixel-wordmark {
+ display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;
+ font-family:"VT323",ui-monospace,monospace;font-weight:800;
+ font-size:clamp(29px,3vw,43px);letter-spacing:.045em;line-height:1;
+ color:#286d60;background:#e3f4ea;border:3px solid #6fad96;
+ padding:13px 17px;box-shadow:5px 5px 0 #c5e3d0;
+ margin-bottom:25px;text-shadow:none;
+}
+#gate .login-pixel-wordmark span {
+ font-family:"Be Vietnam Pro",sans-serif;font-size:11px;
+ letter-spacing:.06em;line-height:1.5;font-weight:800;color:#417b69
+}
+#gate.authgate .login-showcase {
+ padding:clamp(20px,3vw,35px)!important;
+ max-width:590px!important;min-width:0;
+}
+#gate.authgate .login-showcase .login-kicker{display:inline-flex}
+#gate.authgate .login-showcase h1 {
+ font-size:clamp(27px,3vw,43px)!important;
+ line-height:1.25!important;
+ margin:15px 0 13px!important;
+}
+#gate.authgate .login-showcase p{max-width:500px}
+.tthk-footer-pixelmark,.page-loader-pixel{
+ display:grid;place-items:center;flex-shrink:0;
+ background:#e5f4e9;color:#2f8066;border:3px solid #6da78b;
+ box-shadow:4px 4px 0 #c6dfce;
+ font-family:"VT323",ui-monospace,monospace;
+ font-weight:800;image-rendering:pixelated;
+}
+.tthk-footer-pixelmark{width:74px;height:74px;font-size:44px}
+.page-loader-pixel{width:95px;height:95px;font-size:57px;margin:0 auto}
+#site .tthk-pixel-wordmark-small {
+ color:#2f7d65!important;font:800 23px/1.2 "VT323",monospace!important;
+ white-space:nowrap;letter-spacing:1px;
+}
+@media(max-width:880px){
+ #gate.authgate .login-showcase{padding:16px!important;text-align:center;max-width:490px!important}
+ #gate .login-pixel-wordmark{align-items:center;margin:0 auto 13px;padding:9px 14px;font-size:30px}
+ #gate.authgate .login-showcase h1{font-size:26px!important;margin:12px 0!important}
+}
+@media(max-width:480px){
+ #gate.authgate .login-showcase{padding:13px!important}
+ #gate .login-pixel-wordmark{font-size:27px;margin-bottom:10px}
+ #gate.authgate .login-showcase h1{font-size:22px!important}
+ #gate .authcard{max-width:100%!important}
+}
