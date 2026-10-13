@@ -1283,11 +1283,11 @@ if(gate&&window.supabase){
  const style=document.createElement('link');
  style.id='tthk2026RefreshStyle';
  style.rel='stylesheet';
- style.href='/site-refresh.css?v=mint-bilingual-20261013-v1';
+ style.href='/site-refresh.css?v=mint-no-oldlogo-20261013-v2';
  document.head.append(style);
  const script=document.createElement('script');
  script.id='tthk2026RefreshLoader';
- script.src='/site-refresh.js?v=mint-bilingual-20261013-v1';
+ script.src='/site-refresh.js?v=mint-no-oldlogo-20261013-v2';
  script.onerror=()=>console.warn('The new study layout did not load.');
  document.head.append(script);
 })();
