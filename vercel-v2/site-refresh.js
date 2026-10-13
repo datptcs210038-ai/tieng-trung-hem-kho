@@ -46,6 +46,8 @@ function pixelWordImage(w){
  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
 D.pixelWordImage=pixelWordImage;
+D.extraExamples=Object.assign(D.extraExamples||{}, {'宾馆':{zh:'这家宾馆离学校很近。',py:'Zhè jiā bīnguǎn lí xuéxiào hěn jìn.',vi:'Khách sạn này rất gần trường.'},'等':{zh:'请等我五分钟。',py:'Qǐng děng wǒ wǔ fēnzhōng.',vi:'Hãy đợi tôi năm phút.'},'过':{zh:'我去过北京。',py:'Wǒ qù guo Běijīng.',vi:'Tôi đã từng đến Bắc Kinh.'}});
+D.wordUsage=Object.assign(D.wordUsage||{}, {'宾馆':{pattern:'住宾馆 / 一家宾馆',note:'宾馆 là khách sạn, thường dùng với 住 (ở).'},'等':{pattern:'等 + 人 / 时间',note:'Chờ ai đó hoặc chờ một khoảng thời gian.'},'过':{pattern:'动词 + 过',note:'Trợ từ chỉ trải nghiệm đã từng làm gì, như 去过。'}});
 function applyImages(){
  if(!Array.isArray(D.words)||!D.words.length)return;
  for(const w of D.words){
@@ -65,6 +67,7 @@ const loadOriginal=D.loadWords;
 D.loadWords=async(...args)=>{
  const r=await loadOriginal.apply(D,args);
  applyImages();
+ refreshWordEditor();
  return r;
 };
 function fetchContext(){return D.profileContext?.()||{}}
@@ -283,7 +286,7 @@ async function saveWord(event){
  if(save.error){status.textContent='Không lưu được: '+save.error.message;return}
  contentRows[editingWord]=save.data;const w=D.words.find(x=>x.h===editingWord);
  D.photos[editingWord]=photo||pixelWordImage(w);
- if(zh)D.exampleSentences[editingWord]={zh,py,vi};
+ if(zh){D.exampleSentences=D.exampleSentences||{};D.exampleSentences[editingWord]={zh,py,vi};}
  status.textContent='Đã cập nhật ảnh và ví dụ.';D.vocab();
 }
 function hideCollocations(){
@@ -364,8 +367,9 @@ async function cropProfile(){
  }
  $('#profile').addEventListener('click',()=>{setTimeout(limits,200)},{capture:true,passive:true});
  upload.addEventListener('click',async event=>{
-  if(!img||upload.disabled)return;
   event.preventDefault();event.stopImmediatePropagation();
+  if(upload.disabled)return;
+  if(!img){$('#photoStatus').textContent='Hãy chọn ảnh và căn vùng cắt trước khi lưu.';return;}
   const {db,user}=fetchContext();if(!db||!user)return;
   upload.disabled=true;$('#photoStatus').textContent='Đang lưu ảnh đã cắt...';
   try{
