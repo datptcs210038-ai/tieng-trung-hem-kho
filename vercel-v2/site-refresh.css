@@ -131,3 +131,7 @@ p,.muted{color:#638076}
 .site main>footer:not(#tthkContactFooter),.site>footer:not(#tthkContactFooter){display:none!important}
 .tthk-choice-search>input{width:100%;min-height:44px;padding:11px 14px;margin:3px 0 9px}
 .tthk-choice-search>.tthk-choice-strip{width:100%}
+
+/* CRITICAL: never override hidden auth/app views with display:flex!important. */
+#site[hidden],#gate[hidden],#music[hidden],.page[hidden],#hsk20PaperShelf[hidden],.tthk-original-select[hidden]{display:none!important}
+#site:not([hidden]){visibility:visible}
