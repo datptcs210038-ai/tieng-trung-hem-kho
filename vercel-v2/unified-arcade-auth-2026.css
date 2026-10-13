@@ -504,3 +504,97 @@ html body #site .garden-cat-sprite{
   html body #site :is(.btn,button,[role="button"]),
   html body #pixelArcade :is(.btn,button,[role="button"]){transition:none!important}
 }
+
+/* Shared pastel gradient palette: auth, study tabs, menus and floating tools. */
+:root,html body,html body #site,html body #gate,html body #pixelArcade{
+ --tthk-ink:#294b62;--tthk-strong:#24475f;--tthk-muted:#647f94;
+ --tthk-edge:#cfe3f2;--tthk-outline:#cfe3f2;--tthk-surface:#f8fcff;
+ --tthk-soft:#e6f3fd;--tthk-navy:#294b62;--tthk-paper:#f8fcff;
+ --tthk-blue:#4a8cb7;--tthk-deep:#3c7ea9;
+ --tthk-page-gradient:radial-gradient(ellipse at 12% 4%,#dceeff 0,transparent 55%),radial-gradient(ellipse at 95% 90%,#e6eaff 0,transparent 52%),linear-gradient(135deg,#f3faff 0%,#e8f4ff 55%,#f0f1ff 100%);
+ --tthk-card-gradient:linear-gradient(135deg,rgba(255,255,255,.94),rgba(237,247,255,.94) 65%,rgba(239,241,255,.94));
+ --tthk-button-gradient:linear-gradient(120deg,#c5e5fa,#d3e3ff 65%,#e1e3fb);
+ --tthk-shadow:0 16px 44px rgba(66,111,150,.10),0 3px 12px rgba(66,111,150,.04);
+}
+html body,html body #gate.authgate,html body #gate.authgate.custom-login-bg,
+html body .page-loader,html body .page-loader.active{
+ background:var(--tthk-page-gradient)!important;background-attachment:fixed!important;
+ color:var(--tthk-ink)!important;
+}
+html body #site,html body #site main,html body #site .page,
+html body #flash.pixel-arcade-page,html body #pixelArcade{
+ background:transparent!important;color:var(--tthk-ink)!important;
+}
+html body #gate.authgate .authcard,html body #gate.authgate.custom-login-bg .authcard,
+html body #gate.authgate .login-showcase,html body #gate.authgate.custom-login-bg .login-showcase,
+html body #site :is(.box,.card,.word,.member,.student-card,.profile-section,.searchbar),
+html body #pixelArcade :is(.pa-panel,.pa-game-card,.pa-shop-item,.pa-inventory,.pa-results,.pa-cat-home,.pa-cat-care,.pa-pet-summary),
+html body :is(#wordDetail,#timerFloatingWindow,#timerFloatingChip,#tthkWordImageLibrary,.popup,.modal,.page-loader-inner,#toast){
+ background:var(--tthk-card-gradient)!important;border-color:var(--tthk-edge)!important;
+ color:var(--tthk-ink)!important;box-shadow:var(--tthk-shadow)!important;
+}
+html body #site .side,html body #site .side.top-glass,
+html body #site .nav,html body #site .switch,
+html body #pixelArcade :is(.pa-tabs,.pa-store-groups){
+ background:linear-gradient(115deg,rgba(244,251,255,.90),rgba(227,241,255,.88),rgba(239,241,255,.90))!important;
+ border-color:var(--tthk-edge)!important;backdrop-filter:blur(18px)!important;
+}
+html body #site .nav button,html body #site .switch button,
+html body #pixelArcade :is(.pa-tabs button,.pa-store-groups button){color:#526f89!important}
+html body #site .nav button.on,html body #site .nav button:hover,
+html body #site .switch button.on,
+html body #pixelArcade :is(.pa-tabs button.on,.pa-tabs button.active,.pa-store-groups button.on){
+ background:var(--tthk-button-gradient)!important;color:#274f70!important;
+ border-color:#c7def0!important;box-shadow:0 4px 14px #6c9abc22!important;
+}
+html body #gate.authgate .authcard .btn:not(.soft),
+html body #gate.authgate .authcard button:not(.soft),
+html body #site .btn:not(.soft),html body #pixelArcade .pa-primary,
+html body #pixelArcade .pa-shop-item button{
+ background:var(--tthk-button-gradient)!important;color:#274f70!important;
+ border:1px solid #bfd9ee!important;box-shadow:0 7px 20px #6c9abc22!important;
+}
+html body #site .btn.soft,html body #gate.authgate .btn.soft,
+html body #pixelArcade .pa-secondary,
+html body #gate.authgate :is(.login-kicker,.login-chips span),
+html body #pixelArcade :is(.pa-wallet,.pa-price,.pa-status-pill,.pa-game-icon,.pa-timer){
+ background:linear-gradient(130deg,#e8f5ff,#edf0ff)!important;
+ color:#3f6585!important;border-color:#d1e3f2!important;
+}
+html body #gate.authgate .authcard input,
+html body #site :is(input:not([type=checkbox]):not([type=radio]),textarea,select){
+ background:linear-gradient(135deg,#ffffff,#f1f8ff)!important;
+ border-color:#cbdfee!important;color:#294b62!important;
+}
+html body #gate.authgate .authcard input:focus,
+html body #site :is(input,textarea,select):focus-visible{
+ outline:2px solid #83b6dc!important;outline-offset:2px!important;
+ box-shadow:0 0 0 4px #b9dbf433!important;
+}
+html body #site :is(.hero,.writepad),html body #site #intro .hero{
+ background-color:#eaf5ff!important;
+ background-image:linear-gradient(120deg,rgba(222,240,255,.94),rgba(239,246,255,.90),rgba(225,229,251,.70))!important;
+ border-color:var(--tthk-edge)!important;
+}
+html body #gate.authgate .login-showcase h1 span,
+html body #site #intro .hero h1 em{color:#4b7da5!important}
+html body #gate.authgate .login-logo-frame{
+ display:block!important;visibility:visible!important;opacity:1!important;
+ width:min(100%,300px)!important;max-width:300px!important;margin:0 auto 20px!important;
+ padding:12px!important;border:1px solid #d0e3f2!important;border-radius:22px!important;
+ background:linear-gradient(130deg,#fff,#edf6ff)!important;box-shadow:0 10px 28px #6c9abc1c!important;
+}
+html body #gate.authgate .login-logo-frame img{
+ display:block!important;visibility:visible!important;opacity:1!important;
+ width:100%!important;height:auto!important;max-height:170px!important;
+ object-fit:contain!important;mix-blend-mode:normal!important;animation:none!important;
+}
+html body #site footer,html body #site .muted,html body #gate.authgate .muted{
+ color:var(--tthk-muted)!important;border-color:var(--tthk-edge)!important;
+}
+@media(max-width:880px){
+ html body #gate.authgate{align-content:start!important;gap:14px!important;padding:20px 16px!important}
+ html body #gate.authgate .login-logo-frame{max-width:220px!important;margin-bottom:12px!important;padding:8px!important}
+ html body #gate.authgate .login-logo-frame img{max-height:130px!important}
+}
+@media(prefers-reduced-motion:reduce){html body #gate.authgate .login-logo-frame img{animation:none!important}}
