@@ -224,7 +224,11 @@ root.querySelectorAll('[data-pa-tab]').forEach(b=>b.onclick=()=>{
 });
 function randomize(list){const out=[...list];for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
 function vocab(){
- return (D.words||[]).filter(w=>[1,2].includes(Number(w.l))&&w.h&&w.p&&w.m);
+ // Single Chinese/Vietnamese source for all arcade games, including word pairs.
+ // Skip a term if it has no confirmed Vietnamese meaning instead of showing English.
+ return (D.words||[])
+  .filter(w=>[1,2].includes(Number(w.l))&&w.h&&w.p&&D.vi?.[w.h])
+  .map(w=>({...w,m:D.vi[w.h]}));
 }
 async function startGame(id){
  if(!statusAccount()){toast('Vui lòng đăng nhập để tích xu.');return}
