@@ -289,3 +289,9 @@ p,.muted{color:#638076}
  #site .side .nav{gap:5px!important}
  #site .side .nav button[data-page]{font-size:12px!important;padding:9px 10px!important}
 }
+
+/* Flatten grouped navigation introduced by compact-ui, with no stacked labels. */
+#site .side .nav .nav-group-label{display:none!important}
+#site .side .nav.nav-organized>.nav-group{display:contents!important}
+#site .side h2{min-height:0!important;height:auto!important}
+#site .side .nav.nav-organized{flex-direction:row!important;align-items:center!important;gap:7px!important}
