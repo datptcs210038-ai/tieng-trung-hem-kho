@@ -1270,9 +1270,26 @@ if(gate&&window.supabase){
  'use strict';
  if(document.getElementById('tthkWordImageLibraryLoader'))return;
  const style=document.createElement('link');style.rel='stylesheet';
- style.href='/word-image-library.css?v=word-library-20261013-v1';document.head.appendChild(style);
+ style.href='/word-image-library.css?v=word-library-blue-20261013-v2';document.head.appendChild(style);
  const script=document.createElement('script');script.id='tthkWordImageLibraryLoader';
- script.src='/word-image-library.js?v=word-library-20261013-v1';
+ script.src='/word-image-library.js?v=word-library-blue-20261013-v2';
  script.onerror=()=>console.warn('Không tải được trình quản lý ảnh từ vựng.');
+ document.head.appendChild(script);
+})();
+
+
+// Baby-blue site upgrade: loaded after existing platform features.
+// Keeps original authentication, database, HSK exams, mascot and progress systems intact.
+;(()=>{
+ 'use strict';
+ if(document.getElementById('tthk2026Upgrade'))return;
+ const css=document.createElement('link');
+ css.rel='stylesheet';
+ css.href='/site-upgrade-2026.css?v=baby-blue-pixel-20261013-v1';
+ document.head.appendChild(css);
+ const script=document.createElement('script');
+ script.id='tthk2026Upgrade';
+ script.src='/site-upgrade-2026.js?v=baby-blue-pixel-20261013-v1';
+ script.onerror=()=>console.warn('Có lỗi tải giao diện mới; các chức năng cũ vẫn hoạt động.');
  document.head.appendChild(script);
 })();
