@@ -1333,3 +1333,6 @@ if(gate&&window.supabase){
   css.href='/full-ui-consistency.css?v=unified-arcade-and-auth-20261014-v1';
   document.head.append(css);
 })();
+
+// Last stylesheet wins over arcade, pet and auth legacy pixel themes.
+;(()=>{if(document.getElementById('tthkUnifiedArcadeAuth'))return;const link=document.createElement('link');link.id='tthkUnifiedArcadeAuth';link.rel='stylesheet';link.href='/unified-arcade-auth-2026.css?v=20261014-blue-ivory-v1';document.head.appendChild(link);})();
