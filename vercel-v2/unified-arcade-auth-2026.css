@@ -375,3 +375,83 @@ html body #site #intro .hero .garden-running-cat{image-rendering:auto!important}
 @media(prefers-reduced-motion:reduce){
  html body #pixelArcade .sky-leaf,html body #pixelArcade .sky-cloud{animation:none!important}
 }
+
+
+/* TTHK PASTEL SYSTEM V3 - single visual palette across all application layers.
+   This file must load after legacy styles; app behavior & illustrations unchanged. */
+:root,html body,#site,#gate,#pixelArcade{
+ --bg:#f4f9fd;--surface:#fff;--surface2:#eef6fb;
+ --primary:#72afd2;--primary2:#367fa7;--jade:#8cbfd9;--jade2:#397ea3;
+ --qa-leaf:#78b7d5;--qa-edge:#d8e8f1;--qa-warm:#fffdfb;--qa-yellow:#e6f3fb;
+ --tthk-bg:#f4f9fd;--tthk-bg-soft:#eef6fb;--tthk-primary:#72afd2;--tthk-primary-deep:#367fa7;
+ --tthk-paper:#fff;--tthk-paper-warm:#fffdfb;--tthk-line:#d8e8f1;
+ --tthk-text:#294b62;--tthk-text-soft:#6a889b;
+ --px-ink:#294b62;--px-leaf:#78b7d5;--brand-700:#397ea3;
+ accent-color:#72afd2;
+}
+html body{background:#f4f9fd!important;background-image:radial-gradient(ellipse 68% 44% at 85% 0%,#d4e9f5ab,transparent 77%),linear-gradient(160deg,#f9fcfe,#edf6fb 55%,#f8fbfd)!important;color:#294b62!important}
+html body #site.site:not([hidden]),html body #site.site:not([hidden])>main,html body #site .page{background-color:transparent!important}
+html body #gate.authgate,html body #gate.authgate.custom-login-bg{
+ background-color:#f4f9fd!important;
+ background-image:radial-gradient(ellipse 75% 50% at 85% 10%,#d2eaf7b8,transparent 79%),linear-gradient(145deg,#f9fcff,#edf6fb 58%,#f9fbfd)!important;
+}
+html body #gate :is(.authcard,.login-showcase,.authpane),
+html body #site :is(.box,.card,.word,.member,.profile-section,.study-filter-toolbar,.grammar-item,.gr-panel,.gr-card,.wd-panel,.wd-content),
+html body #pixelArcade :is(.pa-panel,.pa-game-card,.pa-shop-item,.pa-cat-home,.pa-cat-room,.pa-inventory,.pa-results,.pa-set-preview,.pa-pet-summary){
+ background:linear-gradient(154deg,#fff,#fbfdff)!important;
+ border-color:#d7e8f2!important;
+ box-shadow:0 16px 42px #3e80a51a,0 3px 10px #34688709!important;
+ color:#294b62!important;
+}
+html body #site :is(.side,.sidebar,.topbar,.mobile-dock,.nav.nav-organized,.study-toolbar,.toolbar),
+html body #pixelArcade :is(.pa-tabs,.pa-store-groups){
+ border-color:#d8e8f1!important;
+}
+html body #site :is(.nav button.on,.nav button:hover,.nav button[aria-current="page"],.switch button.on,.tab.active,.tab[aria-selected="true"],.filter.active,.filter[aria-selected="true"]),
+html body #pixelArcade :is(.pa-tabs button[aria-selected="true"],.pa-store-groups button[aria-pressed="true"]),
+html body #gate :is(.login-kicker,.login-chips span){
+ background:#e4f3fb!important;border-color:#b9d9eb!important;color:#306d91!important;
+ box-shadow:0 4px 12px #448ab10b!important;
+}
+html body #site :is(.switch,.searchbar,.placeholder,.pill,.notice,.writepad,.progressbar,.searchbox,.study-filter-toolbar),
+html body #pixelArcade :is(.pa-wallet,.pa-price,.pa-game-icon,.pa-status-pill,.pa-meter,.pa-crumb,.pa-cat-bubble){
+ background-color:#edf7fc!important;border-color:#d5e8f2!important;color:#3e7392!important;
+}
+html body #site :is(.btn.primary,.btn.jade,.btn:not(.soft):not(.ghost):not(.danger)),
+html body #gate .authcard :is(button[type="submit"],.btn:not(.soft)),
+html body #pixelArcade :is(.pa-primary,.pa-shop-item button:not(.is-equipped)){
+ background:linear-gradient(135deg,#8cc6e3,#539ac0)!important;
+ border:1px solid #7ab4d3!important;color:#fff!important;box-shadow:0 8px 20px #468ab025!important;
+}
+html body #site :is(.btn.soft,.btn.ghost,.choice:hover),
+html body #gate :is(.btn.soft,.choice:hover),
+html body #pixelArcade :is(.pa-secondary,.pa-small,.pa-tabs button){
+ background:#edf7fc!important;border-color:#cee4f0!important;color:#316f93!important;
+}
+html body :is(#site,#gate,#pixelArcade,#wordDetail,#tthkWordImageLibrary) :is(input,select,textarea){
+ background:#fff!important;border-color:#d1e4ee!important;color:#294b62!important;
+}
+html body :is(#site,#gate,#pixelArcade,#wordDetail,#tthkWordImageLibrary) :is(input,select,textarea):focus{
+ outline:2px solid #8fc4df!important;outline-offset:1px!important;box-shadow:0 0 0 4px #a9d6eb3b!important;
+}
+html body #site :is(.word h2,.hero em,.side h2,.hanviet,.pinyin,footer a),
+html body #pixelArcade :is(.pa-title,.pa-wallet,.pa-price,.pa-play-title),
+html body #gate :is(.login-showcase h1 span,.login-kicker){color:#367fa7!important}
+html body #site :is(.progressbar i,.stat .spark i,.gr-progress-fill,.progress-fill),
+html body #pixelArcade :is(.pa-meter-fill,.pa-progress-fill){
+ background:linear-gradient(90deg,#a7d5eb,#61a6c8)!important;
+}
+html body :is(#timerFloatingWindow,#timerFloatingChip,#wordDetail,#tthkWordImageLibrary,.popup,.page-loader-inner,.modal){
+ background:#fffdfd!important;border-color:#d4e7f1!important;box-shadow:0 18px 48px #3f789c21!important;color:#294b62!important;
+}
+html body #site #intro .hero{border-color:#d4e7f1!important}
+html body :is(#site,#gate,#pixelArcade) :is(.btn,button,a):focus-visible{
+ outline:3px solid #94c7e1!important;outline-offset:3px!important;
+}
+html body #pixelArcade :is(.pa-cat,.pa-cat-base,.pa-shop-sprite svg,.tthk-food-2d),
+html body #site #intro .garden-cat-sprite{image-rendering:auto!important}
+/* Keep semantic wrong/error colors and backgrounds: never override error/correct states. */
+@media(max-width:700px){
+ html body #site :is(.box,.card,.word,.member),html body #pixelArcade :is(.pa-panel,.pa-game-card,.pa-shop-item){border-radius:18px!important}
+ html body #gate :is(.authcard,.login-showcase){border-radius:22px!important}
+}
