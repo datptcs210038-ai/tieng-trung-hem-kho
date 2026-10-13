@@ -251,3 +251,9 @@ html body #site #lookup .gr-panel{
 @media(prefers-reduced-motion:reduce){
  html body #site .page.on{animation:none!important}
 }
+
+
+/* Hide retired lookup choices even before the updated grammar script initializes. */
+body #site #lookup [data-lookup]:not([data-lookup="words"]):not([data-lookup="grammar"]){
+ display:none!important;
+}
