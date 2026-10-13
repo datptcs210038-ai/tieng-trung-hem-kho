@@ -1278,21 +1278,6 @@ if(gate&&window.supabase){
 })();
 
 
-// Motion design for the original production website.
-// New files can fail independently without affecting authentication or study tools.
-;(()=>{
- 'use strict';
- if(document.getElementById('tthkCinematicHomeLoader'))return;
- const css=document.createElement('link');css.rel='stylesheet';
- css.href='/cinematic-home.css?v=cinematic-original-20261013-v1';
- document.head.appendChild(css);
- const js=document.createElement('script');js.id='tthkCinematicHomeLoader';
- js.src='/cinematic-home.js?v=cinematic-original-20261013-v1';
- js.onerror=()=>console.warn('Motion design unavailable; classic website remains functional.');
- document.head.appendChild(js);
-})();
-
-
 // Refined editorial UI depth and contemporary SVG icon system.
 // Scoped overrides preserve the existing auth, HSK, vocabulary and pixel-pet runtime.
 ;(()=>{
