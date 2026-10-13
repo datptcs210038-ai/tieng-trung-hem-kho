@@ -4,7 +4,7 @@
 const D=window.TTHK;
 const $=s=>document.querySelector(s);
 if(!D||!$('#site')||!$('#wordGrid')||$('#wordDetail'))return;
-const link=document.createElement('link');link.rel='stylesheet';link.href='/word-detail.css?v=learn-20261009-v1';document.head.append(link);
+const link=document.createElement('link');link.rel='stylesheet';link.href='/word-detail.css?v=hanzii-natural-20261013-v2';document.head.append(link);
 const main=$('#site main');
 if(!main)return;
 const detail=document.createElement('section');
@@ -15,7 +15,8 @@ detail.innerHTML=[
  '<div class="wd-shell"><article class="wd-panel"><div class="wd-label" id="wdLevel">TỪ VỰNG HSK</div><div class="wd-hanzi" id="wdWord"></div><p class="wd-pinyin" id="wdPinyin"></p><p class="wd-vn" id="wdMeaning"></p>',
  '<div class="wd-controls"><button type="button" class="wd-button primary" id="wdSpeakWord">🔊 Nghe từ</button><button type="button" class="wd-button" id="wdSpeakSlow">🐢 Nghe chậm</button></div>',
  '<div class="wd-picture" id="wdPicture"></div>',
- '<div class="wd-example"><span class="wd-label">CÂU VÍ DỤ</span><div class="zh" id="wdSentence"></div><div class="py" id="wdSentencePinyin"></div><div class="vi" id="wdSentenceVietnamese"></div><div class="en" id="wdExtraHint" hidden></div><button type="button" class="wd-button" id="wdSpeakSentence">🔊 Nghe cả câu</button></div>',
+ '<div class="wd-example"><span class="wd-label">CÂU VÍ DỤ TRONG ĐỜI SỐNG</span><div class="zh" id="wdSentence"></div><div class="py" id="wdSentencePinyin"></div><div class="vi" id="wdSentenceVietnamese"></div><div class="en" id="wdExtraHint" hidden></div><button type="button" class="wd-button" id="wdSpeakSentence">🔊 Nghe cả câu</button></div>',
+ '<div class="wd-usage"><span class="wd-label">📌 CÁCH SỬ DỤNG TỪ</span><div class="wd-usage-pattern-label">Mẫu thường gặp</div><div class="wd-usage-pattern" id="wdUsagePattern"></div><p class="wd-usage-note" id="wdUsageNote"></p><div class="wd-usage-source"><span>Tham khảo thêm:</span><a id="wdHanziiWord" target="_blank" rel="noopener noreferrer">Hanzii · Tra từ ↗</a><a id="wdHanziiExamples" target="_blank" rel="noopener noreferrer">Xem thêm ví dụ ↗</a></div></div>',
  '</article><section class="wd-panel"><h2 class="wd-stroke-title">✍ Hướng dẫn & tập viết</h2><p class="wd-description">Bấm một chữ để xem thứ tự nét. Sau đó chọn “Tập viết” để tự viết và được kiểm tra nét.</p><div class="wd-characters" id="wdCharacters"></div>',
  '<div class="wd-canvas-wrap"><div id="wordDetailCanvas" aria-label="Ô tập viết chữ Hán"></div></div>',
  '<div class="wd-controls"><button type="button" class="wd-button" id="wdAnimate">▶ Xem thứ tự nét</button><button type="button" class="wd-button primary" id="wdStartPractice">✍ Tập viết</button><button type="button" class="wd-button" id="wdResetPractice">↺ Viết lại</button></div>',
@@ -151,9 +152,9 @@ const siteObserver=new MutationObserver(()=>{
 siteObserver.observe($('#site'),{attributes:true,attributeFilter:['hidden']});
 loadFavorites();
 function currentExample(w){
- const custom=D.exampleSentences?.[w.h];
- if(custom)return {...custom,kind:'curated'};
- return {zh:'今天我学习“'+w.h+'”这个词。',py:'Jīntiān wǒ xuéxí “'+(w.p||w.h)+'” zhège cí.',vi:'Hôm nay tôi học từ “'+w.h+'”.',kind:'practice'};
+ const custom=D.exampleSentences?.[w.h]||D.extraExamples?.[w.h];
+ if(custom&&custom.zh&&custom.py&&custom.vi)return {...custom,kind:'curated'};
+ return {zh:'Câu ví dụ đang được biên tập cho từ này.',py:'',vi:'Hãy xem thêm ví dụ trong Hanzii bên dưới.',kind:'pending'};
 }
 function drawPicture(w){
  const slot=$('#wdPicture');slot.replaceChildren();
@@ -187,8 +188,14 @@ function renderDetail(){
  $('#wdSentencePinyin').textContent=example.py;
  $('#wdSentenceVietnamese').textContent=example.vi;
  const hint=$('#wdExtraHint');
- hint.hidden=example.kind!=='practice';
- hint.textContent=example.kind==='practice'?'Câu luyện đọc khi từ này chưa có ví dụ ngữ cảnh riêng.':'';
+ hint.hidden=example.kind!=='pending';
+ hint.textContent=example.kind==='pending'?'Chưa có câu được biên soạn riêng; không dùng mẫu câu máy móc.':'';
+ const usage=D.wordUsage?.[w.h];
+ $('#wdUsagePattern').textContent=usage?.pattern||'Chưa có mẫu câu dành riêng cho mục từ này.';
+ $('#wdUsageNote').textContent=usage?.note||'Đang biên soạn cách dùng. Hãy tham khảo thêm tại Hanzii.';
+ $('#wdHanziiWord').href='https://hanzii.net/search/word/'+encodeURIComponent(w.h)+'?hl=vi';
+ $('#wdHanziiExamples').href='https://hanzii.net/search/example/'+encodeURIComponent(w.h)+'?hl=vi';
+ $('#wdSpeakSentence').disabled=example.kind==='pending';
  const chars=[...w.h];
  const row=$('#wdCharacters');row.replaceChildren();
  for(let i=0;i<chars.length;i++){
@@ -252,7 +259,7 @@ $('#wdSpeakSlow').onclick=()=>{
  if(voices.length)utter.voice=voices[0];
  speechSynthesis.cancel();speechSynthesis.speak(utter);
 };
-$('#wdSpeakSentence').onclick=()=>{const w=activeWord();if(w)D.speak(currentExample(w).zh)};
+$('#wdSpeakSentence').onclick=()=>{const w=activeWord();if(w){const ex=currentExample(w);if(ex.kind!=='pending')D.speak(ex.zh)}};
 detailFav.onclick=()=>{const w=activeWord();if(w)toggleFavorite(w.h)};
 $('#wdBack').onclick=()=>D.page(origin==='wordDetail'?'vocab':origin);
 D.openWordDetail=openWord;
