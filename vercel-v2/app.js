@@ -705,7 +705,7 @@ render();
    const lv=$('#level').value,topic=$('#topic').value,query=$('#vocabQuery').value.toLowerCase();
    const filtered=D.words.filter(w=>!hasPhoto(w)
     &&(lv==='all'||w.l==lv)&&(topic==='all'||w.topic===topic)
-    &&[w.h,w.p,w.m,w.en].some(val=>String(val).toLowerCase().includes(query)));
+    &&[w.h,w.p,w.m].some(val=>String(val).toLowerCase().includes(query)));
    wordGrid.innerHTML=filtered.slice(0,D.shown).map(D.card).join('');
    D.bindCards(wordGrid);
    $('#loadMore').hidden=D.shown>=filtered.length;
@@ -1024,7 +1024,7 @@ if(gate&&window.supabase){
   all.forEach((w,i)=>{
     if(w.l!==1&&w.l!==2&&w.topic!=='✍ Tự chọn')return;
     if(level!=='all'&&String(w.l)!==level)return;
-    if(q&&![w.h,w.p,w.m,w.en].some(x=>normalize(x).includes(q)))return;
+    if(q&&![w.h,w.p,w.m].some(x=>normalize(x).includes(q)))return;
     matches.push(i);
   });
   grid.replaceChildren();
@@ -1034,7 +1034,7 @@ if(gate&&window.supabase){
    b.type='button';b.className='picker-word';b.dataset.wordIndex=String(idx);
    b.setAttribute('aria-label','Luyện viết '+w.h+', '+(w.m||''));
    if(idx===D.writeIndex)b.classList.add('is-picked');
-   for(const [name,text] of [['picker-hanzi',w.h],['picker-pinyin',w.p||' '],['picker-meaning',w.m||w.en||'']]){
+   for(const [name,text] of [['picker-hanzi',w.h],['picker-pinyin',w.p||' '],['picker-meaning',w.m||'']]){
     const span=document.createElement('span');span.className=name;span.textContent=text;b.append(span);
    }
    b.onclick=()=>choose(idx,true);
@@ -1072,7 +1072,7 @@ if(gate&&window.supabase){
   }
   const q=normalize(value);
   const found=D.words.findIndex(w=>
-   [w.h,w.p,w.m,w.en].some(x=>normalize(x).includes(q))&&
+   [w.h,w.p,w.m].some(x=>normalize(x).includes(q))&&
    (level==='all'||String(w.l)===level));
   if(found>=0)choose(found,true);
   else{count.textContent='Không tìm thấy. Bạn có thể nhập trực tiếp chữ Hán (tối đa 4 chữ).';search.focus();}
