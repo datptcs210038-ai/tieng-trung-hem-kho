@@ -10,14 +10,17 @@
   ruby:'#bb5767', pink:'#ef9fbe', sparkle:'#fff5cf'
  };
  const bodyFrames = {
-  idle:[[25,17,25],[26,15,27],[27,14,29],[28,13,30],[29,13,31],[30,12,31],[31,12,32],[32,12,32],[33,13,32],[34,13,31],[35,14,31],[36,15,30],[37,17,29]],
-  blink:[[25,17,25],[26,15,27],[27,14,29],[28,13,30],[29,13,31],[30,12,31],[31,12,32],[32,12,32],[33,13,32],[34,13,31],[35,14,31],[36,15,30],[37,17,29]],
-  walk1:[[24,17,26],[25,15,28],[26,14,30],[27,13,31],[28,13,32],[29,12,32],[30,12,32],[31,13,33],[32,13,33],[33,13,32],[34,14,32],[35,15,31],[36,17,29]],
-  walk2:[[26,18,26],[27,16,29],[28,15,31],[29,14,32],[30,14,33],[31,13,33],[32,13,34],[33,13,34],[34,14,34],[35,14,33],[36,15,32],[37,16,31],[38,18,30]],
-  groom1:[[25,18,28],[26,16,29],[27,15,30],[28,14,31],[29,14,31],[30,13,31],[31,13,32],[32,13,32],[33,14,32],[34,15,31],[35,15,30],[36,17,29],[37,19,27]],
-  groom2:[[26,17,27],[27,15,29],[28,14,30],[29,13,31],[30,13,31],[31,12,32],[32,12,32],[33,13,32],[34,14,32],[35,14,31],[36,15,30],[37,17,29],[38,19,27]],
-  eat:[[25,33,42],[26,32,46],[27,31,48],[28,31,49],[29,30,50],[30,30,50],[31,30,49],[32,31,49],[33,32,48],[34,33,47],[35,35,45]],
-  sleep:[[27,24,34],[28,21,38],[29,19,40],[30,18,41],[31,18,42],[32,17,43],[33,17,43],[34,18,43],[35,19,42],[36,21,40],[37,24,38]]
+  // Narrow, tapered tailoring — fabric stays on the shoulder/back, leaves feet and tail free.
+  idle:[[25,19,25],[26,17,27],[27,16,28],[28,15,29],[29,15,29],[30,15,29],[31,16,28],[32,17,27],[33,19,25]],
+  blink:[[25,19,25],[26,17,27],[27,16,28],[28,15,29],[29,15,29],[30,15,29],[31,16,28],[32,17,27],[33,19,25]],
+  walk1:[[25,20,26],[26,18,28],[27,17,29],[28,16,30],[29,16,30],[30,16,30],[31,17,29],[32,18,28],[33,20,26]],
+  walk2:[[26,20,26],[27,18,28],[28,17,29],[29,16,30],[30,16,30],[31,17,29],[32,18,28],[33,20,27]],
+  // Forepaws rise over the coat in grooming; only a slim lower vest is exposed.
+  groom1:[[30,22,27],[31,20,29],[32,19,29],[33,20,28],[34,22,27]],
+  groom2:[[30,22,27],[31,20,29],[32,19,29],[33,20,28],[34,22,27]],
+  // Eating and sleeping use separate silhouettes, away from bowl and sleeping head.
+  eat:[[28,20,25],[29,18,27],[30,17,28],[31,17,28],[32,18,27],[33,20,26]],
+  sleep:[[29,26,32],[30,24,35],[31,23,36],[32,23,37],[33,24,37],[34,25,36],[35,27,34]]
  };
  const frames = {
   idle:{hx:44,hy:15,nx:33,ny:31},
@@ -55,39 +58,22 @@
     if(idx>0&&idx<rows.length-1)row(l+1,y,Math.max(1,r-l-1),main);
     if(idx>1&&idx<rows.length-3&&r-l>6)row(l+2,y,3,shade);
    });
-   // All stitch and collar details move with their corresponding native animation frame.
-   const mid=Math.floor(rows.length/2),middle=rows[mid],seamX=middle[2]-3;
-   for(let i=3;i<rows.length-2;i+=3){
-    const [y,l,r]=rows[i];
-    rect(Math.min(r-3,l+4),y,3,1,accent);
-   }
-   // Button placket follows the slope of the shirt and never covers the face.
-   for(let i=3;i<rows.length-2;i+=4){
-    const [y,l,r]=rows[i]; rect(Math.min(r-3,seamX),y,1,1,id==='royal'?'gold':id==='aoba'?'ivory':id==='pajamas'?'cream':'sky');
-   }
-   if(id==='student'){
-    const y=rows[3][0],x=rows[3][1]+3;
-    rect(x,y+2,4,2,'ivory');rect(x+1,y+3,2,1,'navy');
-    rect(rows[rows.length-4][1]+1,rows[rows.length-4][0],5,1,'sky');
-   }else if(id==='aoba'){
-    const [y,l,r]=rows[5];
-    rect(Math.min(r-4,l+8),y,2,4,'lilacLight');
-    rect(Math.min(r-4,l+9),y+1,1,1,'ivory');
-    rect(rows[rows.length-4][1]+2,rows[rows.length-4][0],6,1,'blush');
-   }else if(id==='royal'){
-    const [y,l,r]=rows[5],x=Math.floor((l+r)/2);
-    rect(x-2,y,5,1,'gold');rect(x-1,y+1,3,1,'goldDark');rect(x,y+2,1,2,'gold');
-    rect(rows[rows.length-3][1]+1,rows[rows.length-3][0],Math.max(3,rows[rows.length-3][2]-rows[rows.length-3][1]-1),1,'gold');
-   }else if(id==='pajamas'){
-    const [y,l,r]=rows[4];
-    rect(l+4,y,4,1,'cream');rect(l+3,y+1,2,1,'cream');rect(l+5,y+2,5,1,'cream');
-    rect(rows[rows.length-3][1]+2,rows[rows.length-3][0],4,1,'pink');
+   // Pixel stitches are placed inside the small garment; no bulky rectangles.
+   const mid=rows[Math.floor(rows.length/2)];
+   if(rows.length>=7){
+    const [y,l,r]=mid;
+    rect(l+2,y,2,1,shade);
+    rect(Math.min(r-3,l+5),y+1,2,1,accent);
+    if(id==='student'){rect(l+3,y-2,3,1,'ivory');rect(l+4,y-1,1,1,'gold')}
+    else if(id==='aoba'){rect(l+5,y-2,1,4,'ivory');rect(l+6,y,1,1,'gold')}
+    else if(id==='royal'){rect(l+3,y-1,5,1,'gold');rect(l+5,y,1,2,'goldDark')}
+    else if(id==='pajamas'){rect(l+3,y-2,3,1,'cream');rect(l+4,y-1,2,1,'pink')}
    }
    // Pixel neck seam, repositioned for grooming, eating and lying down.
    if(pose==='sleep'){
     row(f.nx-2,f.ny,7,shade);rect(f.nx+1,f.ny,2,1,accent);
    }else{
-    row(f.nx-4,f.ny-2,7,'line');row(f.nx-3,f.ny-2,5,accent);
+    row(f.nx-3,f.ny-2,5,accent);
    }
   } else if(id==='bow'){
    const x=f.hx+1,y=f.hy-7;
@@ -98,11 +84,13 @@
    rect(x-2,y+2,5,3,'navy');rect(x-1,y+2,2,1,'ivory');
    rect(x-6,y+2,2,1,'ivory');rect(x+5,y+2,2,1,'ivory');
   } else if(id==='glasses'){
-   // In sleep the glasses rest higher on the forehead; the cat may still close its eyes.
-   const gy=f.hy+(pose==='sleep'?1:5),x=f.hx;
-   frameRect(x-11,gy,9,8,'navy');frameRect(x+1,gy,9,8,'navy');
-   row(x-2,gy+2,3,'navy');row(x-12,gy+2,2,'denim');row(x+9,gy+2,2,'denim');
-   rect(x-9,gy+1,2,1,'sky');rect(x+3,gy+1,2,1,'sky');
+   // Four-pixel correction towards the real pupil centres of the 64x50 cat.
+   // Two narrower 7x7 lenses: pupils stay inside the glass in both walk frames.
+   const centers={idle:49,blink:49,walk1:49,walk2:50,groom1:45,groom2:44,eat:50,sleep:40};
+   const x=centers[pose],gy=f.hy+(pose==='sleep'?0:4);
+   frameRect(x-10,gy,8,7,'navy');frameRect(x+4,gy,8,7,'navy');
+   row(x-2,gy+2,6,'navy');row(x-11,gy+2,2,'denim');row(x+11,gy+2,2,'denim');
+   rect(x-8,gy+1,2,1,'sky');rect(x+6,gy+1,2,1,'sky');
   } else if(id==='beanie'){
    const x=f.hx-1,y=f.hy-8;
    row(x-8,y+1,8,'forest');row(x-10,y+2,13,'sage');
@@ -117,13 +105,13 @@
    row(x-10,y+2,20,'gold');rect(x-10,y+3,20,3,'goldDark');
    row(x-8,y+4,16,'gold');rect(x-1,y+3,3,2,'ruby');rect(x-7,y+3,2,1,'sky');
   } else if(id==='scarf'){
-   const x=f.nx,y=f.ny;
-   row(x-6,y-3,11,'roseDark');row(x-7,y-2,13,'rose');
-   row(x-5,y-1,10,'blush');row(x-3,y,8,'rose');
-   rect(x+1,y+1,4,6,'roseDark');
-   rect(x+2,y+5,3,1,'blush');
-   if(pose==='walk1'||pose==='walk2')row(x+4,y+4,4,'rose');
-   if(pose==='sleep')rect(x+1,y+1,5,2,'rose');
+   const x=f.nx+1,y=f.ny-1;
+   // Slim 2-pixel collar with a 3-pixel fabric tail; never hides front paws.
+   row(x-4,y-2,8,'roseDark');row(x-5,y-1,10,'rose');
+   row(x-4,y,8,'blush');rect(x+1,y+1,3,4,'roseDark');
+   row(x+1,y+3,3,'blush');
+   if(pose==='walk1'||pose==='walk2')row(x+3,y+2,3,'rose');
+   if(pose==='sleep')rect(x+1,y+1,3,2,'rose');
   } else if(id==='bell'){
    const x=f.nx,y=f.ny;
    row(x-6,y-3,11,'navy');row(x-5,y-2,10,'denim');
