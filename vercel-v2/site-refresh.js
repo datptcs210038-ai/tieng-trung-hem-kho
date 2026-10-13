@@ -37,9 +37,11 @@ function pixelWordImage(w){
   const v=(sum*17+i*31)%23,xx=14+(i%3)*26,yy=18+Math.floor(i/3)*18;
   return '<rect x="'+xx+'" y="'+yy+'" width="'+(4+v%7)+'" height="'+(5+v%9)+'" fill="'+p[1]+'" opacity=".14"/>';
  }).join('');
+ const category=/Học tập/.test(w.topic||'')?'vocab':/Đi lại/.test(w.topic||'')?'home':/Gia đình/.test(w.topic||'')?'team':/Ăn uống/.test(w.topic||'')?'study':/Động vật/.test(w.topic||'')?'profile':'info';
+ const categoryPixels=(pixelPaths[category]||pixelPaths.info).map((row,y)=>[...row].map((value,x)=>value==='1'?'<rect x="'+(128+x*2)+'" y="'+(18+y*2)+'" width="2" height="2" fill="'+p[1]+'"/>':'').join('')).join('');
  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 160 120">'+
   '<rect width="160" height="120" rx="12" fill="#edf8f1"/><rect x="5" y="5" width="150" height="110" fill="#fdfef9" stroke="'+p[1]+'" stroke-width="2"/>'+
-  blocks+'<rect x="12" y="13" width="34" height="4" fill="'+p[0]+'"/><rect x="12" y="20" width="20" height="4" fill="'+p[0]+'"/>'+
+  blocks+categoryPixels+'<rect x="12" y="13" width="34" height="4" fill="'+p[0]+'"/><rect x="12" y="20" width="20" height="4" fill="'+p[0]+'"/>'+
   '<text x="80" y="77" text-anchor="middle" font-family="Noto Sans SC,sans-serif" font-weight="800" font-size="'+(text.length>3?26:text.length>2?32:40)+'" fill="'+p[1]+'">'+escape(text)+'</text>'+
   '<rect x="18" y="89" width="124" height="2" fill="'+p[0]+'"/>'+
   '<text x="80" y="105" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#476b61">'+escape(label)+'</text></svg>';
