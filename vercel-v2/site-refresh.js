@@ -322,6 +322,22 @@ function footer(){
   '<a href="tel:0373247662">'+pixelIcon('info',18)+'<span>0373247662</span></a>'+
   '<a href="mailto:tiengtrunghemkho@gmail.com">'+pixelIcon('study',18)+'<span>tiengtrunghemkho@gmail.com</span></a></div>';
  const main=site.querySelector('main');(main||site).append(foot);
+ // Data may have loaded before this footer exists; reapply the uploaded logo.
+ const uploaded=window.TTHK_CURRENT_BRAND_LOGO;
+ if(uploaded&&/^https:\/\//i.test(uploaded)){
+  const brand=foot.querySelector('.tthk-footer-brand');
+  if(brand){
+   const img=document.createElement('img');
+   img.className='tthk-footer-logo';
+   img.src=uploaded;
+   img.alt='Logo Tiếng Trung Hem Khó';
+   img.loading='lazy';
+   img.onerror=()=>{img.hidden=true;const fallback=brand.querySelector('.tthk-footer-pixelmark');if(fallback)fallback.hidden=false};
+   brand.prepend(img);
+   const fallback=brand.querySelector('.tthk-footer-pixelmark');
+   if(fallback)fallback.hidden=true;
+  }
+ }
 }
 function bio(){
  const intro=$('#intro');if(!intro)return;
