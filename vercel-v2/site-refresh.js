@@ -317,7 +317,7 @@ function footer(){
  const foot=document.createElement('footer');foot.id='tthkContactFooter';
  foot.innerHTML='<div class="tthk-footer-brand"><img src="/logo-tthk.webp" alt="Logo Tiếng Trung Hem Khó" loading="lazy"><div><strong>TIẾNG TRUNG HEM KHÓ</strong><span>中文不难 · Học tiếng Trung dễ hiểu, dễ nhớ</span></div></div>'+
   '<div class="tthk-footer-details"><h3>Liên hệ</h3>'+
-  '<a href="https://www.facebook.com/tiengtrunghemkho" target="_blank" rel="noopener noreferrer">'+pixelIcon('facebook',18)+'<span>Fanpage Tiếng Trung Hem Khó</span></a>'+
+  '<a href="https://www.facebook.com/search/pages/?q=Ti%E1%BA%BFng%20Trung%20Hem%20Kh%C3%B3" target="_blank" rel="noopener noreferrer">'+pixelIcon('facebook',18)+'<span>Fanpage Tiếng Trung Hem Khó</span></a>'+
   '<p>'+pixelIcon('home',18)+'<span>Số 600, đường Nguyễn Văn Cừ (nối dài), Phường An Bình, Thành phố Cần Thơ</span></p>'+
   '<a href="tel:0373247662">'+pixelIcon('info',18)+'<span>0373247662</span></a>'+
   '<a href="mailto:tiengtrunghemkho@gmail.com">'+pixelIcon('study',18)+'<span>tiengtrunghemkho@gmail.com</span></a></div>';
@@ -379,7 +379,7 @@ async function cropProfile(){
   const photoDate=Date.parse(res.data.avatar_changed_at||'');
   const nameDate=Date.parse(res.data.name_changed_at||'');
   if(Number.isFinite(photoDate)&&now<photoDate+day){upload.disabled=true;desc.push('Ảnh: đổi tiếp từ '+new Date(photoDate+day).toLocaleDateString('vi-VN'))}else upload.disabled=false;
-  if(Number.isFinite(nameDate)&&now<nameDate+day){const b=$('#saveName');if(b)b.disabled=true;desc.push('Tên: đổi tiếp từ '+new Date(nameDate+day).toLocaleDateString('vi-VN'))}
+  if(Number.isFinite(nameDate)&&now<nameDate+day){const b=$('#saveName');if(b)b.disabled=true;desc.push('Tên: đổi tiếp từ '+new Date(nameDate+day).toLocaleDateString('vi-VN'))}else{const b=$('#saveName');if(b)b.disabled=false}
   $('#tthkProfileLimit').textContent=desc.length?desc.join(' · '):'Bạn có thể đổi tên và ảnh đại diện, mỗi mục tối đa 1 lần trong 7 ngày.';
  }
  $('#profile').addEventListener('click',()=>{setTimeout(limits,200)},{capture:true,passive:true});
