@@ -1263,3 +1263,16 @@ if(gate&&window.supabase){
  }
  load(0);
 })();
+
+
+// Self-contained 300-word image and example editor (original app layout unaffected).
+;(()=>{
+ 'use strict';
+ if(document.getElementById('tthkWordImageLibraryLoader'))return;
+ const style=document.createElement('link');style.rel='stylesheet';
+ style.href='/word-image-library.css?v=word-library-20261013-v1';document.head.appendChild(style);
+ const script=document.createElement('script');script.id='tthkWordImageLibraryLoader';
+ script.src='/word-image-library.js?v=word-library-20261013-v1';
+ script.onerror=()=>console.warn('Không tải được trình quản lý ảnh từ vựng.');
+ document.head.appendChild(script);
+})();
