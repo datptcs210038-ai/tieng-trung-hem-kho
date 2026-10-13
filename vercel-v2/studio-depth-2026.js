@@ -65,7 +65,7 @@ function chrome(){
   span.dataset.studioClean='1';
  });
  const greeting=$('#gate .login-kicker');
- if(greeting)greeting.textContent='HỌC TIẾNG TRUNG · KHÁM PHÁ THẾ GIỚI';
+ if(greeting&&greeting.textContent!=='HỌC TIẾNG TRUNG · KHÁM PHÁ THẾ GIỚI')greeting.textContent='HỌC TIẾNG TRUNG · KHÁM PHÁ THẾ GIỚI';
 }
 function actionIcons(){
  // Restore sleek modern line icons only on study utility buttons.
