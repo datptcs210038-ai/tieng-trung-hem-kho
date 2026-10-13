@@ -200,3 +200,74 @@ html body :is(#timerFloatingWindow,#timerFloatingChip,.popup,.page-loader-inner)
 @media(prefers-reduced-motion:reduce){
  html body #pixelArcade .pa-game-card,html body #pixelArcade :is(.pa-primary,.pa-secondary){transition:none!important}
 }
+
+
+/* 2026-10-14 · FINAL SKY-PASTEL CLEANUP
+   Override legacy jade/leaf palette across app, auth, learning, and arcade.
+   Preserve semantic correct/wrong indications and pet illustration artwork. */
+:root{
+ --jade:#7db7d5;--jade2:#397b9d;
+ --qa-leaf:#6da9c9;--qa-edge:#d5e6f0;--qa-warm:#fffdfb;
+ --brand-700:#397b9d;--tthk-deep:#397fa6;
+ accent-color:#6da9c9;
+}
+html body #site,html body #gate,html body #pixelArcade{
+ --jade:#7db7d5;--jade2:#397b9d;--qa-leaf:#6da9c9;
+ accent-color:#6da9c9;
+}
+html body #site :is(.btn,.nav button.on,.nav button:hover,.switch button.on,.searchbar,.searchbar input,.choice,.pill,.badge,.tag,.word,.box,.card),
+html body #gate :is(.btn,.authcard,.authpane,.login-kicker,.login-chips span,.choice),
+html body #pixelArcade :is(.pa-primary,.pa-secondary,.pa-game-card,.pa-panel,.pa-shop-item,.pa-status-pill){
+ border-color:#d3e5f0!important;
+}
+html body :is(#site,#gate,#wordDetail,#pixelArcade) :is(input,select,textarea):focus-visible{
+ outline:2px solid #98c9e1!important;outline-offset:2px!important;
+ border-color:#8dc3dd!important;box-shadow:0 0 0 4px rgba(135,190,220,.17)!important;
+}
+html body #site :is(.btn,.button):not(.soft):not(.ghost):not(.danger),
+html body #gate .authcard :is(.btn,button[type="submit"]):not(.soft),
+html body #pixelArcade :is(.pa-primary,.pa-play-btn,.pa-action-primary){
+ background:linear-gradient(135deg,#85bfdb,#4f94b9)!important;
+ border-color:#80b7d3!important;color:#fff!important;
+ box-shadow:0 8px 22px rgba(58,121,163,.17)!important;
+}
+html body #site :is(.btn.soft,.switch button.on,.nav button.on,.nav button:hover,.choice:hover),
+html body #gate :is(.btn.soft,.choice:hover),
+html body #pixelArcade :is(.pa-secondary,.pa-status-pill,.pa-wallet,.pa-price,.pa-game-icon){
+ background:#eaf5fb!important;color:#376b89!important;border-color:#cfe3ef!important;
+}
+html body #site :is(.hero,.study-filter-toolbar,.searchbar,.writepad),
+html body #gate :is(.login-showcase,.authcard),
+html body #pixelArcade :is(.pa-panel,.pa-game-card,.pa-shop-item,.pa-cat-home,.pa-inventory){
+ border-color:#d7e6ef!important;
+}
+html body #site :is(.word h2,.hero em,.side h2,.switch button.on,footer a,.nav button.on),
+html body #gate :is(.login-kicker,.login-showcase h1 span),
+html body #pixelArcade :is(.pa-price,.pa-wallet,.pa-title,.pa-crumb){
+ color:#397b9d!important;
+}
+html body #site :is(.placeholder,.pill,.badge,.tag,.switch,.notice,.searchbar),
+html body #gate :is(.login-chips span,.login-kicker),
+html body #pixelArcade :is(.pa-status-pill,.pa-game-icon,.pa-price){
+ background-color:#eaf4fa!important;
+}
+html body #site :is(.progressbar i,.progress-fill,.stat .spark i),
+html body #pixelArcade :is(.pa-progress-fill,.pa-meter-fill,.pa-bar-fill){
+ background:linear-gradient(90deg,#a4d3e7,#5b9fc2)!important;
+}
+html body #site :is(.nav button.on,.switch button.on,.word:hover,.choice:hover),
+html body #pixelArcade :is(.pa-game-card:hover,.pa-shop-item:hover){
+ border-color:#9fc9dd!important;
+}
+html body #gate.authgate,
+html body #gate.authgate.custom-login-bg{
+ background:#f3f8fb!important;
+ background-image:radial-gradient(ellipse 70% 48% at 90% 0%,rgba(171,210,232,.42),transparent 78%),linear-gradient(140deg,#f8fbfd,#eaf4fa 54%,#f9fbfd)!important;
+}
+html body #site :is(.sidebar,.side,.topbar,.mobile-dock){
+ border-color:#d6e7f0!important;
+}
+html body #site :is(.searchbar,.switch,.notice,.writepad){
+ background:#f0f7fb!important;
+}
+/* Keep right/wrong quiz feedback meaningful: never recolor .correct/.wrong. */
