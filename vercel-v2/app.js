@@ -671,17 +671,21 @@ render();
  async function executeWithAuthLoader(fn,message,...args){
    const started=showAuthLoader(message);
    const at=Date.now();
+   // Do not freeze login/logout behind a mandatory five-second animation.
+   // A failsafe also closes the visual overlay when a network request stalls.
+   const failsafe=started?setTimeout(hideAuthLoader,8000):null;
    try{return await fn(...args);}
    finally{
+     if(failsafe)clearTimeout(failsafe);
      if(started){
-       const delay=Math.max(0,5000-(Date.now()-at));
+       const delay=Math.max(0,320-(Date.now()-at));
        if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
        hideAuthLoader();
      }
    }
  }
  const login=$('#login'),logout=$('#logout'),logoutTop=$('#quickSignOut');
- // Five seconds on account transitions only; regular page/tab navigation has no spinner.
+ // Brief account transition feedback; never block navigation for five seconds.
  loader?.classList.add('auth-five-second-loader');
  if(login&&typeof login.onclick==='function'){
    const original=login.onclick;
