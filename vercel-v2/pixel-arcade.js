@@ -130,7 +130,8 @@ function vectorCat(pose='idle',equipped={}){
  const hat=head==='beanie'?'<path d="M48 82Q52 22 95 24Q137 30 140 83Z" fill="#9ec7e4" stroke="#648fae" stroke-width="3"/><rect x="45" y="73" width="98" height="15" rx="7" fill="#d9eaf7"/>':head==='crown'?'<path d="M57 72V39L77 54 94 30 110 54 130 39V72Z" fill="#e8cf8c" stroke="#bca161" stroke-width="3"/>':'';
  const glasses=head==='glasses'?'<g stroke="#526e86" stroke-width="4" fill="none"><circle cx="70" cy="106" r="17"/><circle cx="114" cy="106" r="17"/><path d="M87 105Q93 101 97 105"/></g>':'';
  const eyes=blink?'<g stroke="#4c596c" stroke-width="3.5" fill="none" stroke-linecap="round"><path d="M60 108q11 9 21 0M103 108q11 9 21 0"/></g>':'<g fill="#405366"><ellipse cx="71" cy="108" rx="5" ry="8"/><ellipse cx="115" cy="108" rx="5" ry="8"/><circle cx="73" cy="105" r="2" fill="white"/><circle cx="117" cy="105" r="2" fill="white"/></g>';
- const paw=groom?'<path d="M120 149Q131 132 121 108" fill="none" stroke="#fff5e8" stroke-width="17" stroke-linecap="round"/>':'<path d="M62 162q-7 16 8 20M120 162q7 16-8 20" fill="none" stroke="#fff5e8" stroke-width="14" stroke-linecap="round"/>';
+ const walk=pose==='walk1'||pose==='walk2';
+ const paw=groom?'<path d="M120 149Q131 132 121 108" fill="none" stroke="#fff5e8" stroke-width="17" stroke-linecap="round"/>':walk?(pose==='walk1'?'<path d="M61 157q-21 8-13 25M118 159q17 5 24 21" fill="none" stroke="#fff5e8" stroke-width="14" stroke-linecap="round"/>':'<path d="M62 159q14 5 22 24M121 157q-21 6-17 24" fill="none" stroke="#fff5e8" stroke-width="14" stroke-linecap="round"/>'):'<path d="M62 162q-7 16 8 20M120 162q7 16-8 20" fill="none" stroke="#fff5e8" stroke-width="14" stroke-linecap="round"/>';
  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 215" role="img" aria-label="Mèo minh họa 2D" shape-rendering="geometricPrecision">'+
  '<ellipse cx="94" cy="200" rx="59" ry="9" fill="#547995" opacity=".13"/>'+
  '<path d="M129 170Q175 174 163 134" fill="none" stroke="#e5b9a4" stroke-width="18" stroke-linecap="round"/>'+
@@ -225,7 +226,7 @@ function render(){
 }
 function foodCard(item){
  const count=Number((pet.food_stock||{})[item.id]||0);
- return '<div class="pa-shop-item"><div class="pa-shop-sprite">'+pixelSvg(item.id)+'</div><strong>'+item.name+'</strong><p>'+item.caption+'</p><span class="pa-price">Còn '+count+' món</span>'+
+ return '<div class="pa-shop-item"><div class="pa-shop-sprite">'+vectorFood(item.id)+'</div><strong>'+item.name+'</strong><p>'+item.caption+'</p><span class="pa-price">Còn '+count+' món</span>'+
  '<button data-action="feed" data-item="'+item.id+'" '+(count?'':'disabled')+'>Cho mèo ăn ♥</button></div>';
 }
 function shopCard(item){
@@ -469,16 +470,17 @@ function integratedLookPreview(equipped,extraClass=''){
  return '<span class="pa-shop-preview pa-complete-look '+extraClass+'" data-pa-look="'+encoded+'" aria-hidden="true"><span class="pa-shop-cat"></span></span>';
 }
 function refreshLookPreviews(){
- const atlas=window.TTHK_CAT_LOOKS;
  content.querySelectorAll('[data-pa-look]').forEach(preview=>{
   let eq={};try{eq=JSON.parse(decodeURIComponent(preview.dataset.paLook))}catch(e){}
-  const img=atlas?.url(eq)||window.TTHK_CAT_ATLAS;
   const cat=preview.querySelector('.pa-shop-cat');
-  if(!cat||!img)return;
+  if(!cat)return;
+  // Use the same 2D cat renderer in the dressing room and pet scene.
+  const img='data:image/svg+xml,'+encodeURIComponent(vectorCat('idle',eq));
   cat.style.setProperty('background-image','url("'+img+'")','important');
-  cat.style.setProperty('background-size','400% 200%','important');
-  cat.style.setProperty('background-position','0% 0%','important');
+  cat.style.setProperty('background-size','contain','important');
+  cat.style.setProperty('background-position','center','important');
   cat.style.setProperty('background-repeat','no-repeat','important');
+  cat.style.setProperty('image-rendering','auto','important');
  });
 }
 function wardrobePreview(id){
