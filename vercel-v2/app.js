@@ -705,7 +705,7 @@ render();
    const lv=$('#level').value,topic=$('#topic').value,query=$('#vocabQuery').value.toLowerCase();
    const filtered=D.words.filter(w=>!hasPhoto(w)
     &&(lv==='all'||w.l==lv)&&(topic==='all'||w.topic===topic)
-    &&[w.h,w.p,w.m].some(val=>String(val).toLowerCase().includes(query)));
+    &&[w.h,w.m].some(val=>String(val).toLowerCase().includes(query)));
    wordGrid.innerHTML=filtered.slice(0,D.shown).map(D.card).join('');
    D.bindCards(wordGrid);
    $('#loadMore').hidden=D.shown>=filtered.length;
@@ -986,7 +986,7 @@ if(gate&&window.supabase){
  document.head.append(style);
  const panel=document.createElement('section');
  panel.id='writingWordPicker';panel.setAttribute('aria-label','Chọn chữ để luyện viết');
- panel.innerHTML="<div class=\"picker-top\"><h2 class=\"picker-title\">✦ Chọn chữ để luyện viết</h2><p class=\"picker-help\">Bấm một từ hoặc tìm chữ muốn tập</p></div>\n<div class=\"picker-search-line\"><input id=\"writingCharacterSearch\" class=\"picker-search\" type=\"search\" autocomplete=\"off\" spellcheck=\"false\" enterkeyhint=\"search\" placeholder=\"Nhập chữ Hán, Pinyin hoặc nghĩa tiếng Việt…\" aria-label=\"Tìm chữ Hán, Pinyin hoặc nghĩa tiếng Việt\"><button type=\"button\" class=\"btn picker-apply\" id=\"writeCustomWord\">✍ Tập viết chữ đã nhập</button></div>\n<div class=\"picker-tabs\" role=\"group\" aria-label=\"Lọc cấp độ HSK\"><button type=\"button\" class=\"picker-tab\" data-writing-level=\"all\" aria-pressed=\"true\">Tất cả</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"1\" aria-pressed=\"false\">HSK 1</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"2\" aria-pressed=\"false\">HSK 2</button></div>\n<div class=\"picker-grid\" id=\"writingCharacterGrid\" aria-label=\"Danh sách từ để chọn luyện viết\"></div><div class=\"picker-foot\"><span id=\"writingPickerCount\" role=\"status\" aria-live=\"polite\"></span><button class=\"btn soft\" type=\"button\" id=\"writingMoreWords\" hidden>Xem thêm chữ ↓</button></div><div class=\"picker-selected\">Đang luyện: <strong id=\"writingSelectedWord\">Chưa chọn chữ</strong></div>";
+ panel.innerHTML="<div class=\"picker-top\"><h2 class=\"picker-title\">✦ Chọn chữ để luyện viết</h2><p class=\"picker-help\">Bấm một từ hoặc tìm chữ muốn tập</p></div>\n<div class=\"picker-search-line\"><input id=\"writingCharacterSearch\" class=\"picker-search\" type=\"search\" autocomplete=\"off\" spellcheck=\"false\" enterkeyhint=\"search\" placeholder=\"Nhập chữ Hán hoặc nghĩa tiếng Việt…\" aria-label=\"Tìm chữ Hán hoặc nghĩa tiếng Việt\"><button type=\"button\" class=\"btn picker-apply\" id=\"writeCustomWord\">✍ Tập viết chữ đã nhập</button></div>\n<div class=\"picker-tabs\" role=\"group\" aria-label=\"Lọc cấp độ HSK\"><button type=\"button\" class=\"picker-tab\" data-writing-level=\"all\" aria-pressed=\"true\">Tất cả</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"1\" aria-pressed=\"false\">HSK 1</button><button type=\"button\" class=\"picker-tab\" data-writing-level=\"2\" aria-pressed=\"false\">HSK 2</button></div>\n<div class=\"picker-grid\" id=\"writingCharacterGrid\" aria-label=\"Danh sách từ để chọn luyện viết\"></div><div class=\"picker-foot\"><span id=\"writingPickerCount\" role=\"status\" aria-live=\"polite\"></span><button class=\"btn soft\" type=\"button\" id=\"writingMoreWords\" hidden>Xem thêm chữ ↓</button></div><div class=\"picker-selected\">Đang luyện: <strong id=\"writingSelectedWord\">Chưa chọn chữ</strong></div>";
  const intro=Array.from(section.children).find(el=>el.matches?.('p.muted'))||section.querySelector('h1');
  if(intro)intro.insertAdjacentElement('afterend',panel);else section.prepend(panel);
  const search=panel.querySelector('#writingCharacterSearch');
@@ -1024,7 +1024,7 @@ if(gate&&window.supabase){
   all.forEach((w,i)=>{
     if(w.l!==1&&w.l!==2&&w.topic!=='✍ Tự chọn')return;
     if(level!=='all'&&String(w.l)!==level)return;
-    if(q&&![w.h,w.p,w.m].some(x=>normalize(x).includes(q)))return;
+    if(q&&![w.h,w.m].some(x=>normalize(x).includes(q)))return;
     matches.push(i);
   });
   grid.replaceChildren();
@@ -1072,7 +1072,7 @@ if(gate&&window.supabase){
   }
   const q=normalize(value);
   const found=D.words.findIndex(w=>
-   [w.h,w.p,w.m].some(x=>normalize(x).includes(q))&&
+   [w.h,w.m].some(x=>normalize(x).includes(q))&&
    (level==='all'||String(w.l)===level));
   if(found>=0)choose(found,true);
   else{count.textContent='Không tìm thấy. Bạn có thể nhập trực tiếp chữ Hán (tối đa 4 chữ).';search.focus();}
