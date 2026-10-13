@@ -1263,3 +1263,20 @@ if(gate&&window.supabase){
  }
  load(0);
 })();
+
+
+// Mint study UI, 300 word pixel illustrations, secure editorial profiles, contact footer.
+;(()=>{
+ 'use strict';
+ if(document.getElementById('tthk2026RefreshLoader'))return;
+ const style=document.createElement('link');
+ style.id='tthk2026RefreshStyle';
+ style.rel='stylesheet';
+ style.href='/site-refresh.css?v=mint-bilingual-20261013-v1';
+ document.head.append(style);
+ const script=document.createElement('script');
+ script.id='tthk2026RefreshLoader';
+ script.src='/site-refresh.js?v=mint-bilingual-20261013-v1';
+ script.onerror=()=>console.warn('The new study layout did not load.');
+ document.head.append(script);
+})();
