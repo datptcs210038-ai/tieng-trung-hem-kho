@@ -30,7 +30,7 @@
   const conf=CONFIG[l],seed=l*10393+series*1337;
   const blocks=kinds.map((kind,i)=>({
    kind,section:i<4?0:1,part:(i%4)+1,label:(i<4?'听力 · Nghe':'阅读 · Đọc')+' — Phần '+((i%4)+1),
-   items:shuffle(bank[kind],seed+73*i).slice(0,conf.sizes[i]).map((v,j)=>({...v,id:kind+'-'+j}))
+   items:shuffle((l===1&&window.TTHK_HSK20_BANK1?.[kind])||bank[kind],seed+73*i).slice(0,conf.sizes[i]).map((v,j)=>({...v,id:kind+'-'+j}))
   }));
   const items=blocks.flatMap(x=>x.items.map(v=>({...v,section:x.section,part:x.part,block:x.kind,number:0})));
   items.forEach((x,i)=>x.number=i+1);
