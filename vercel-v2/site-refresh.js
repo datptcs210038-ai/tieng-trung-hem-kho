@@ -315,7 +315,7 @@ function hideCollocations(){
 function footer(){
  const site=$('#site');if(!site||$('#tthkContactFooter'))return;
  const foot=document.createElement('footer');foot.id='tthkContactFooter';
- foot.innerHTML='<div class="tthk-footer-brand"><img src="/logo-tthk.webp" alt="Logo Tiếng Trung Hem Khó" loading="lazy"><div><strong>TIẾNG TRUNG HEM KHÓ</strong><span>中文不难 · Học tiếng Trung dễ hiểu, dễ nhớ</span></div></div>'+
+ foot.innerHTML='<div class="tthk-footer-brand"><span class="tthk-footer-pixelmark" lang="zh" aria-hidden="true">中</span><div><strong>TIẾNG TRUNG HEM KHÓ</strong><span>中文不难 · Học tiếng Trung dễ hiểu, dễ nhớ</span></div></div>'+
   '<div class="tthk-footer-details"><h3>Liên hệ</h3>'+
   '<a href="https://www.facebook.com/search/pages/?q=Ti%E1%BA%BFng%20Trung%20Hem%20Kh%C3%B3" target="_blank" rel="noopener noreferrer">'+pixelIcon('facebook',18)+'<span>Fanpage Tiếng Trung Hem Khó</span></a>'+
   '<p>'+pixelIcon('home',18)+'<span>Số 600, đường Nguyễn Văn Cừ (nối dài), Phường An Bình, Thành phố Cần Thơ</span></p>'+
