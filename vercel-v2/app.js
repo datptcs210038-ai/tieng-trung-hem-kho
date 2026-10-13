@@ -1308,3 +1308,17 @@ if(gate&&window.supabase){
  script.onerror=()=>console.warn('Editorial UI polish could not load; the existing website remains available.');
  document.head.append(script);
 })();
+
+
+// Floating glass top navigation and harmonious photography/typography treatments.
+;(()=>{
+ 'use strict';
+ if(document.getElementById('tthkGlassTopLoader'))return;
+ const stylesheet=document.createElement('link');stylesheet.rel='stylesheet';
+ stylesheet.href='/top-glass-refinement.css?v=topbar-glass-harmony-v1';
+ document.head.appendChild(stylesheet);
+ const script=document.createElement('script');script.id='tthkGlassTopLoader';
+ script.src='/top-glass-refinement.js?v=topbar-glass-harmony-v1';
+ script.onerror=()=>console.warn('Top navigation enhancement unavailable; core learning remains available.');
+ document.head.appendChild(script);
+})();
