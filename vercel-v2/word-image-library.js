@@ -33,7 +33,7 @@
   overlay.innerHTML='<div class="twil-shell">'+
   '<header class="twil-top"><div><small>TIẾNG TRUNG HEM KHÓ · THƯ VIỆN NỘI DUNG</small>'+
   '<h1>Ảnh & ví dụ · 300 từ</h1><p>Chọn một từ để xem hoặc bổ sung liên kết ảnh và câu ví dụ Trung – Việt.</p></div>'+
-  '<button type="button" class="twil-close" id="twilClose" aria-label="Đóng">✕ Đóng</button></header>'+
+  '<div class="twil-header-actions"><a class="twil-export" href="/vocab-image-urls.csv" download>Xuất 300 link ảnh CSV</a><button type="button" class="twil-close" id="twilClose" aria-label="Đóng">Đóng</button></div></header>'+
   '<div class="twil-main"><aside class="twil-sidebar">'+
   '<label for="twilSearch">Tìm chữ Hán hoặc nghĩa tiếng Việt</label>'+
   '<input type="search" id="twilSearch" placeholder="Ví dụ: 苹果 hoặc quả táo" autocomplete="off">'+
@@ -51,8 +51,9 @@
  }
  function drawList(){
   if(!overlay)return;
-  const query=Q('#twilSearch')?.value.trim().toLocaleLowerCase('vi')||'';
-  const filtered=words.filter(x=>(x.hanzi+' '+x.meaning).toLocaleLowerCase('vi').includes(query));
+  const norm=t=>String(t||'').toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+  const query=norm(Q('#twilSearch')?.value.trim()||'');
+  const filtered=words.filter(x=>norm(x.hanzi+' '+x.meaning).includes(query));
   Q('#twilCount').textContent=filtered.length+' / '+words.length+' từ · '+Object.values(contents).filter(x=>x.image_url).length+' ảnh đã có liên kết chỉnh riêng';
   const list=Q('#twilWordList');
   list.innerHTML=filtered.map(x=>'<button class="twil-word '+(selected===x.hanzi?'on':'')+'" type="button" data-hanzi="'+safe(x.hanzi)+'">'+
@@ -68,7 +69,7 @@
  function drawEditor(){
   const w=words.find(x=>x.hanzi===selected),box=Q('#twilEditor');
   if(!box||!w){if(box)box.innerHTML='<p>Chọn một từ ở danh sách bên trái.</p>';return}
-  const saved=contents[w.hanzi]||{},image=saved.image_url||'',fallback=D.photos?.[w.hanzi]||'',display=image||fallback;
+  const saved=contents[w.hanzi]||{},image=saved.image_url||'',fallback=D.photos?.[w.hanzi]||D.imageURL?.(w.hanzi)||'',display=image||fallback;
   const examples=D.exampleSentences?.[w.hanzi]||D.extraExamples?.[w.hanzi]||{};
   box.innerHTML='<div class="twil-word-heading"><strong>'+safe(w.hanzi)+'</strong><div><span>'+safe(w.meaning)+'</span><small>HSK '+w.hsk_level+'</small></div></div>'+
    '<div class="twil-preview">'+buildPreview(display,w)+'</div>'+
@@ -76,6 +77,8 @@
    (display?'<div class="twil-linkline"><input id="twilCurrentImageLink" readonly value="'+safe(display)+'" aria-label="Đường dẫn ảnh đang sử dụng"><button type="button" id="twilCopyLink">Sao chép link</button></div>':'')+
    '<form id="twilForm">'+
    '<label>Link ảnh mới (HTTPS)<input name="image" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/hinh-anh.jpg" value="'+safe(image)+'" '+(!canEdit?'readonly':'')+'></label>'+
+   '<label>Hoặc tải ảnh mới (JPG/PNG/WebP, tối đa 6 MB)<input name="upload" type="file" accept="image/jpeg,image/png,image/webp" '+(!canEdit?'disabled':'')+'></label>'+ 
+   '<button class="twil-preview-button" type="button" id="twilPreviewButton">Xem trước ảnh mới</button>'+ 
    '<label>Ví dụ tiếng Trung<textarea name="zh" maxlength="300" rows="2" placeholder="我喜欢喝茶。" '+(!canEdit?'readonly':'')+'>'+safe(saved.example_zh||examples.zh||'')+'</textarea></label>'+
    '<label>Pinyin<textarea name="pinyin" maxlength="500" rows="2" placeholder="Wǒ xǐhuan hē chá." '+(!canEdit?'readonly':'')+'>'+safe(saved.example_pinyin||examples.py||'')+'</textarea></label>'+
    '<label>Nghĩa ví dụ tiếng Việt<textarea name="vi" maxlength="500" rows="2" placeholder="Tôi thích uống trà." '+(!canEdit?'readonly':'')+'>'+safe(saved.example_vi||examples.vi||'')+'</textarea></label>'+
@@ -86,12 +89,34 @@
   const cp=Q('#twilCopyLink');
   if(cp)cp.onclick=async()=>{try{await navigator.clipboard.writeText(display);notify('Đã sao chép đường dẫn ảnh của '+w.hanzi)}catch{Q('#twilCurrentImageLink')?.select();notify('Hãy sao chép đường dẫn trong ô bên trên.')}};
   const form=Q('#twilForm');
+  Q('#twilPreviewButton').onclick=()=>{
+    const file=form.elements.upload.files[0],url=form.elements.image.value.trim();
+    const target=Q('.twil-preview');if(!target)return;
+    if(file){
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>6*1024*1024){notify('Chỉ hỗ trợ ảnh JPG, PNG, WebP tối đa 6 MB.',true);return}
+      const temp=URL.createObjectURL(file);
+      target.innerHTML='<img src="'+temp+'" alt="Xem trước ảnh mới">';
+      target.querySelector('img').onload=()=>URL.revokeObjectURL(temp);
+      return;
+    }
+    if(url&&/^https:\/\//i.test(url))target.innerHTML=buildPreview(url,w);
+    else notify('Nhập đường dẫn HTTPS hoặc chọn tệp ảnh để xem trước.',true);
+  };
   form.onsubmit=async event=>{
    event.preventDefault();
    if(!canEdit)return;
    const button=form.querySelector('.twil-save');button.disabled=true;
    try{
-    const image=form.elements.image.value.trim();
+    let image=form.elements.image.value.trim();
+    const file=form.elements.upload.files[0];
+    if(file){
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>6*1024*1024)throw Error('Ảnh phải là JPG/PNG/WebP, tối đa 6 MB.');
+      const extension=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+      const path='words/'+Array.from(w.hanzi).map(c=>c.codePointAt(0).toString(16)).join('-')+'-'+Date.now()+'.'+extension;
+      const result=await db.storage.from('vocab-images').upload(path,file,{contentType:file.type,upsert:false});
+      if(result.error)throw result.error;
+      image=db.storage.from('vocab-images').getPublicUrl(path).data.publicUrl;
+    }
     const zh=form.elements.zh.value.trim(),py=form.elements.pinyin.value.trim(),vi=form.elements.vi.value.trim();
     if(image&&!/^https:\/\/[^ ]+$/i.test(image))throw Error('Link ảnh phải bắt đầu bằng https://');
     if(image.length>1000)throw Error('Link ảnh quá dài');
