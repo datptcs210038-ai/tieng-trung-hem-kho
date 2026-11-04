@@ -4,7 +4,7 @@
 const D=window.TTHK;
 const $=s=>document.querySelector(s);
 if(!D||!$('#site')||!$('#wordGrid')||$('#wordDetail'))return;
-const link=document.createElement('link');link.rel='stylesheet';link.href='/word-detail.css?v=hanzii-natural-20261013-v2';document.head.append(link);
+const link=document.createElement('link');link.rel='stylesheet';link.href='/word-detail.css?v=detail-sync-20261104';document.head.append(link);
 const main=$('#site main');
 if(!main)return;
 const detail=document.createElement('section');
