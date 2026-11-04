@@ -109,7 +109,11 @@ const saved=await db.storage.from(slug==='login-background'?'login-backgrounds':
 const record={slug,image_path:path,updated_at:new Date().toISOString()};
 const u=await db.from('site_assets').upsert(record,{onConflict:'slug'});if(u.error)throw u.error;
 records[slug]=record;updateCurrent();
-status('✅ Đã lưu '+chosen.name+' thành công!\n'+note+'.\nVề trang chính và tải lại để xem ảnh mới.');
+try{
+  localStorage.setItem('tthk-media-updated',String(Date.now()));
+  if('BroadcastChannel' in window){const ch=new BroadcastChannel('tthk-media');ch.postMessage({type:'updated',scope:'site_assets',slug});ch.close();}
+}catch(e){console.warn('Không gửi được thông báo cập nhật liên tab:',e)}
+status('✅ Đã lưu '+chosen.name+' thành công!\n'+note+'.\nHình mới sẽ tự cập nhật trên website chính đang mở.');
 }catch(e){status('❌ Chưa lưu được: '+e.message)}finally{b.disabled=false;b.textContent='💾 Lưu lên website'}
 };
 async function init(){
