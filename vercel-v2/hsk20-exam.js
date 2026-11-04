@@ -41,25 +41,21 @@
  function timerSecs(){return state?Math.max(0,Math.ceil((state.deadline-Date.now())/1000)):0}
  function stopVoice(){
   voiceCounter++;
-  try{window.speechSynthesis?.cancel()}catch(e){}
+  try{window.TTHKVoice?.stop?.()}catch(e){}
  }
  function speak(audio){
-  if(!state||!('speechSynthesis' in window))return;
-  const q=state.items[state.index];
-  const count=state.listenCount[q.number]||0;
+  if(!state||!window.TTHKVoice)return;
+  const q=state.items[state.index],count=state.listenCount[q.number]||0;
   if(count>=2)return;
-  state.listenCount[q.number]=count+1;
-  const token=++voiceCounter;
-  try{
-   window.speechSynthesis.cancel();
-   const u=new SpeechSynthesisUtterance(audio.replaceAll('男：','。').replaceAll('女：','。').replaceAll('问：','。'));
-   u.lang='zh-CN';u.rate=0.82;u.pitch=1;
-   const voices=window.speechSynthesis.getVoices().filter(x=>(x.lang||'').toLowerCase().replace('_','-').startsWith('zh'));
-   if(voices.length)u.voice=voices.find(x=>x.lang.toLowerCase().includes('cn'))||voices[0];
-   u.onerror=()=>{if(token===voiceCounter)showMessage('Thiết bị không phát được giọng đọc tiếng Trung. Hãy kiểm tra cài đặt giọng đọc.');};
-   window.speechSynthesis.speak(u);
-  }catch(e){showMessage('Không phát được âm thanh trên thiết bị này.')}
-  const b=(examOverlay||body).querySelector('#hsk20Listen');if(b){b.textContent='🔊 Nghe tiếng Trung ('+state.listenCount[q.number]+'/2)';b.disabled=state.listenCount[q.number]>=2;}
+  const id=++voiceCounter;
+  const button=(examOverlay||body).querySelector('#hsk20Listen');
+  if(button)button.disabled=true;
+  const update=()=>{if(id!==voiceCounter)return;const b=(examOverlay||body).querySelector('#hsk20Listen');if(b){b.textContent='🔊 Nghe tiếng Trung ('+(state.listenCount[q.number]||0)+'/2)';b.disabled=(state.listenCount[q.number]||0)>=2;}};
+  window.TTHKVoice.speak(String(audio||'').replaceAll('男：','。').replaceAll('女：','。').replaceAll('问：','。'),{
+   onStart:()=>{if(id!==voiceCounter)return;state.listenCount[q.number]=(state.listenCount[q.number]||0)+1;update()},
+   onEnd:update,
+   onError:(err)=>{if(id!==voiceCounter)return;showMessage('Không phát được âm thanh: '+String(err||'Chưa có bản thu'));update()}
+  });
  }
  function showMessage(v){const e=(examOverlay||body).querySelector('#hsk20Message');if(e)e.textContent=v}
 
@@ -183,20 +179,24 @@
   jumpTo(next);
  }
  function questionMarkup(q){
+  const media=window.TTHK_HSK_MEDIA?.get(q)||null;
+  const mediaOk=u=>window.TTHK_HSK_MEDIA?.validUrl(u)===true;
+  const mediaImg=(u,label)=>'<img class="hsk20-managed-img" src="'+esc(u)+'" alt="'+esc(label)+'" loading="lazy" referrerpolicy="no-referrer">';
   let heading='',display='',instruction=help[q.block];
   if(q.block==='L1'||q.block==='R1'){
    heading='Đối chiếu câu với hình';
-   display='<div class="hsk20-picture" aria-label="Hình minh họa">'+esc(q.picture)+'</div>';
+   display='<div class="hsk20-picture" aria-label="Hình minh họa">'+(mediaOk(media?.image_url)?mediaImg(media.image_url,'Hình minh họa cho câu nghe'):esc(q.picture))+'</div>';
    if(q.section===1)display+='<div class="hsk20-hanzi">'+esc(q.zh)+'</div>';
   }else if(q.block==='L2'||q.block==='L3'||q.block==='L4'){
    heading='Nghe rồi chọn đáp án';
+   if(mediaOk(media?.image_url))display='<div class="hsk20-picture" aria-label="Hình minh họa câu nghe">'+mediaImg(media.image_url,'Hình minh họa câu nghe')+'</div>';
   }else if(q.block==='R2'){heading='Chọn hình đúng';display='<div class="hsk20-hanzi">'+esc(q.zh)+'</div>';}
   else if(q.block==='R3'){heading='Chọn câu trả lời';display='<div class="hsk20-hanzi">'+esc(q.zh)+'</div>';}
   else{heading='Chọn từ điền vào chỗ trống';display='<div class="hsk20-hanzi">'+esc(q.zh).replace('___','<span class="hsk20-blank">______</span>')+'</div>';}
   if(q.section===0)display+='<div class="hsk20-speak"><button type="button" id="hsk20Listen" class="hsk20-action">🔊 Nghe tiếng Trung ('+(state.listenCount[q.number]||0)+'/2)</button><small>Nhấn để phát câu/hội thoại. Tối đa 2 lượt phát, không hiện lời thoại trước khi nộp.</small></div>';
   const isPicture=['L2','L3','R2'].includes(q.block);
   return '<h3>'+esc(heading)+'</h3><p class="hsk20-help">'+esc(instruction)+'</p>'+display+
-   '<div class="hsk20-choices '+(isPicture?'has-pictures':'')+'">'+q.options.map((op,i)=>'<button type="button" class="hsk20-choice '+(state.answers[q.number]===i?'selected':'')+'" data-hsk-answer="'+i+'" aria-pressed="'+(state.answers[q.number]===i)+'"><span class="hsk20-letter">'+String.fromCharCode(65+i)+'</span><span>'+(isPicture?'<span class="hsk20-icon">'+esc(op)+'</span>':esc(op))+'</span></button>').join('')+'</div>';
+   '<div class="hsk20-choices '+(isPicture?'has-pictures':'')+'">'+q.options.map((op,i)=>'<button type="button" class="hsk20-choice '+(state.answers[q.number]===i?'selected':'')+'" data-hsk-answer="'+i+'" aria-pressed="'+(state.answers[q.number]===i)+'"><span class="hsk20-letter">'+String.fromCharCode(65+i)+'</span><span>'+(isPicture?'<span class="hsk20-icon">'+(q.section===0&&mediaOk(media?.choice_images?.[i])?mediaImg(media.choice_images[i],'Đáp án '+String.fromCharCode(65+i)):esc(op))+'</span>':esc(op))+'</span></button>').join('')+'</div>';
  }
  function render(){
   if(!state||state.completed)return;
@@ -295,4 +295,5 @@
  window.addEventListener('keydown',event=>{if(event.key==='Escape'&&state&&!state.completed){event.preventDefault();if(dialog)closeDialog();else confirmStop()}});
  window.addEventListener('beforeunload',event=>{if(state&&!state.completed){event.preventDefault();event.returnValue=''}});
  D.hsk20={start:()=>confirmPaper(selectedLevel,1),getStatus:()=>state?{level:state.level,series:state.series,section:state.section,completed:state.completed,question:state.index+1}:null};
+ window.addEventListener('tthk-hsk-media-ready',()=>{if(state&&!state.completed)render()});
 })();
