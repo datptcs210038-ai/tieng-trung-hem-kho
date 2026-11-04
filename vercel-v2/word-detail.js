@@ -27,7 +27,7 @@ const footer=main.querySelector('footer');
 if(footer)footer.before(detail);else main.append(detail);
 const favoritesBar=document.createElement('div');
 favoritesBar.id='wordFavoritesBar';
-favoritesBar.innerHTML='<button id="wdAllFilter" type="button" aria-pressed="true">☷ Tất cả từ</button><button id="wdSavedFilter" type="button" aria-pressed="false">♡ Từ yêu thích</button><span id="wdSavedCount" class="wd-count">Chưa lưu từ nào</span>';
+favoritesBar.innerHTML='<button id="wdAllFilter" type="button" aria-pressed="true">☷ Từ trong cuốn</button><button id="wdSavedFilter" type="button" aria-pressed="false">♡ Từ yêu thích</button><span id="wdSavedCount" class="wd-count">Chưa lưu từ nào</span>';
 const toolbar=$('#vocab .study-filter-toolbar')||$('#level')?.closest('.row');
 if(toolbar)toolbar.insertAdjacentElement('afterend',favoritesBar);
 else $('#vocab')?.insertBefore(favoritesBar,$('#wordGrid'));
@@ -160,13 +160,24 @@ function drawPicture(w){
  const slot=$('#wdPicture');slot.replaceChildren();
  if(D.photos?.[w.h]){
   const img=document.createElement('img');
-  img.src=D.photos[w.h];img.alt='Ảnh minh họa: '+(w.m||w.h);
-  img.onerror=()=>{slot.replaceChildren();const item=document.createElement('span');item.className='wd-picture-symbol';item.textContent=w.h;slot.append(item)};
+  img.alt='Ảnh minh họa: '+(w.m||w.h);
+  img.loading='eager';img.decoding='async';img.style.objectFit='contain';
+  img.onerror=()=>{if(!img.isConnected)return;slot.replaceChildren();const item=document.createElement('span');item.className='wd-picture-symbol';item.textContent=w.h;slot.append(item)};
+  img.src=D.photos[w.h];
   slot.append(img);
  }else{
   const item=document.createElement('span');item.className='wd-picture-symbol';item.textContent=w.h;slot.append(item);
  }
 }
+// Update the open word-detail picture whenever Supabase publishes a new image.
+// Cards redraw separately; without this hook, an already-open detail keeps the old <img>.
+window.addEventListener('tthk-word-photos-updated',()=>{
+ const w=activeWord();
+ if(!w||!detail.classList.contains('on'))return;
+ const current=$('#wdPicture img')?.getAttribute('src')||'';
+ const next=D.photos?.[w.h]||'';
+ if(current!==next)drawPicture(w);
+});
 function openWord(hanzi){
  const idx=(D.words||[]).findIndex(x=>x.h===hanzi);
  if(idx<0)return;
@@ -222,7 +233,7 @@ function makeWriter(practice){
  try{
   writer=window.HanziWriter.create('wordDetailCanvas',char,{
    width:270,height:270,padding:18,
-   strokeColor:'#288c77',outlineColor:'#cbe8d7',drawingColor:'#168d78',
+   strokeColor:'#426d91',outlineColor:'#d5e4f2',drawingColor:'#729abd',
    showOutline:!practice,showCharacter:!practice,showHintAfterMisses:true,
    highlightOnComplete:true,
    onLoadCharDataError:()=>{
@@ -250,16 +261,7 @@ $('#wdNextCharacter').onclick=()=>{
  if(selectedChar+1<[...w.h].length){selectedChar++;makeWriter(true)}
 };
 $('#wdSpeakWord').onclick=()=>{const w=activeWord();if(w)D.speak(w.h)};
-$('#wdSpeakSlow').onclick=()=>{
- const w=activeWord();if(!w||!window.speechSynthesis)return;
- // Honor selected voice and browser speech settings where supported.
- const utter=new SpeechSynthesisUtterance(w.h);
- utter.lang='zh-CN';utter.rate=.63;
- const voices=speechSynthesis.getVoices().filter(x=>(x.lang||'').toLowerCase().replace('_','-').startsWith('zh'));
- if(voices.length)utter.voice=voices[0];
- speechSynthesis.cancel();speechSynthesis.speak(utter);
-};
-$('#wdSpeakSentence').onclick=()=>{const w=activeWord();if(w){const ex=currentExample(w);if(ex.kind!=='pending')D.speak(ex.zh)}};
+$('#wdSpeakSlow').onclick=()=>{const w=activeWord();if(w)window.TTHKVoice?.speak(w.h)}; $('#wdSpeakSentence').onclick=()=>{const w=activeWord();if(w){const ex=currentExample(w);if(ex.kind!=='pending')D.speak(ex.zh)}};
 detailFav.onclick=()=>{const w=activeWord();if(w)toggleFavorite(w.h)};
 $('#wdBack').onclick=()=>D.page(origin==='wordDetail'?'vocab':origin);
 D.openWordDetail=openWord;
