@@ -164,7 +164,15 @@ async function save(){
      const r=await state.db.from('hsk_listening_media').upsert(row,{onConflict:'question_key'}).select().single();if(r.error)throw r.error;
      state.mediaMap[q.key]=r.data;
    }
-   list();detail();msg('✅ Đã cập nhật ảnh thành công! Các bài học sẽ hiển thị ảnh mới khi được tải lại.');
+   list();detail();msg('✅ Đã cập nhật ảnh thành công! Website chính sẽ tự tải lại ảnh mới khi bạn mở hoặc quay lại tab học tập.');
+   try{
+     localStorage.setItem('tthk-media-updated',String(Date.now()));
+     if('BroadcastChannel' in window){
+       const channel=new BroadcastChannel('tthk-media');
+       channel.postMessage({type:'updated',source:'image-studio',tab:state.tab});
+       channel.close();
+     }
+   }catch(e){console.warn('Image update notification unavailable',e)}
  }catch(e){msg('❌ Không lưu được: '+(e.message||e),true)}
  finally{state.busy=false;if(btn.isConnected){btn.disabled=false;btn.textContent=state.tab==='words'?'💾 Lưu hình ảnh từ vựng':'💾 Lưu hình ảnh câu nghe'}}
 }
