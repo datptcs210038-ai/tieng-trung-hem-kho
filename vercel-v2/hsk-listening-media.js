@@ -81,6 +81,17 @@ function updateLoginWallpaper(asset){
   image.src=src;
   S.backgroundImage=image;
 }
+async function refreshAssetSnapshot(){
+  const c=ctx();
+  if(!c.db)return;
+  if(typeof window.TTHK_REFRESH_SITE_ASSETS==='function'){
+    try{await window.TTHK_REFRESH_SITE_ASSETS()}catch(e){report('assets snapshot',e)}
+  }
+  try{
+    const r=await c.db.from('site_assets').select('slug,image_path,updated_at').eq('slug','login-background').maybeSingle();
+    if(!r.error&&r.data)updateLoginWallpaper(r.data);
+  }catch(e){report('background snapshot',e)}
+}
 function updateSiteAssets(payload){
   const row=payload.eventType==='DELETE'?payload.old:payload.new;
   if(row?.slug==='login-background'&&payload.eventType!=='DELETE')updateLoginWallpaper(row);
@@ -184,10 +195,10 @@ function start(){
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!site.hidden)void load(true)});
   window.addEventListener('focus',()=>{if(!site.hidden)void load()});
   window.addEventListener('pageshow',()=>{if(!site.hidden)void load(true)});
-  window.addEventListener('storage',e=>{if(e.key==='tthk-media-updated'&&!site.hidden)void load(true)});
+  window.addEventListener('storage',e=>{if(e.key==='tthk-media-updated'&&!site.hidden){void load(true);void refreshAssetSnapshot()}});
   if('BroadcastChannel' in window){
     S.browserChannel=new BroadcastChannel('tthk-media');
-    S.browserChannel.onmessage=e=>{if(e.data?.type==='updated'&&!site.hidden)void load(true)};
+    S.browserChannel.onmessage=e=>{if(e.data?.type==='updated'&&!site.hidden){void load(true);if(e.data?.scope==='site_assets')void refreshAssetSnapshot()}};
   }
   // Fallback for clients that cannot maintain a websocket connection.
   setInterval(()=>{
