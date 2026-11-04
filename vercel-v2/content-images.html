@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#e9f6fa">
+<title>Thư viện ảnh học liệu | Tiếng Trung Hem Khó</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="/hsk20-bank.js"></script><script defer src="/hsk20-hsk1.js"></script>
+<style>
+:root{--ink:#24445a;--muted:#6e8b9c;--line:#d7e9ee;--blue:#3988a9;--green:#258b7b}
+*{box-sizing:border-box}body{margin:0;font-family:"Be Vietnam Pro",sans-serif;color:var(--ink);background:radial-gradient(ellipse at top left,#dff5ee 0,transparent 45%),radial-gradient(ellipse at top right,#dfeefe 0,transparent 48%),#f6fafb}
+a{color:#267b9e}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.wrap{max-width:1390px;margin:auto;padding:26px 25px 60px}
+header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:30px}
+.brand{font-weight:800;font-size:19px;text-decoration:none;color:#206b77}.links{display:flex;gap:10px;flex-wrap:wrap}
+.links a,.ghost{display:inline-flex;align-items:center;border:1px solid #cce4eb;color:#267c94;text-decoration:none;background:#fff9;padding:11px 15px;border-radius:13px;font-weight:700}
+.eyebrow{font-size:12px;letter-spacing:2px;font-weight:800;color:#4a9c92}h1{font-size:clamp(26px,3.8vw,42px);color:#205a70;margin:10px 0 8px;letter-spacing:-1.5px}h2{font-size:21px;color:#235a73;margin:0 0 8px}p{line-height:1.7}.muted{color:var(--muted);margin:0 0 22px}
+.panel{background:#ffffffed;border:1px solid var(--line);border-radius:22px;box-shadow:0 15px 40px #277c9f12;padding:22px}
+#loginBox{max-width:480px;margin:50px auto}#loginBox input{display:block;width:100%;margin:10px 0}
+input[type=email],input[type=password],input[type=url],input[type=search],select{background:#fbfeff;border:1px solid #c9dfe8;border-radius:12px;padding:12px;color:var(--ink);width:100%;outline-offset:3px}
+input[type=file]{width:100%;max-width:100%;font-size:12px;border:1px dashed #b8dce4;padding:11px;border-radius:12px;background:#f7fbfe}
+button.primary{border:0;background:linear-gradient(115deg,#39a592,#3389b3);border-radius:12px;color:white;padding:12px 18px;font-weight:800}
+button.secondary{border:1px solid #cbe5e7;background:#eaf8f5;color:#247875;padding:11px 16px;border-radius:12px;font-weight:700}
+.tabbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:17px}.tabbar button{background:#eff8fb;border:1px solid #cce5ed;color:#357d9e;border-radius:13px;padding:12px 17px;font-weight:800}.tabbar button.on{background:linear-gradient(100deg,#298c91,#4485b2);color:white}
+.layout{display:grid;grid-template-columns:minmax(280px,390px) minmax(0,1fr);align-items:start;gap:17px}
+.sidebar{position:sticky;top:12px}.searchrow{display:flex;gap:8px}.searchrow>*{flex:1;min-width:0}
+#count{font-size:12px;font-weight:700;color:#65909d;margin:12px 0}
+#items{height:min(65vh,720px);overflow:auto;display:flex;flex-direction:column;gap:7px;padding-right:3px}
+.item{width:100%;text-align:left;padding:12px 13px;border:1px solid #e0edf2;border-radius:13px;background:#f9fcff;display:flex;gap:10px;align-items:center;justify-content:space-between;color:var(--ink)}
+.item.on{border-color:#50adab;background:#e8f8f3}.item strong{font-size:19px;color:#2d6678;font-family:"Noto Sans SC","Be Vietnam Pro",sans-serif}.item small{color:#7892a0;display:block;font-size:11px;margin-top:3px}.item i{font-style:normal;font-size:12px}
+#detail{min-height:400px}.lead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}.big-zh{font-size:29px;color:#216978;font-family:"Noto Sans SC",sans-serif;font-weight:800}
+.tag{padding:7px 10px;border-radius:50px;font-size:11px;font-weight:800;background:#e8f7f3;color:#2a8276}
+.note{font-size:13px;color:#6b8b9a;background:#f1f8fb;border:1px solid #d9ebf0;padding:12px 15px;border-radius:12px;line-height:1.7}
+.field{margin:20px 0}.field label{display:block;font-size:13px;font-weight:800;margin:0 0 8px;color:#366981}.field input{margin-bottom:9px}
+.preview{min-height:190px;display:grid;place-items:center;border:2px dashed #bddde5;border-radius:18px;padding:14px;background:repeating-conic-gradient(#f1f8fa 0 25%,#fff 0 50%) 50%/22px 22px;overflow:hidden}
+.preview img{max-width:100%;max-height:300px;object-fit:contain;border-radius:12px}
+.placeholder{text-align:center;color:#91a7b1;padding:26px 8px;font-size:14px}
+.small-preview{display:flex;align-items:center;gap:10px}.small-preview img{width:75px;height:75px;object-fit:contain;border:1px solid #d4e5ea;border-radius:9px;background:white}.small-preview span{font-size:12px;color:#7b939e}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.choice{border:1px solid #deedf0;border-radius:15px;padding:13px;background:#fafdff}.choice b{color:#2c6c85}.choice input{margin-top:7px}.choice .thumb{width:100%;height:110px;display:grid;place-items:center;margin:9px 0;background:#eff6f8;border-radius:10px;overflow:hidden}.choice .thumb img{max-width:100%;max-height:110px;object-fit:contain}.choice .thumb span{font-size:26px}
+.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:17px}
+#message{white-space:pre-line;font-size:13px;color:#307c7a;font-weight:700;margin-top:15px;min-height:22px}
+.readonly{color:#a26c26;background:#fff8e9;border:1px solid #f1ddbc;border-radius:12px;padding:12px;font-size:13px}
+[hidden]{display:none!important}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.sidebar{position:static}#items{height:320px}.wrap{padding:17px 12px 35px}.panel{padding:16px;border-radius:18px}.choice-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="brand" href="/">🐼 Tiếng Trung Hem Khó</a><nav class="links"><a href="/images.html">Ảnh logo & thành viên</a><a href="/">← Quay lại học tập</a><button class="secondary" id="logoutBtn" hidden>Đăng xuất</button></nav></header>
+<div class="eyebrow">IMAGE STUDIO · HỌC LIỆU HSK</div>
+<h1>🖼️ Thư viện hình ảnh học liệu</h1>
+<p class="muted">Cập nhật hình minh họa cho 300 từ vựng HSK 1–2 và từng câu nghe trong bộ đề HSK. Ảnh đã lưu dùng chung cho học sinh trên website.</p>
+<div id="waiting" class="panel" role="status">Đang kiểm tra tài khoản…</div>
+<div id="loginBox" class="panel" hidden><h2>🔐 Đăng nhập</h2><p>Dùng tài khoản Tiếng Trung Hem Khó của bạn.</p><input id="email" type="email" autocomplete="email" placeholder="Email"><input id="password" type="password" autocomplete="current-password" placeholder="Mật khẩu"><button id="loginBtn" class="primary">Đăng nhập</button><p id="loginMessage" role="status"></p></div>
+<div id="studio" hidden>
+<div class="tabbar" role="tablist" aria-label="Chọn thư viện"><button data-tab="words" class="on" aria-selected="true">📚 Từ vựng tổng hợp</button><button data-tab="listening" aria-selected="false">🎧 Hình ảnh bài nghe HSK</button></div>
+<div class="layout">
+<section class="panel sidebar"><h2 id="listTitle">Danh sách từ vựng</h2><input id="search" type="search" autocomplete="off" placeholder="Tìm chữ Hán, nghĩa Việt hoặc câu nghe"><div class="searchrow" style="margin-top:9px"><select id="level"><option value="all">Tất cả HSK</option><option value="1">HSK 1</option><option value="2">HSK 2</option></select><select id="part" hidden><option value="all">Tất cả phần nghe</option><option value="L1">Phần 1</option><option value="L2">Phần 2</option><option value="L3">Phần 3</option><option value="L4">Phần 4</option></select></div><p id="count" role="status"></p><div id="items"></div></section>
+<section class="panel"><div id="detail">Đang tải dữ liệu…</div><p id="message" role="status" aria-live="polite"></p></section>
+</div>
+</div>
+</div>
+<script>
+(function(){
+'use strict';
+const URL_SB='https://wcgzdbjmwhyroszvyetv.supabase.co',KEY='sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ';
+const $=s=>document.querySelector(s),esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl=x=>/^https:\/\/[^\s<>"']{3,1000}$/i.test(x||'');
+const normalized=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+const state={db:null,user:null,editor:false,tab:'words',words:[],wordMap:{},questions:[],mediaMap:{},selected:null,busy:false};
+const qKey=(kind,q)=>kind+'|'+(q.audio||q.zh||'')+'|'+(q.options||[]).join('|');
+const msg=(text,error)=>{const el=$('#message');el.textContent=text;el.style.color=error?'#b34d4b':'#307c7a'};
+function allQuestions(){
+  const main=window.TTHK_HSK20_BANK||{},hsk1=window.TTHK_HSK20_BANK1||{},out=[],seen=new Set();
+  for(const level of [1,2])for(const kind of ['L1','L2','L3','L4']){
+    const rows=(level===1&&hsk1[kind])||main[kind]||[];
+    rows.forEach((q,index)=>{
+      const key=qKey(kind,q),id=level+'|'+key;if(seen.has(id))return;seen.add(id);
+      out.push({level,kind,index:index+1,key,zh:q.zh||'',audio:q.audio||'',note:q.note||'',picture:q.picture||'',options:q.options||[]});
+    });
+  }
+  return out;
+}
+function list(){
+  const filter=normalized($('#search').value.trim()),level=$('#level').value,part=$('#part').value;
+  const arr=state.tab==='words'?state.words:state.questions;
+  const found=arr.filter(x=>{
+    if(level!=='all'&&String(state.tab==='words'?x.hsk_level:x.level)!==level)return false;
+    if(state.tab==='listening'&&part!=='all'&&x.kind!==part)return false;
+    return !filter||normalized(state.tab==='words'?x.hanzi+' '+x.meaning:x.audio+' '+x.zh+' '+x.note+' '+x.kind).includes(filter);
+  });
+  const saved=state.tab==='words'?state.words.filter(w=>state.wordMap[w.hanzi]?.image_url).length:state.questions.filter(q=>{const m=state.mediaMap[q.key];return m&&(m.image_url||(m.choice_images||[]).some(Boolean))}).length;
+  $('#count').textContent=found.length+' mục đang hiển thị · '+saved+' mục có ảnh đã lưu';
+  $('#items').innerHTML=found.map(x=>{
+    const id=state.tab==='words'?x.hanzi:x.level+'|'+x.key;
+    const m=state.tab==='words'?state.wordMap[x.hanzi]:state.mediaMap[x.key];
+    const has=!!(m&&(m.image_url||(m.choice_images||[]).some(Boolean)));
+    const title=state.tab==='words'?x.hanzi:(x.audio||x.zh||'Câu không có lời thoại');
+    const extra=state.tab==='words'?x.meaning:'HSK '+x.level+' · Phần '+x.kind.slice(1)+' · Câu nguồn '+x.index;
+    return '<button type="button" class="item '+(state.selected===id?'on':'')+'" data-id="'+esc(id)+'"><span><strong>'+esc(title)+'</strong><small>'+esc(extra)+'</small></span><i aria-label="'+(has?'Đã có ảnh':'Chưa có ảnh')+'">'+(has?'🟢':'⚪')+'</i></button>';
+  }).join('')||'<p class="muted">Không tìm thấy mục phù hợp.</p>';
+  $('#items').querySelectorAll('button[data-id]').forEach(b=>b.onclick=()=>{state.selected=b.dataset.id;list();detail();msg('')});
+}
+const picture=(url,label='Ảnh hiện tại')=>safeUrl(url)?'<img src="'+esc(url)+'" alt="'+esc(label)+'" referrerpolicy="no-referrer">':'<div class="placeholder">📷 Chưa có ảnh riêng. Hãy tải hình từ máy hoặc dán link HTTPS.</div>';
+const inputRow=(id,label,url)=>'<div class="field"><label for="'+id+'Link">'+esc(label)+'</label><input id="'+id+'Link" type="url" placeholder="https://..." value="'+esc(url||'')+'" '+(!state.editor?'readonly':'')+'><input id="'+id+'File" type="file" accept="image/png,image/jpeg,image/webp" '+(!state.editor?'disabled':'')+'><div class="small-preview" id="'+id+'Preview"></div></div>';
+function detail(){
+ const box=$('#detail');
+ if(state.tab==='words'){
+   const w=state.words.find(x=>x.hanzi===state.selected);if(!w){box.textContent='Hãy chọn một từ ở danh sách bên trái.';return}
+   const m=state.wordMap[w.hanzi]||{};
+   box.innerHTML='<div class="lead"><div><div class="big-zh">'+esc(w.hanzi)+'</div><p class="muted">'+esc(w.meaning)+'</p></div><span class="tag">HSK '+w.hsk_level+'</span></div>'+
+    '<div class="preview" id="bigPreview">'+picture(m.image_url,'Ảnh cho '+w.hanzi)+'</div>'+
+    inputRow('main','Đường dẫn ảnh hoặc tải ảnh mới',m.image_url)+
+    '<p class="note">Hình đã lưu sẽ thay thế ảnh minh họa của từ vựng. Các câu ví dụ và dữ liệu học tập hiện có được giữ nguyên.</p>'+
+    (state.editor?'<div class="actions"><button class="primary" id="saveItem">💾 Lưu hình ảnh từ vựng</button><button class="secondary" id="clearItem">Xóa liên kết ảnh riêng</button></div>':'<p class="readonly">Tài khoản này chỉ có quyền xem. Chỉ quản trị viên được thay ảnh.</p>');
+ }else{
+   const q=state.questions.find(x=>x.level+'|'+x.key===state.selected);if(!q){box.textContent='Chọn một câu nghe ở danh sách bên trái.';return}
+   const m=state.mediaMap[q.key]||{},choice=m.choice_images||[];
+   box.innerHTML='<div class="lead"><div><h2>🎧 Phần nghe '+esc(q.kind.slice(1))+'</h2><span class="muted">Câu số '+q.index+' trong ngân hàng · HSK '+q.level+'</span></div><span class="tag">HSK '+q.level+'</span></div>'+
+    '<div class="note"><b>Nội dung nghe:</b> '+esc(q.audio||q.zh||'Không có bản chép câu nghe')+'<div style="margin-top:7px"><b>Ghi chú:</b> '+esc(q.note)+'</div></div>'+
+    '<div class="field"><label>Ảnh minh họa chung cho câu nghe</label><div class="preview" id="bigPreview">'+picture(m.image_url)+'</div></div>'+
+    inputRow('main','Link ảnh chung hoặc tải ảnh mới',m.image_url)+
+    ((q.kind==='L2'||q.kind==='L3')?'<h2>Ảnh đáp án A – D</h2><p class="muted">Mỗi phương án có thể có ảnh riêng; nếu chưa thêm, đề thi giữ biểu tượng hiện tại.</p><div class="choice-grid">'+q.options.map((op,i)=>'<div class="choice"><b>'+String.fromCharCode(65+i)+' · '+esc(op)+'</b><div class="thumb" id="thumb'+i+'">'+(safeUrl(choice[i])?picture(choice[i],'Phương án '+String.fromCharCode(65+i)):'<span>'+esc(op)+'</span>')+'</div><label for="opt'+i+'Link">Link ảnh</label><input id="opt'+i+'Link" type="url" placeholder="https://..." value="'+esc(choice[i]||'')+'" '+(!state.editor?'readonly':'')+'><input id="opt'+i+'File" type="file" accept="image/png,image/jpeg,image/webp" '+(!state.editor?'disabled':'')+'></div>').join('')+'</div>':'')+
+    '<p class="note">Từng câu được liên kết bằng nội dung gốc, không theo số thứ tự câu trong mã đề đã trộn. Hình mới sẽ được dùng cho các đề sử dụng câu này.</p>'+
+    (state.editor?'<div class="actions"><button class="primary" id="saveItem">💾 Lưu hình ảnh câu nghe</button><button class="secondary" id="clearItem">Xóa toàn bộ ảnh riêng của câu</button></div>':'<p class="readonly">Chỉ quản trị viên có quyền sửa và tải hình lên.</p>');
+ }
+ const mainFile=$('#mainFile');
+ if(mainFile)mainFile.onchange=e=>previewFile(e.target.files?.[0],$('#bigPreview'));
+ for(let i=0;i<4;i++){const f=$('#opt'+i+'File');if(f)f.onchange=e=>previewFile(e.target.files?.[0],$('#thumb'+i));}
+ if(state.editor){$('#saveItem').onclick=save;$('#clearItem').onclick=clearItem}
+}
+function previewFile(file,el){
+ if(!file||!el)return;const err=validateFile(file);if(err){msg(err,true);return}
+ const u=URL.createObjectURL(file);const img=document.createElement('img');img.src=u;img.alt='Xem trước ảnh được chọn';img.onload=()=>URL.revokeObjectURL(u);el.replaceChildren(img);msg('Đã chọn hình mới. Nhấn Lưu để cập nhật lên website.')
+}
+function validateFile(f){if(!['image/jpeg','image/png','image/webp'].includes(f.type))return 'Chỉ hỗ trợ JPG, PNG hoặc WebP.';if(f.size>6*1024*1024)return 'Ảnh vượt quá 6 MB. Hãy chọn ảnh nhỏ hơn.';return ''}
+async function upload(f,folder){
+ const err=validateFile(f);if(err)throw Error(err);
+ const ext=f.type==='image/png'?'png':f.type==='image/webp'?'webp':'jpg';
+ const path=folder+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,11)+'.'+ext;
+ const r=await state.db.storage.from('vocab-images').upload(path,f,{contentType:f.type,cacheControl:'31536000',upsert:false});if(r.error)throw r.error;
+ return state.db.storage.from('vocab-images').getPublicUrl(path).data.publicUrl;
+}
+async function fileOrUrl(prefix,folder){
+ const f=$('#'+prefix+'File')?.files?.[0],v=$('#'+prefix+'Link')?.value.trim()||'';
+ if(f)return upload(f,folder);
+ if(v&&!safeUrl(v))throw Error('Link phải bắt đầu bằng HTTPS và không chứa khoảng trắng.');
+ return v;
+}
+async function save(){
+ if(!state.editor||state.busy)return;
+ state.busy=true;const btn=$('#saveItem');btn.disabled=true;btn.textContent='Đang tải và lưu…';msg('');
+ try{
+   if(state.tab==='words'){
+     const w=state.words.find(x=>x.hanzi===state.selected),u=await fileOrUrl('main','words');
+     const r=await state.db.from('word_content').update({image_url:u||null,updated_at:new Date().toISOString()}).eq('hanzi',w.hanzi).select('hanzi,image_url').single();
+     if(r.error)throw r.error;
+     state.wordMap[w.hanzi]={...state.wordMap[w.hanzi],image_url:u||null};
+   }else{
+     const q=state.questions.find(x=>x.level+'|'+x.key===state.selected);
+     const u=await fileOrUrl('main','listening');const choice=[...(state.mediaMap[q.key]?.choice_images||[])];
+     if(q.kind==='L2'||q.kind==='L3')for(let i=0;i<q.options.length;i++)choice[i]=await fileOrUrl('opt'+i,'listening');
+     const row={question_key:q.key,kind:q.kind,image_url:u||null,choice_images:choice.slice(0,4),updated_at:new Date().toISOString()};
+     const r=await state.db.from('hsk_listening_media').upsert(row,{onConflict:'question_key'}).select().single();if(r.error)throw r.error;
+     state.mediaMap[q.key]=r.data;
+   }
+   list();detail();msg('✅ Đã cập nhật ảnh thành công! Các bài học sẽ hiển thị ảnh mới khi được tải lại.');
+ }catch(e){msg('❌ Không lưu được: '+(e.message||e),true)}
+ finally{state.busy=false;if(btn.isConnected){btn.disabled=false;btn.textContent=state.tab==='words'?'💾 Lưu hình ảnh từ vựng':'💾 Lưu hình ảnh câu nghe'}}
+}
+async function clearItem(){
+ if(!state.editor||state.busy||!confirm('Bạn muốn xóa liên kết ảnh riêng của mục này? Ảnh mẫu mặc định vẫn giữ nguyên.'))return;
+ state.busy=true;try{
+  if(state.tab==='words'){
+   const w=state.words.find(x=>x.hanzi===state.selected),r=await state.db.from('word_content').update({image_url:null,updated_at:new Date().toISOString()}).eq('hanzi',w.hanzi);
+   if(r.error)throw r.error;state.wordMap[w.hanzi]={...state.wordMap[w.hanzi],image_url:null};
+  }else{
+   const q=state.questions.find(x=>x.level+'|'+x.key===state.selected);
+   const r=await state.db.from('hsk_listening_media').delete().eq('question_key',q.key);if(r.error)throw r.error;
+   delete state.mediaMap[q.key];
+  }
+  list();detail();msg('✅ Đã xóa liên kết ảnh riêng. Ảnh mặc định sẽ tiếp tục được sử dụng.');
+ }catch(e){msg('❌ '+(e.message||e),true)}finally{state.busy=false}
+}
+function chooseTab(tab){
+ state.tab=tab;state.selected=null;
+ document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('on',b.dataset.tab===tab);b.setAttribute('aria-selected',String(b.dataset.tab===tab))});
+ $('#listTitle').textContent=tab==='words'?'Danh sách 300 từ vựng':'Danh sách các câu nghe HSK';
+ $('#part').hidden=tab!=='listening';$('#search').value='';
+ $('#search').placeholder=tab==='words'?'Tìm chữ Hán hoặc nghĩa tiếng Việt':'Tìm theo nội dung câu nghe';
+ state.selected=tab==='words'?state.words[0]?.hanzi:(state.questions[0]?state.questions[0].level+'|'+state.questions[0].key:null);
+ list();detail();msg('');
+}
+async function session(){
+ const r=await state.db.auth.getUser();if(r.error)throw r.error;
+ state.user=r.data.user;
+ $('#waiting').hidden=true;$('#loginBox').hidden=!!state.user;$('#studio').hidden=!state.user;$('#logoutBtn').hidden=!state.user;
+ if(!state.user)return;
+ const e=await state.db.from('site_editors').select('user_id').eq('user_id',state.user.id).maybeSingle();if(e.error)throw e.error;
+ state.editor=Boolean(e.data);
+ const [w,c,m]=await Promise.all([
+  state.db.from('quiz_vocab').select('hanzi,meaning,hsk_level').order('hsk_level').order('hanzi'),
+  state.db.from('word_content').select('hanzi,image_url'),
+  state.db.from('hsk_listening_media').select('question_key,kind,image_url,choice_images')
+ ]);
+ for(const result of [w,c,m])if(result.error)throw result.error;
+ state.words=w.data||[];state.wordMap=Object.fromEntries((c.data||[]).map(x=>[x.hanzi,x]));
+ state.questions=allQuestions();state.mediaMap=Object.fromEntries((m.data||[]).map(x=>[x.question_key,x]));
+ chooseTab(state.tab);
+ if(!state.editor)msg('⚠️ Bạn đang xem ở chế độ chỉ đọc. Liên hệ quản trị viên để cấp quyền chỉnh ảnh.',true);
+}
+async function init(){
+ try{
+  if(!window.supabase)throw Error('Không tải được Supabase.');
+  state.db=window.supabase.createClient(URL_SB,KEY);
+  $('#loginBtn').onclick=async()=>{const b=$('#loginBtn');b.disabled=true;$('#loginMessage').textContent='Đang đăng nhập…';try{const r=await state.db.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});if(r.error)throw r.error;await session()}catch(e){$('#loginMessage').textContent=e.message||String(e)}finally{b.disabled=false}};
+  $('#logoutBtn').onclick=async()=>{await state.db.auth.signOut();await session()};
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>chooseTab(b.dataset.tab));
+  $('#search').oninput=list;$('#level').onchange=list;$('#part').onchange=list;
+  await session();
+ }catch(e){$('#waiting').textContent='Không mở được thư viện: '+(e.message||e);$('#waiting').hidden=false}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script></body></html>
