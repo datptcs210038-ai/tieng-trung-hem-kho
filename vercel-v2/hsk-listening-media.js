@@ -18,9 +18,12 @@
    if(userId===state.lastUser)return;
    state.loading=true;
    try{
-     const [r,w]=await Promise.all([ctx.db.from('hsk_listening_media').select('question_key,image_url,choice_images'),ctx.db.from('word_content').select('hanzi,image_url')]);
+     const [r,w,e]=await Promise.all([ctx.db.from('hsk_listening_media').select('question_key,image_url,choice_images'),ctx.db.from('word_content').select('hanzi,image_url'),ctx.db.from('site_editors').select('user_id').eq('user_id',userId).maybeSingle()]);
      if(r.error)throw r.error;
      if(w.error)throw w.error;
+     if(e.error)throw e.error;
+     const nav=document.querySelector('.side .nav');
+     if(nav&&e.data&&!document.getElementById('tthkMediaAdminLink')){const btn=document.createElement('button');btn.id='tthkMediaAdminLink';btn.type='button';btn.textContent='🖼️ Kho ảnh HSK';btn.onclick=()=>location.assign('/content-images.html');nav.insertBefore(btn,document.getElementById('logout'));}
      state.records=Object.fromEntries((r.data||[]).map(x=>[x.question_key,x]));
      D.photos=D.photos||{};
      for(const item of (w.data||[]))if(isUrl(item.image_url))D.photos[item.hanzi]=item.image_url;
@@ -35,7 +38,7 @@
   const site=document.getElementById('site');
   if(!site)return;
   new MutationObserver(()=>{
-   if(site.hidden){state.lastUser='';state.records={}}
+   if(site.hidden){state.lastUser='';state.records={};document.getElementById('tthkMediaAdminLink')?.remove()}
    else load();
   }).observe(site,{attributes:true,attributeFilter:['hidden']});
   if(!site.hidden)load();
