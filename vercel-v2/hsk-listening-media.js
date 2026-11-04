@@ -18,9 +18,13 @@
    if(userId===state.lastUser)return;
    state.loading=true;
    try{
-     const r=await ctx.db.from('hsk_listening_media').select('question_key,image_url,choice_images');
+     const [r,w]=await Promise.all([ctx.db.from('hsk_listening_media').select('question_key,image_url,choice_images'),ctx.db.from('word_content').select('hanzi,image_url')]);
      if(r.error)throw r.error;
+     if(w.error)throw w.error;
      state.records=Object.fromEntries((r.data||[]).map(x=>[x.question_key,x]));
+     D.photos=D.photos||{};
+     for(const item of (w.data||[]))if(isUrl(item.image_url))D.photos[item.hanzi]=item.image_url;
+     D.vocab?.();
      state.lastUser=userId;
      window.dispatchEvent(new Event('tthk-hsk-media-ready'));
    }catch(e){console.warn('HSK listening media not available:',e.message)}
