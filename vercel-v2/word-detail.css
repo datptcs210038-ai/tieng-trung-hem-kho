@@ -91,3 +91,17 @@
  #wordDetail .wd-usage{padding:13px 12px}
  #wordDetail .wd-usage-source{gap:7px}
 }
+
+/* Show every uploaded illustration in full, including portrait-oriented photos. */
+#wordDetail .wd-picture{
+ height:clamp(290px,32vw,440px);
+ min-height:0;
+}
+#wordDetail .wd-picture img{
+ display:block;
+ width:100%;
+ height:100%;
+ object-fit:contain!important;
+ object-position:center center!important;
+}
+@media(max-width:520px){#wordDetail .wd-picture{height:310px}}
