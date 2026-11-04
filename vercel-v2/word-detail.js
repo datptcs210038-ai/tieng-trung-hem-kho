@@ -4,7 +4,7 @@
 const D=window.TTHK;
 const $=s=>document.querySelector(s);
 if(!D||!$('#site')||!$('#wordGrid')||$('#wordDetail'))return;
-const link=document.createElement('link');link.rel='stylesheet';link.href='/word-detail.css?v=detail-sync-20261104';document.head.append(link);
+const link=document.createElement('link');link.rel='stylesheet';link.href='/word-detail.css?v=natural-image-mobile-20261104';document.head.append(link);
 const main=$('#site main');
 if(!main)return;
 const detail=document.createElement('section');
@@ -161,7 +161,7 @@ function drawPicture(w){
  if(D.photos?.[w.h]){
   const img=document.createElement('img');
   img.alt='Ảnh minh họa: '+(w.m||w.h);
-  img.loading='eager';img.decoding='async';img.style.objectFit='contain';
+  img.loading='eager';img.decoding='async';img.style.cssText='display:block;width:100%;height:auto;max-width:100%;max-height:none;aspect-ratio:auto;object-fit:contain;object-position:center;';
   img.onerror=()=>{if(!img.isConnected)return;slot.replaceChildren();const item=document.createElement('span');item.className='wd-picture-symbol';item.textContent=w.h;slot.append(item)};
   img.src=D.photos[w.h];
   slot.append(img);
