@@ -31,6 +31,7 @@
    finally{state.loading=false}
  }
  function observe(){
+  if(!document.getElementById('tthk-hsk-photo-style')){const style=document.createElement('style');style.id='tthk-hsk-photo-style';style.textContent='.hsk20-picture .hsk20-managed-img{display:block;width:auto;max-width:min(100%,420px);max-height:240px;object-fit:contain;margin:auto;border-radius:12px}.hsk20-choice .hsk20-managed-img{display:block;width:min(100%,160px);height:105px;object-fit:contain;border-radius:10px;margin:auto}.hsk20-icon:has(.hsk20-managed-img){display:block;width:100%}';document.head.append(style)}
   const site=document.getElementById('site');
   if(!site)return;
   new MutationObserver(()=>{
