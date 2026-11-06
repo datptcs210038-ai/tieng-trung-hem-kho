@@ -33,13 +33,42 @@
 
 (()=>{
 const D=window.TTHK,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let db=null,user=null;D.profileContext=()=>({db,user});$('#team').innerHTML=D.team.map((x,i)=>'<div class="box member"><div class="memberpic" style="background-position:'+(i*25)+'% center"></div><h3>'+x[0]+'</h3><p class="muted">'+x[1]+'</p></div>').join('');
-function pane(id){$$('.authpane').forEach(x=>x.classList.toggle('on',x.id===id));$('#authStatus').textContent=''}$$('[data-auth]').forEach(b=>b.onclick=()=>pane(b.dataset.auth));
-async function session(){try{const r=await db.auth.getUser();if(r.error)throw r.error;user=r.data.user;$('#gate').hidden=!!user;$('#site').hidden=!user;$('#music').hidden=!user;if(user){$('#hello').textContent='Xin chào, '+(user.user_metadata?.full_name||user.email?.split('@')[0])+' 🌱';D.syncUserHeader?.();if(!D.words.length)D.loadWords().catch(e=>console.warn('Vocabulary data unavailable',e))}else{pane('paneLogin');D.syncUserHeader?.()}return !!user}catch(e){$('#authStatus').textContent='Không kiểm tra được phiên đăng nhập. Kiểm tra kết nối và thử tải lại trang.';return false}}
-async function auth(){db=window.supabase?.createClient('https://wcgzdbjmwhyroszvyetv.supabase.co','sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ');if(!db){$('#authStatus').textContent='Chưa tải được dịch vụ đăng nhập.';return}db.auth.onAuthStateChange(e=>{if(e==='PASSWORD_RECOVERY')pane('paneReset')});await session()}
+function pane(id){$('.authpane').forEach(x=>x.classList.toggle('on',x.id===id));$('#authStatus').textContent=''}
+function openAuth(id='paneLogin'){$('#gate').hidden=false;pane(id);$('#emailLogin')?.focus()}
+function closeAuth(){$('#gate').hidden=true}
+D.openAuth=openAuth;D.closeAuth=closeAuth;
+$('#closeAuth')?.addEventListener('click',closeAuth);
+$('#gate')?.addEventListener('click',event=>{if(event.target===$('#gate'))closeAuth()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#gate').hidden)closeAuth()});
+$('[data-auth]').forEach(b=>b.onclick=()=>pane(b.dataset.auth));
+async function session(){
+ try{
+  const r=await db.auth.getUser();
+  if(r.error && !/auth session missing|authsessionmissingerror/i.test(String(r.error.name||'')+' '+String(r.error.message||'')))console.warn('Không xác minh được phiên đăng nhập:',r.error.message);
+  user=r.data?.user||null;
+  $('#site').hidden=false;
+  $('#music').hidden=false;
+  if(!$('#paneReset')?.classList.contains('on'))$('#gate').hidden=true;
+  $('#hello').textContent=user?'Xin chào, '+(user.user_metadata?.full_name||user.email?.split('@')[0])+' 🌱':'Xin chào, bạn học! Đăng nhập để ghi điểm HSK lên bảng xếp hạng.';
+  D.syncUserHeader?.();
+  if(!D.words.length)D.loadWords().catch(e=>console.warn('Vocabulary data unavailable',e));
+  window.dispatchEvent(new Event('tthk:auth-changed'));
+  return !!user;
+ }catch(e){
+  user=null;$('#site').hidden=false;$('#gate').hidden=true;
+  $('#hello').textContent='Xin chào, bạn học! Bạn vẫn có thể học và làm bài HSK.';
+  D.syncUserHeader?.();
+  window.dispatchEvent(new Event('tthk:auth-changed'));
+  console.warn('Account unavailable; continuing as guest',e);
+  return false;
+ }
+}
+D.refreshSession=session;
+async function auth(){db=window.supabase?.createClient('https://wcgzdbjmwhyroszvyetv.supabase.co','sb_publishable_rS5k1n1aKhqPaq_4En2pKw_hXYe3WcJ');if(!db){$('#authStatus').textContent='Chưa tải được dịch vụ đăng nhập.';return}db.auth.onAuthStateChange(e=>{if(e==='PASSWORD_RECOVERY')openAuth('paneReset')});await session()}
 $('#login').onclick=async()=>{const btn=$('#login');const email=$('#emailLogin').value.trim();const pass=$('#passLogin').value;if(!email||!pass){$('#authStatus').textContent='Vui lòng nhập email và mật khẩu.';return}btn.disabled=true;btn.textContent='Đang đăng nhập…';$('#authStatus').textContent='Đang xác thực với Supabase…';try{if(!db)throw new Error('Chưa kết nối được dịch vụ tài khoản, hãy tải lại trang.');let r=await db.auth.signInWithPassword({email,password:pass});if(r.error)throw r.error;$('#authStatus').textContent='Đăng nhập thành công, đang mở website…';const ok=await session();if(!ok)$('#authStatus').textContent='Đã xác thực, nhưng chưa tải được trang học tập. Vui lòng tải lại trang.';}catch(e){const message=String(e.message||e);$('#authStatus').textContent=/invalid login credentials/i.test(message)?'Email hoặc mật khẩu không chính xác. Bạn có thể chọn Quên mật khẩu để đặt lại.':/email not confirmed/i.test(message)?'Bạn cần xác nhận email trước khi đăng nhập.':message;}finally{btn.disabled=false;btn.textContent='Đăng nhập'}};
 $('#register').onclick=async()=>{let full_name=$('#fullName').value.trim(),student_id=$('#studentId').value.trim().toUpperCase(),phone=$('#phone').value.trim(),email=$('#emailReg').value.trim().toLowerCase(),password=$('#passReg').value;if(!full_name||student_id.length<4||!/^0[0-9]{9}$/.test(phone)||!email.includes('@')||password.length<8){$('#authStatus').textContent='Nhập đủ họ tên, MSSV, SĐT 10 số, email và mật khẩu từ 8 ký tự.';return}let r=await db.auth.signUp({email,password,options:{data:{full_name,student_id,phone},emailRedirectTo:location.origin}});$('#authStatus').textContent=r.error?r.error.message:'Kiểm tra email xác nhận nếu được yêu cầu.'};
 $('#recover').onclick=async()=>{let r=await db.auth.resetPasswordForEmail($('#recoverEmail').value.trim(),{redirectTo:location.origin});$('#authStatus').textContent=r.error?r.error.message:'Nếu email đã đăng ký, hãy kiểm tra hộp thư.'};$('#changePassword').onclick=async()=>{let r=await db.auth.updateUser({password:$('#newPassword').value});$('#authStatus').textContent=r.error?r.error.message:'Mật khẩu đã được cập nhật.'};$('#logout').onclick=async()=>{await db.auth.signOut();session()};
-D.page=function(id){$$('.page').forEach(x=>x.classList.toggle('on',x.id===id));$$('.nav [data-page]').forEach(x=>x.classList.toggle('on',x.dataset.page===id));if(id==='writing')write();if(id==='rank')ranks();if(id==='lookup')D.lookup();window.scrollTo(0,0)};$$('[data-page]').forEach(b=>b.onclick=()=>D.page(b.dataset.page));
+D.page=function(id){if(id==='profile'&&!user){openAuth();return;}$('.page').forEach(x=>x.classList.toggle('on',x.id===id));$$('.nav [data-page]').forEach(x=>x.classList.toggle('on',x.dataset.page===id));if(id==='writing')write();if(id==='rank')ranks();if(id==='lookup')D.lookup();window.scrollTo(0,0)};$$('[data-page]').forEach(b=>b.onclick=()=>D.page(b.dataset.page));
 ['level','topic','vocabQuery','onlyPhotos'].forEach(k=>$('#'+k).oninput=()=>{D.shown=32;D.vocab()});$('#loadMore').onclick=()=>{D.shown+=32;D.vocab()};$$('[data-lookup]').forEach(b=>b.onclick=()=>{D.lookupType=b.dataset.lookup;$$('[data-lookup]').forEach(x=>x.classList.toggle('on',x===b));D.lookup()});$('#query').oninput=D.lookup;$('#voice').onclick=()=>{let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return alert('Trình duyệt chưa hỗ trợ nhận dạng giọng nói.');let r=new SR();r.lang='zh-CN';r.onresult=e=>{$('#query').value=e.results[0][0].transcript;D.lookup()};r.start()};
 let writer=null;
 let writingProgress={accepted:0,mistakes:0,completed:0,done:false};
@@ -147,8 +176,8 @@ $('#trace').textContent='✍ Bắt đầu chấm';$('#trace').onclick=()=>{D.isH
 $('#clear').textContent='↺ Viết lại';$('#clear').onclick=restartWriting;
 let quizWords=[],qi=0,correct=0,flash=false,testLevel=1,testNum=1;function begin(f){flash=f;testLevel=f?1:+$('#examLevel').value;testNum=f?Math.ceil(Math.random()*300):+$('#examNum').value;quizWords=D.shuffle(D.words.filter(w=>w.l<=testLevel),testLevel*813+testNum*179).slice(0,f?+$('#flashCount').value:testLevel===1?40:60);qi=0;correct=0;question()}
 function question(){let box=flash?$('#flashBody'):$('#examBody');if(qi>=quizWords.length)return finish();let w=quizWords[qi],listen=!flash&&qi<quizWords.length/2,opts=D.shuffle([w,...D.shuffle(D.words.filter(x=>x.h!==w.h&&x.m!==w.m),qi*31).slice(0,3)],testNum+qi*7);box.innerHTML='<p>HSK'+testLevel+' · Câu '+(qi+1)+'/'+quizWords.length+'</p><h1 style="text-align:center">'+(listen?'🎧':w.h)+'</h1>'+(listen?'<button class="btn soft" id="listenQ">🔊 Nghe</button>':'')+opts.map((x,i)=>'<button class="choice" data-answer="'+i+'">'+x.m+'</button>').join('')+'<p id="feedback"></p>';if(listen)$('#listenQ').onclick=()=>D.speak(w.h);$$('[data-answer]').forEach(b=>b.onclick=()=>{if($('#feedback').dataset.done)return;$('#feedback').dataset.done='1';let ok=opts[+b.dataset.answer]===w;if(ok)correct++;$('#feedback').innerHTML=(ok?'✅ Chính xác!':'❌ Đáp án: '+w.m)+' <button class="btn" id="next">Tiếp theo</button>';$('#next').onclick=()=>{qi++;question()}})}
-async function finish(){let rate=Math.round(correct/quizWords.length*100),box=flash?$('#flashBody'):$('#examBody');box.innerHTML='<h2>'+(flash?'🎉 Hoàn thành flashcard!':'🎉 Hoàn thành đề HSK!')+'</h2><h1>'+rate+'%</h1><p>'+correct+'/'+quizWords.length+' câu đúng.</p><p id="scoreSaved"></p><button class="btn" id="retry">Thử lại</button>';$('#retry').onclick=()=>begin(flash);if(flash)return;let r=await db.from('hsk_scores').insert({user_id:user.id,nickname:String(user.user_metadata?.full_name||user.email?.split('@')[0]||'Học viên').slice(0,40),level:testLevel,score:rate,correct,total:quizWords.length});$('#scoreSaved').textContent=r.error?r.error.message:'Đã lưu điểm lên bảng xếp hạng.'}$('#startExam').onclick=()=>begin(false);$('#startFlash').onclick=()=>begin(true);
-async function ranks(){let r=await db.from('hsk_scores').select('user_id,nickname,level,score,total').order('score',{ascending:false}).limit(300);if(r.error)return;for(let l of [1,2]){let ids=new Set(),a=r.data.filter(x=>x.level===l&&x.total===(l===1?40:60)&&!ids.has(x.user_id)&&ids.add(x.user_id));let box=$('#rank'+l);box.replaceChildren();if(!a.length)box.textContent='Chưa có kết quả.';a.forEach((x,i)=>{let p=document.createElement('p');p.textContent=(i+1)+'. '+x.nickname+' — '+x.score+'%';box.append(p)})}}
+async function finish(){let rate=Math.round(correct/quizWords.length*100),box=flash?$('#flashBody'):$('#examBody');box.innerHTML='<h2>'+(flash?'🎉 Hoàn thành flashcard!':'🎉 Hoàn thành đề HSK!')+'</h2><h1>'+rate+'%</h1><p>'+correct+'/'+quizWords.length+' câu đúng.</p><p id="scoreSaved"></p><button class="btn" id="retry">Thử lại</button>';$('#retry').onclick=()=>begin(flash);if(flash)return;if(!db||!user){$('#scoreSaved').textContent='Bạn đang thi không đăng nhập. Điểm chỉ hiển thị tại đây, không cập nhật bảng xếp hạng.';return;}let r=await db.from('hsk_scores').insert({user_id:user.id,nickname:String(user.user_metadata?.full_name||user.email?.split('@')[0]||'Học viên').slice(0,40),level:testLevel,score:rate,correct,total:quizWords.length});$('#scoreSaved').textContent=r.error?r.error.message:'Đã lưu điểm lên bảng xếp hạng.'}$('#startExam').onclick=()=>begin(false);$('#startFlash').onclick=()=>begin(true);
+async function ranks(){if(!db){for(const l of [1,2])$('#rank'+l).textContent='Bảng xếp hạng chưa kết nối được.';return;}let r=await db.from('hsk_scores').select('user_id,nickname,level,score,total').order('score',{ascending:false}).limit(300);if(r.error)return;for(let l of [1,2]){let ids=new Set(),a=r.data.filter(x=>x.level===l&&x.total===(l===1?40:60)&&!ids.has(x.user_id)&&ids.add(x.user_id));let box=$('#rank'+l);box.replaceChildren();if(!a.length)box.textContent='Chưa có kết quả.';a.forEach((x,i)=>{let p=document.createElement('p');p.textContent=(i+1)+'. '+x.nickname+' — '+x.score+'%';box.append(p)})}}
 let timerMode='pomo',phase='study',remain=1500000,elapsed=0,started=0,running=false,interval=null;function durations(){return{study:Math.max(1,(+$('#studyMin').value||0)*60+(+$('#studySec').value||0))*1000,break:Math.max(1,(+$('#breakMin').value||0)*60+(+$('#breakSec').value||0))*1000}}function clock(){let ms=running?(timerMode==='watch'?elapsed+Date.now()-started:Math.max(0,remain-Date.now()+started)):(timerMode==='watch'?elapsed:remain),n=Math.floor(ms/1000);$('#clock').textContent=timerMode==='watch'?String(Math.floor(n/3600)).padStart(2,'0')+':'+String(Math.floor(n/60)%60).padStart(2,'0')+':'+String(n%60).padStart(2,'0'):String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');if(running&&timerMode==='pomo'&&ms<=0){clearInterval(interval);running=false;phase=phase==='study'?'break':'study';remain=durations()[phase];$('#toastTitle').textContent=phase==='break'?'🌿 Đến giờ nghỉ rồi!':'📚 Quay lại học nhé!';$('#toast').hidden=false;$('#toggleClock').textContent='▶ Bắt đầu';if('Notification'in window&&Notification.permission==='granted')new Notification($('#toastTitle').textContent);clock()}}$('#toggleClock').onclick=()=>{if(running){let d=Date.now()-started;if(timerMode==='watch')elapsed+=d;else remain=Math.max(0,remain-d);clearInterval(interval);running=false;$('#toggleClock').textContent='▶ Tiếp tục'}else{started=Date.now();running=true;interval=setInterval(clock,280);$('#toggleClock').textContent='⏸ Tạm dừng'}clock()};$('#resetClock').onclick=()=>{clearInterval(interval);running=false;phase='study';remain=durations().study;elapsed=0;$('#toggleClock').textContent='▶ Bắt đầu';clock()};$$('[data-timer]').forEach(b=>b.onclick=()=>{clearInterval(interval);running=false;timerMode=b.dataset.timer;$$('[data-timer]').forEach(x=>x.classList.toggle('on',x===b));$('#pomofields').hidden=timerMode==='watch';elapsed=0;remain=durations().study;clock()});$('#notify').onclick=async()=>{if('Notification'in window){let r=await Notification.requestPermission();$('#timeMessage').textContent=r==='granted'?'Đã bật thông báo chạy nền.':'Trình duyệt chưa cấp quyền.'}};$('#dismiss').onclick=()=>$('#toast').hidden=true;clock();
 $('#memo').value=localStorage.getItem('tthk_memo')||'';$('#memo').oninput=()=>localStorage.setItem('tthk_memo',$('#memo').value);$('#planDate').value=new Date().toISOString().slice(0,10);function plans(){let a=JSON.parse(localStorage.getItem('tthk_plans')||'[]');$('#planList').replaceChildren();a.forEach((x,i)=>{let p=document.createElement('p');p.textContent=x.date+' · '+x.text+' ';let del=document.createElement('button');del.textContent='Xóa';del.className='btn soft';del.onclick=()=>{a.splice(i,1);localStorage.setItem('tthk_plans',JSON.stringify(a));plans()};p.append(del);$('#planList').append(p)})}$('#addPlan').onclick=()=>{let a=JSON.parse(localStorage.getItem('tthk_plans')||'[]'),text=$('#plan').value.trim();if(!text)return;a.push({date:$('#planDate').value,text});localStorage.setItem('tthk_plans',JSON.stringify(a));$('#plan').value='';plans()};plans();
 let audio=null,musicLoop=null,note=0,melody=[392,440,493.88,440,392,349.23,329.63];function playNote(){let t=audio.currentTime,o=audio.createOscillator(),g=audio.createGain(),f=audio.createBiquadFilter();o.type='sawtooth';o.frequency.value=melody[note++%melody.length];f.type='lowpass';f.frequency.value=700;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.017,t+.2);g.gain.exponentialRampToValueAtTime(.0001,t+1.5);o.connect(f);f.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+1.6)}$('#music').onclick=async()=>{if(audio){clearInterval(musicLoop);await audio.close();audio=null;$('#music').textContent='🎻 Bật nhạc nhẹ'}else{audio=new(window.AudioContext||window.webkitAudioContext)();playNote();musicLoop=setInterval(playNote,1600);$('#music').textContent='🔇 Tắt nhạc'}};window.addEventListener('load',auth);
@@ -348,7 +377,7 @@ $('#uploadPhoto').onclick=async()=>{
  const name=document.createElement('span');name.id='accountName';name.textContent='Học viên';
  const arrow=document.createElement('span');arrow.textContent='⌄';arrow.setAttribute('aria-hidden','true');
  accountBtn.append(avatar,name,arrow);top.append(accountBtn);
- accountBtn.onclick=()=>D.page('profile');
+ accountBtn.onclick=()=>{if(!D.profileContext?.().user){D.openAuth?.();return;}D.page('profile')};
  let refreshCounter=0;
  D.syncUserHeader=async()=>{
   const {db,user}=D.profileContext?.()||{};
@@ -508,11 +537,12 @@ async function signOut(){
   if(result.error)throw result.error;
   D.stopTimerOnLogout?.();
   // The auth-only five-second loader remains visible until its wrapper completes.
-  $('#site').hidden=true;$('#gate').hidden=false;
+  $('#site').hidden=false;$('#gate').hidden=true;
   $('#music').hidden=true;
   const p=$('#passLogin');if(p)p.value='';
   document.querySelectorAll('.authpane').forEach(x=>x.classList.toggle('on',x.id==='paneLogin'));
-  $('#authStatus').textContent='✅ Đã đăng xuất thành công!';
+  await D.refreshSession?.();
+  D.page?.('intro');
   window.scrollTo(0,0);
  }catch(error){
   const msg='Không thể đăng xuất: '+(error?.message||String(error));
@@ -535,6 +565,20 @@ if(!$('#quickSignOut')){
  b.id='quickSignOut';b.type='button';b.className='quick-signout';b.textContent='↪ Đăng xuất';b.onclick=signOut;
  wrap.append(b);
 }
+const accountEntry=document.createElement('button');
+accountEntry.type='button';accountEntry.id='accountEntry';accountEntry.className='quick-signout';
+accountEntry.textContent='🔐 Đăng nhập / Đăng ký';
+accountEntry.onclick=()=>D.openAuth?.();
+const userTopBar=$('.user-top-bar');
+if(userTopBar)userTopBar.insertBefore(accountEntry,$('#quickSignOut'));
+function syncAccountNav(){
+ const signedIn=!!D.profileContext?.().user;
+ accountEntry.hidden=signedIn;
+ if($('#quickSignOut'))$('#quickSignOut').hidden=!signedIn;
+ if($('#logout'))$('#logout').hidden=!signedIn;
+}
+window.addEventListener('tthk:auth-changed',syncAccountNav);
+syncAccountNav();
 let mode='pomo',phase='study',remaining=25*60*1000,elapsed=0,deadline=0,startWatchAt=0,running=false,miniVisible=false,minimized=false,ticker=0;
 const mini=document.createElement('aside');mini.id='timerFloatingWindow';mini.hidden=true;mini.setAttribute('role','timer');mini.setAttribute('aria-label','Đồng hồ học tập nổi');
 mini.innerHTML='<div class="timer-mini-head"><strong>⏱ <span id="timerFloatName">Pomodoro</span></strong><button type="button" id="timerFloatMin" class="mini-icon" title="Thu nhỏ đồng hồ" aria-label="Thu nhỏ đồng hồ">−</button></div><div id="timerFloatTime" class="timer-float-time">25:00</div><p id="timerFloatPhase" class="timer-float-phase">Đang học</p><div class="timer-float-actions"><button type="button" id="timerFloatToggle" class="btn soft">⏸ Tạm dừng</button><button type="button" id="timerFloatExpand" class="btn soft">Mở rộng ↗</button></div>';
@@ -670,6 +714,12 @@ render();
      }
    }
  }
+ const initialLoaderStart=Date.now();
+ const initialLoaderShown=showAuthLoader('Đang tải trang TIẾNG TRUNG HEM KHÓ…');
+ window.addEventListener('load',()=>{
+  const wait=Math.max(0,5000-(Date.now()-initialLoaderStart));
+  setTimeout(()=>{if(initialLoaderShown)hideAuthLoader()},wait);
+ },{once:true});
  const login=$('#login'),logout=$('#logout'),logoutTop=$('#quickSignOut');
  // Five seconds on account transitions only; regular page/tab navigation has no spinner.
  loader?.classList.add('auth-five-second-loader');
