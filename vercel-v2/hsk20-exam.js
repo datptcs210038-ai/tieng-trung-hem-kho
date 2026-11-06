@@ -243,7 +243,7 @@
  }
  async function save(result){
   const profile=D.profileContext?.()||{},db=profile.db,user=profile.user;
-  if(!db||!user){updateSave('Đăng nhập để lưu điểm vào bảng xếp hạng.');return}
+  if(!db||!user){updateSave('Bạn đang làm bài với tư cách khách. Điểm chỉ hiển thị tại đây và không cập nhật bảng xếp hạng.');return}
   try{
    const nick=String(user.user_metadata?.full_name||user.email?.split('@')[0]||'Học viên').slice(0,40);
    const res=await db.from('hsk_scores').insert({user_id:user.id,nickname:nick,level:state.level,score:Math.round(result.correct/state.items.length*100),correct:result.correct,total:state.items.length});
