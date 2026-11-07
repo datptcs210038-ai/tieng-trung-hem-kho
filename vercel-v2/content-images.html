@@ -50,9 +50,9 @@ button.secondary{border:1px solid #cbe5e7;background:#eaf8f5;color:#247875;paddi
 <div class="eyebrow">IMAGE STUDIO · HỌC LIỆU HSK</div>
 <h1>🖼️ Thư viện hình ảnh học liệu</h1>
 <p class="muted">Cập nhật hình minh họa cho 300 từ vựng HSK 1–2 và từng câu nghe trong bộ đề HSK. Ảnh đã lưu dùng chung cho học sinh trên website.</p>
-<div id="waiting" class="panel" role="status">Đang kiểm tra tài khoản…</div>
+<div id="waiting" class="panel" role="status">Đang tải thư viện ảnh…</div>
 <div id="loginBox" class="panel" hidden><h2>🔐 Đăng nhập</h2><p>Dùng tài khoản Tiếng Trung Hem Khó của bạn.</p><input id="email" type="email" autocomplete="email" placeholder="Email"><input id="password" type="password" autocomplete="current-password" placeholder="Mật khẩu"><button id="loginBtn" class="primary">Đăng nhập</button><p id="loginMessage" role="status"></p></div>
-<div id="studio" hidden>
+<div id="studio" hidden><p class="note" style="margin:0 0 16px">🌍 Thư viện mở: mọi người đều có thể thêm và thay đổi hình ảnh học liệu mà không cần đăng nhập. Vui lòng chỉ tải ảnh phù hợp và tôn trọng nội dung chung.</p>
 <div class="tabbar" role="tablist" aria-label="Chọn thư viện"><button data-tab="words" class="on" aria-selected="true">📚 Từ vựng tổng hợp</button><button data-tab="listening" aria-selected="false">🎧 Hình ảnh bài nghe HSK</button></div>
 <div class="layout">
 <section class="panel sidebar"><h2 id="listTitle">Danh sách từ vựng</h2><input id="search" type="search" autocomplete="off" placeholder="Tìm chữ Hán, nghĩa Việt hoặc câu nghe"><div class="searchrow" style="margin-top:9px"><select id="level"><option value="all">Tất cả HSK</option><option value="1">HSK 1</option><option value="2">HSK 2</option></select><select id="part" hidden><option value="all">Tất cả phần nghe</option><option value="L1">Phần 1</option><option value="L2">Phần 2</option><option value="L3">Phần 3</option><option value="L4">Phần 4</option></select></div><p id="count" role="status"></p><div id="items"></div></section>
@@ -200,12 +200,9 @@ function chooseTab(tab){
  list();detail();msg('');
 }
 async function session(){
- const r=await state.db.auth.getUser();if(r.error)throw r.error;
- state.user=r.data.user;
- $('#waiting').hidden=true;$('#loginBox').hidden=!!state.user;$('#studio').hidden=!state.user;$('#logoutBtn').hidden=!state.user;
- if(!state.user)return;
- const e=await state.db.from('site_editors').select('user_id').eq('user_id',state.user.id).maybeSingle();if(e.error)throw e.error;
- state.editor=Boolean(e.data);
+ state.user=null;
+ $('#waiting').hidden=true;$('#loginBox').hidden=true;$('#studio').hidden=false;$('#logoutBtn').hidden=true;
+ state.editor=true;
  const [w,c,m]=await Promise.all([
   state.db.from('quiz_vocab').select('hanzi,meaning,hsk_level').order('hsk_level').order('hanzi'),
   state.db.from('word_content').select('hanzi,image_url'),
